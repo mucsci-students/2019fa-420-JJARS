@@ -1,0 +1,37 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+# Set language version:
+default_language_version:
+    python: python3.6
+
+# Default hooks:
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+    -   id: check-docstring-first
+
+# Auto-formatting hooks:
+-   repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+    -   id: black
+-   repo: https://github.com/asottile/reorder_python_imports
+    rev: v1.4.0
+    hooks:
+    -   id: reorder-python-imports
+        args: ['--application-directories=.:scruml', --py3-plus]
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v1.18.0
+    hooks:
+    -   id: pyupgrade
+        args: [--py3-plus]
+-   repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.4.0
+    hooks:
+    -   id: rst-backticks
