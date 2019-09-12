@@ -15,6 +15,7 @@ To build and install ScrUML, run:
 To get started after a fresh `git clone`, run the following command to install the required packages and set up the git hook scripts:
 
     pipenv install --dev
+    pipenv shell
     pre-commit install
 
 And you're ready to develop! Run `pipenv shell` to activate the virtual environment whenever you begin contributing and `exit` to deactivate the virtual environment whenever you're done.
