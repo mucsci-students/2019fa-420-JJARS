@@ -1,8 +1,7 @@
 # ScrUML
 # test_uml_diagram.py
 # Team JJARS
-
-import scruml.uml_diagram
+from scruml.uml_diagram import UMLDiagram
 
 
 def test_add_class() -> None:
@@ -36,10 +35,10 @@ def test_remove_class() -> None:
 
     assert umld.remove_class("1234") == None
     umld.add_class("1234")
-    assert remove_class("1234") == "1234"
+    assert umld.remove_class("1234") == "1234"
 
-    assert remove_class("None") == None
-    add_class("None")
+    assert umld.remove_class("None") == None
+    umld.add_class("None")
     assert umld.remove_class("None") == "None"
 
 
