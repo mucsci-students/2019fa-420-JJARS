@@ -13,3 +13,6 @@
 
 # Coverage report files from pytest-cov
 .coverage
+
+# Cache directory for mypy
+/.mypy_cache/
