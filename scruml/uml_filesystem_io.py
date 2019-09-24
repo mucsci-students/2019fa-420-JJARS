@@ -3,7 +3,6 @@
 #Team JJARS
 
 import yaml
-#import not fixed yet
 from uml_diagram import UMLDiagram
 
 def uml_filesystem_io_save( diagram: UMLDiagram, file_path: str) -> bool:
