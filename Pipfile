@@ -9,6 +9,7 @@ pre-commit = "*"
 mypy = "==0.720"
 pytest = "*"
 pytest-cov = "*"
+python-coveralls = "*"
 
 [packages]
 scruml = {editable = true,path = "."}

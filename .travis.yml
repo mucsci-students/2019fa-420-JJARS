@@ -1,0 +1,23 @@
+# Language
+language: python
+
+# Python versions to test against
+python:
+    - "3.6"
+    - "3.7"
+
+# Pre-install: make sure pip is updated
+before_install:
+    - python -m pip install --upgrade pip
+
+# Install: make sure pipenv and all requirements are installed
+install:
+    - pip install pipenv
+    - pipenv install --dev
+
+# Testing: run black, mypy, and pytest
+script:
+    - black --target-version py36 --check . && mypy && pytest
+
+# Post-testing: generate online coverage report
+    - coveralls
