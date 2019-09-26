@@ -1,7 +1,8 @@
 # ScrUML
 # __init__.py
 # Team JJARS
-from scruml.uml_context_cli import uml_context_cli
+
+import scruml.uml_context_cli
 
 
 def main() -> None:

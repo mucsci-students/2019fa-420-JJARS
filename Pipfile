@@ -6,8 +6,10 @@ verify_ssl = true
 [dev-packages]
 black = "==19.3b0"
 pre-commit = "*"
+mypy = "==0.720"
 pytest = "*"
 pytest-cov = "*"
+python-coveralls = "*"
 
 [packages]
 scruml = {editable = true,path = "."}
