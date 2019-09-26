@@ -2,9 +2,10 @@
 # uml_context_cli.py
 # Team JJARS
 import cmd
+from typing import List
 
-import uml_filesystem_io
-from uml_diagram import UMLDiagram
+from scruml import uml_filesystem_io
+from scruml.uml_diagram import UMLDiagram
 
 
 class __UMLShell(cmd.Cmd):
@@ -15,7 +16,7 @@ class __UMLShell(cmd.Cmd):
         print("Thank you for using ScrUML. Goodbye!")
         return True
 
-    def do_help(self, arg: str) -> None:
+    def help_commands(self) -> None:
         print("Possible commands:")
         print("add_class [class name]")
         print("remove_class [class name]")
@@ -27,7 +28,7 @@ class __UMLShell(cmd.Cmd):
     def do_add_class(self, arg: str) -> None:
         """add_class [class name]
       Adds new class if one with that name does not already exist"""
-        if self.__diagram.add_class(arg):
+        if not self.__diagram.add_class(arg):
             print("'{}' class already exists in the diagram".format(arg))
         else:
             print("Added class '{}'".format(arg))
@@ -35,7 +36,7 @@ class __UMLShell(cmd.Cmd):
     def do_remove_class(self, arg: str) -> None:
         """remove_class [class name]
       Removes class if it exists"""
-        if self.__diagram.remove_class(arg):
+        if not self.__diagram.remove_class(arg):
             print("'{}' class does not exist in the diagram".format(arg))
         else:
             print("Removed class '{}'".format(arg))
@@ -44,14 +45,14 @@ class __UMLShell(cmd.Cmd):
         """list_classes
       Lists all classes"""
         print("All classes in the current diagram:")
-        class_names: List[str] = __diagram.get_all_class_names()
+        class_names: List[str] = self.__diagram.get_all_class_names()
         print("\n".join(class_names))
 
     def do_rename_class(self, arg: str) -> None:
         """rename_class [old class name] [new class name]
       Changes name of class if one of that name exists"""
-        names: str = arg.split()
-        __diagram.rename_class(names[0], names[1])
+        names: List[str] = arg.split()
+        self.__diagram.rename_class(names[0], names[1])
         print("changing " + names[0] + " to " + names[1])
 
     def do_save_diagram(self, arg: str) -> None:
@@ -66,10 +67,10 @@ class __UMLShell(cmd.Cmd):
         """load_diagram [filename]
       Loads existing UML diagram"""
         print("Loading diagram from '{}'".format(arg))
-        __diagram = uml_filesystem_io.load_diagram(arg)
+        self.__diagram = uml_filesystem_io.load_diagram(arg)
 
 
 def activate() -> None:
     print("Welcome to ScrUML.")
-    print(" Type in 'help' to receive a list of possible commands.")
-    __UMLShell().cmdloop("ScrUML> ")
+    print(" Type in 'help commands' to receive a list of possible commands.")
+    __UMLShell().cmdloop()

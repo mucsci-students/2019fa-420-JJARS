@@ -16,3 +16,6 @@
 
 # Cache directory for mypy
 /.mypy_cache/
+
+# Temporary test files
+/tmp/

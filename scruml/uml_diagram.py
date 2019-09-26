@@ -1,11 +1,15 @@
 # ScrUML
 # uml_diagram.py
 # Team JJARS
+from typing import Dict
+from typing import FrozenSet
+from typing import List
+from typing import Optional
 
-from typing import Optional, Dict, List, FrozenSet
+import yaml
 
-class UMLDiagram:
 
+class UMLDiagram(yaml.YAMLObject):
     def __init__(self) -> None:
         self.__classes: Dict[str, Dict[str, str]] = dict()
         self.__relationships: Dict[FrozenSet[str], Dict[str, Dict[str, str]]] = dict()
