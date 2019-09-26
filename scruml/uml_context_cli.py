@@ -56,4 +56,4 @@ class __UMLShell(cmd.Cmd):
 
 
 def activate():
-    __UMLShell().cmdloop()
+    __UMLShell().cmdloop("ScrUML> ")
