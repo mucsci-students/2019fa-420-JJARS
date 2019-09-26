@@ -18,8 +18,3 @@ def uml_filesystem_io_load( diagram: UMLDiagram, file_path: str) -> bool:
 		if diagram is {}:
 			return False
 		return True
-
-
-	
-
-
