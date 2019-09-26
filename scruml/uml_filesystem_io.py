@@ -4,9 +4,9 @@
 from uml_diagram import UMLDiagram
 
 # Dummy file
-def save_diagram(diagram: UMLDiagram, file_path: str):
+def save_diagram(diagram: UMLDiagram, file_path: str) -> bool:
     pass
 
 
-def load_diagram(diagram: UMLDiagram, file_path: str):
+def load_diagram(file_path: str) -> UMLDiagram:
     pass
