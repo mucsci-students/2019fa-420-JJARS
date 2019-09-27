@@ -7,10 +7,11 @@ from scruml.uml_diagram import UMLDiagram
 
 
 def save_diagram(diagram: UMLDiagram, file_path: str) -> bool:
-    with open(file_path, "w") as diagram_file:
-        if diagram_file:
+    try:
+        with open(file_path, "w") as diagram_file:
             yaml.dump(diagram, diagram_file)
             return True
+    except IOError:
         return False
 
 
@@ -19,4 +20,4 @@ def load_diagram(file_path: str) -> UMLDiagram:
         diagram: UMLDiagram = UMLDiagram()
         if diagram_file:
             diagram = yaml.full_load(diagram_file)
-        return UMLDiagram()
+        return diagram

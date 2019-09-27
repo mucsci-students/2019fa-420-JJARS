@@ -5,4 +5,5 @@ exclude_lines =
     if __name__ == .__main__.:
 
 omit =
+    */__init__.py
     */__main__.py
