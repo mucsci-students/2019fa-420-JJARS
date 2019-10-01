@@ -6,6 +6,12 @@ Version 1.0.0
 
 A Simple UML editor written in Python 3.
 
+### Requirements
+
+A functioning Python >3.6 installation is required to run ScrUML.
+
+PIP is required for the installation process.
+
 ### Building + Installing
 
 To build and install ScrUML, run:
