@@ -8,11 +8,17 @@ from typing import Optional
 
 import yaml
 
+ClassPair = FrozenSet[str]
+RelationshipName = Optional[str]
+
+AttributeDict = Dict[str, str]
+RelationshipDict = Dict[RelationshipName, AttributeDict]
+
 
 class UMLDiagram(yaml.YAMLObject):
     def __init__(self) -> None:
-        self.__classes: Dict[str, Dict[str, str]] = dict()
-        self.__relationships: Dict[FrozenSet[str], Dict[str, Dict[str, str]]] = dict()
+        self.__classes: Dict[str, AttributeDict] = dict()
+        self.__relationships: Dict[ClassPair, RelationshipDict] = dict()
 
     def add_class(self, class_name: str) -> Optional[str]:
         if class_name in self.__classes:
