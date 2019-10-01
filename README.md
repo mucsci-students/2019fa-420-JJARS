@@ -2,6 +2,8 @@
 
 Version 1.0.0
 
+[![Build Status](https://travis-ci.org/mucs420f19/JJARS.svg?branch=develop)](https://travis-ci.org/mucs420f19/JJARS)
+
 ### Description
 
 A Simple UML editor written in Python 3.
