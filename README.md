@@ -1,5 +1,7 @@
 # ScrUML
 
+Version 1.0.0
+
 ### Description
 
 A Simple UML editor written in Python 3.
