@@ -41,19 +41,26 @@ class UMLDiagram(yaml.YAMLObject):
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
         return new_class_name
 
-    def get_class_attributes(self, class_name: str) -> Optional[AttributeDict]:
-        if class_name not in self.__classes:
-            return None
-        return self.__classes[class_name]
-    
-    def remove_class_attribute(self, class_name: str, attribute_name: str) -> Optional[str]:
-        if class_name not in self.__classes or attribute_name not in self.__classes[class_name]:
-            return None
-        del self.__classes[class_name][attribute_name]
-        return attribute_name
-    
-    def set_class_attribute(self, class_name: str, attribute_name: str, attribute_value: str) -> Optional[str]:
+    def set_class_attribute(
+        self, class_name: str, attribute_name: str, attribute_value: str
+    ) -> Optional[str]:
         if class_name not in self.__classes:
             return None
         self.__classes[class_name][attribute_name] = attribute_value
         return attribute_value
+
+    def remove_class_attribute(
+        self, class_name: str, attribute_name: str
+    ) -> Optional[str]:
+        if (
+            class_name not in self.__classes
+            or attribute_name not in self.__classes[class_name]
+        ):
+            return None
+        del self.__classes[class_name][attribute_name]
+        return attribute_name
+
+    def get_class_attributes(self, class_name: str) -> Optional[AttributeDict]:
+        if class_name not in self.__classes:
+            return None
+        return self.__classes[class_name]
