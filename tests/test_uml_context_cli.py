@@ -23,7 +23,7 @@ def test_add_and_remove() -> None:
 
     assert not shell._UMLShell__diagram.add_class("classA")
     assert not shell._UMLShell__diagram.add_class("classB")
-    assert shell._UMLShell__diagram.get_all_class_names() == ["classA", "classB"]
+    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == ["classA", "classB"]
 
     shell.onecmd("remove classA")
     shell.onecmd("remove classB")
@@ -45,10 +45,10 @@ def test_rename() -> None:
     shell.onecmd("add classB")
     shell.onecmd("rename classA classC")
 
-    assert shell._UMLShell__diagram.get_all_class_names() == ["classC", "classB"]
+    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == ["classB", "classC"]
 
     shell.onecmd("rename classB")
-    assert shell._UMLShell__diagram.get_all_class_names() == ["classC", "classB"]
+    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == ["classB", "classC"]
 
     shell.onecmd("remove classB")
     shell.onecmd("remove classC")
