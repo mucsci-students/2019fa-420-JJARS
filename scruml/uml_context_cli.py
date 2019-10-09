@@ -68,6 +68,18 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         return (str(class_A_name), str(class_B_name), relationship_name)
 
+    def __parse_attribute_identifier(self, ident: str) -> Optional[Dict[str, str]]:
+        """Returns valid attribute identifier on success, or None on failure
+	Valid attribute identifier are surrounded by brackets, contain one valid
+	class and one valid attribute identifier"""
+
+        ident = ident.strip()
+        #Check for start and end brackets
+        if ident.startswith("[") and ident.endswith("]"):
+                ident = ident[1:-1]
+        else:
+                return None
+
     def __classify_identifier(self, ident: str) -> Optional[str]:
         """Returns a string identifying the kind of identifier that "ident" represents
 Possible values: "class", "relationship", None"""
@@ -128,8 +140,6 @@ For help with identifiers, type in 'help identifiers'"""
             self.__add_class(arg)
         elif identifier_class == "relationship":
             self.__add_relationship(arg)
-#ADD CODE HERE!!!!!
-
         else:
             print("Invalid argument provided.\n")
             print(self.do_add.__doc__)
@@ -145,61 +155,6 @@ For help with identifiers, type in 'help identifiers'"""
     def __add_relationship(self, arg: str) -> None:
         """Adds new relationship if one with that identifier does not already exist"""
         print("Sorry! Relationships are coming in a future version of ScrUML.")
-
-    def do_set(self, arg, class_name: str, attribute_name: str) -> Optional[str]:
-        """Usage: set <id>
-Adds new attribute if one with that id does not already exist"""
-	#Returns a list of all words in the string, sets them to arg
-        arg = arg.split()
-        arg_list: List[str] = arg.split(",")
-
-        # Make sure that there were enough values provided, a class and attribute name
-        if len(arg_list) != 3:
-            print("Please provide a class name and attribute name and attribute value.\n")
-        else:
-            self.__diagram.set_class_attribute(class_name, attribute_name, attribute_name)
-       
-      
-    def __set_attributes(self, class_name: str, attribute_name: str, attribute_value: str) -> None:
-        """Sets a new attribute to a class
-        #Trying to add an attribute unless one with the name already exist
-        check_class_name = self.__diagram.get_all_class_names(class_name)
-        if not check_class_name:
-            print("Class '{}' already exist in the diagram".format(class_name))
-        check_attribute_name = self.__diagram.get_class_attribute(attribute_name)
-        if not check_attribute_name:
-            print("Attribute '{}' already exist in the diagram".format(attribute_name))
-        else:
-            print("Set Attribute '{}'".format(attribute_name))
-
-    def do_strip(self, arg: str) -> None:
-        """Usage strip <id>
-        Removes attribute if one with that id exist in the diagram"""
-        arg = arg.split()
-        arg_list: List[str] = arg.split(",")
-	
-        if len(arg_list) != 2:
-             identifier_class = self.__classify_identifier(arg)
-             if identifier_class == "class":
-                self.__strip_class_attribute(arg)
-             elif identifier_class == "relationship":
-                self.__strip_relationship_attribute(arg)              
-        else:
-            print("Invalid amount of arguments entered")
-
-    def __strip_attribute(self, class_name: str, attribute_name: str) -> Optional[str]:
-        """Strip an attribute from its class"""
-        #Trying to remove an attribute unless the attribute does not exist in diagram
-	check_class_name = self.__diagram.get_all_class_names(class_name)
-        check_attribute_name = self.__diagram.get_class_attribute(attribute_name)
-        if not check_class_name:
-            print("Class '{}' does not exist in the diagram".format(class_name))
-        elif not check_attribute_name:
-            print("Attribute '{}' does not exist in the diagram".format(attribute_name))
-        else:
-            print("Removed Attribute '{}'".format(attribute_name))
-            self.remove_class_attribute(class_name, attribute_name)
-
 
     def do_remove(self, arg: str) -> None:
         """Usage: remove <identifier>
