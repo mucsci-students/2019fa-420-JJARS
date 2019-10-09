@@ -1,14 +1,12 @@
-# ScruML
-# uml_context_cli.py
-# Team JJARS
+# ScruML uml_context_cli.py Team JJARS
 import cmd
 import os
 from typing import List
 from typing import Optional
 from typing import Tuple
 
-from scruml import uml_filesystem_io
-from scruml.uml_diagram import UMLDiagram
+import uml_filesystem_io
+from uml_diagram import UMLDiagram
 
 
 class __UMLShell(cmd.Cmd):
@@ -70,6 +68,18 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         return (str(class_A_name), str(class_B_name), relationship_name)
 
+    def __parse_attribute_identifier(self, ident: str) -> Optional[Dict[str, str]]:
+        """Returns valid attribute identifier on success, or None on failure
+	Valid attribute identifier are surrounded by brackets, contain one valid
+	class and one valid attribute identifier"""
+
+        ident = ident.strip()
+        #Check for start and end brackets
+        if ident.startswith("[") and ident.endswith("]"):
+                ident = ident[1:-1]
+        else:
+                return None	
+
     def __classify_identifier(self, ident: str) -> Optional[str]:
         """Returns a string identifying the kind of identifier that "ident" represents
 Possible values: "class", "relationship", None"""
@@ -130,6 +140,8 @@ For help with identifiers, type in 'help identifiers'"""
             self.__add_class(arg)
         elif identifier_class == "relationship":
             self.__add_relationship(arg)
+#	elif identifier_class == "attribute":
+#	    self.__add_attribute(arg)
         else:
             print("Invalid argument provided.\n")
             print(self.do_add.__doc__)
@@ -146,6 +158,9 @@ For help with identifiers, type in 'help identifiers'"""
         """Adds new relationship if one with that identifier does not already exist"""
         print("Sorry! Relationships are coming in a future version of ScrUML.")
 
+ #   def __add_attribute(self, arg: str) -> None:
+#	"""Adds new attribute if one with that identifier does not already exist"""
+	
     # ----------
     # "Remove" command
 
