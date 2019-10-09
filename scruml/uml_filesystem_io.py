@@ -11,7 +11,7 @@ def save_diagram(diagram: UMLDiagram, file_path: str) -> bool:
         with open(file_path, "w") as diagram_file:
             yaml.dump(diagram, diagram_file)
             return True
-    except IOError:
+    except:
         return False
 
 
