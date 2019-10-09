@@ -51,20 +51,35 @@ def test_rename() -> None:
     shell._UMLShell__diagram = UMLDiagram()
 
     shell.onecmd("add classA")
+    shell.onecmd("add classA")
     shell.onecmd("add classB")
     shell.onecmd("rename classA classC")
 
-    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == ["classB", "classC"]
+    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == [
+        "classB",
+        "classC",
+    ]
 
     shell.onecmd("rename classB")
-    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == ["classB", "classC"]
+
+    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == [
+        "classB",
+        "classC",
+    ]
 
     shell.onecmd("remove classB")
     shell.onecmd("remove classC")
+    shell.onecmd("remove classC")
     shell.onecmd("add classA")
     shell.onecmd("rename classA [classB]")
+    shell.onecmd("rename classZOINKS classB")
+    shell.onecmd("rename classA classA")
 
     assert shell._UMLShell__diagram.get_all_class_names() == ["classA"]
+
+    # TODO: Update this when renaming is fully implemented, should probably be removed
+    shell._UMLShell__rename_class("Not implemented")
+    shell._UMLShell__rename_relationship("Not implemented")
 
 
 def test_rename() -> None:
