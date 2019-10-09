@@ -88,7 +88,9 @@ Possible values: "class", "relationship", None"""
                 return True
             if reply[:1] == "n":
                 return False
-        return False
+        assert (
+            False
+        ), "This is unreachable code. If you are reading this, you're in trouble, buddy."
 
     # ----------
     # "Help" commands
