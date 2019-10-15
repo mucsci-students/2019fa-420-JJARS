@@ -68,6 +68,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         return (str(class_A_name), str(class_B_name), relationship_name)
 
+<<<<<<< HEAD
     def __parse_attribute_identifier(self, ident: str) -> Optional[Dict[str, str]]:
         """Returns valid attribute identifier on success, or None on failure
 	Valid attribute identifier are surrounded by brackets, contain one valid
@@ -80,6 +81,8 @@ separated by a comma, and an optional relationship name (also comma separated)""
         else:
                 return None
 
+=======
+>>>>>>> quick changes for setup on code
     def __classify_identifier(self, ident: str) -> Optional[str]:
         """Returns a string identifying the kind of identifier that "ident" represents
 Possible values: "class", "relationship", None"""
@@ -155,6 +158,9 @@ For help with identifiers, type in 'help identifiers'"""
     def __add_relationship(self, arg: str) -> None:
         """Adds new relationship if one with that identifier does not already exist"""
         print("Sorry! Relationships are coming in a future version of ScrUML.")
+
+    # ----------
+    # "Remove" command
 
     def do_remove(self, arg: str) -> None:
         """Usage: remove <identifier>
