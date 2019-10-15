@@ -68,7 +68,10 @@ class UMLDiagram(yaml.YAMLObject):
         return self.__classes[class_name]
 
     def add_relationship(
-        self, class_name_a: str, class_name_b: str, relationship_name: RelationshipName
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: RelationshipName = None,
     ) -> Optional[RelationshipID]:
         rel_id: RelationshipID = (
             frozenset((class_name_a, class_name_b)),
@@ -78,7 +81,10 @@ class UMLDiagram(yaml.YAMLObject):
         return rel_id
 
     def remove_relationship(
-        self, class_name_a: str, class_name_b: str, relationship_name: RelationshipName
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: RelationshipName = None,
     ) -> Optional[RelationshipID]:
         rel_id: RelationshipID = (
             frozenset((class_name_a, class_name_b)),
