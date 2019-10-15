@@ -68,18 +68,6 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         return (str(class_A_name), str(class_B_name), relationship_name)
 
-    def __parse_attribute_identifier(self, ident: str) -> Optional[Dict[str, str]]:
-        """Returns valid attribute identifier on success, or None on failure
-	Valid attribute identifier are surrounded by brackets, contain one valid
-	class and one valid attribute identifier"""
-
-        ident = ident.strip()
-        #Check for start and end brackets
-        if ident.startswith("[") and ident.endswith("]"):
-                ident = ident[1:-1]
-        else:
-                return None	
-
     def __classify_identifier(self, ident: str) -> Optional[str]:
         """Returns a string identifying the kind of identifier that "ident" represents
 Possible values: "class", "relationship", None"""
@@ -158,9 +146,23 @@ For help with identifiers, type in 'help identifiers'"""
         """Adds new relationship if one with that identifier does not already exist"""
         print("Sorry! Relationships are coming in a future version of ScrUML.")
 
- #   def __add_attribute(self, arg: str) -> None:
-#	"""Adds new attribute if one with that identifier does not already exist"""
-	
+ #   def do_set(self, arg: str) -> None:
+        """Usage: set <id>
+Adds new attribute if one with that id does not already exist"""
+        names: List[str] = arg.split()
+        identifier_class: Optional[str] = self.__classify_identifier(arg)
+        if identifier_class == "class":
+            self.__set_class(arg)
+        elif identifier_class == "relationship":
+            self.__set_relationship(arg)
+        else:
+            print("Invalid argument provided.\n")
+            print(self.do_add.__doc__)
+
+#    def do_split(self, arg: str) -> None:
+        """Usage: split <id>
+Removes an attribute if one with that id exists in the diagram"""
+		
     # ----------
     # "Remove" command
 
