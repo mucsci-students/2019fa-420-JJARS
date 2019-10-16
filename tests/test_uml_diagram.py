@@ -194,6 +194,7 @@ def test_remove_relationship() -> None:
     umld.add_relationship("Gamma", "Gamma")
     umld.add_relationship("Gamma", "Gamma", "observes")
 
+    assert not umld.remove_relationship("Alpha", "Beta", "fake_relation")
     assert umld.remove_relationship("Alpha", "Beta") == (
         frozenset(("Alpha", "Beta")),
         None,

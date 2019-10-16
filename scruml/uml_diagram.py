@@ -14,7 +14,7 @@ RelationshipName = Optional[str]
 RelationshipID = Tuple[ClassPair, RelationshipName]
 
 AttributeDict = Dict[str, str]
-RelationshipDict = Dict[RelationshipName, AttributeDict]
+RelationshipDict = Dict[str, AttributeDict]
 
 
 class UMLDiagram(yaml.YAMLObject):
@@ -77,7 +77,13 @@ class UMLDiagram(yaml.YAMLObject):
             frozenset((class_name_a, class_name_b)),
             relationship_name,
         )
-        # TODO: implement this function
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or rel_id in self.__relationships
+        ):
+            return None
+        self.__relationships[rel_id] = dict()
         return rel_id
 
     def remove_relationship(
@@ -90,5 +96,11 @@ class UMLDiagram(yaml.YAMLObject):
             frozenset((class_name_a, class_name_b)),
             relationship_name,
         )
-        # TODO: implement this function
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or rel_id not in self.__relationships
+        ):
+            return None
+        del self.__relationships[rel_id]
         return rel_id
