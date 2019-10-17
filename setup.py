@@ -9,7 +9,8 @@ setup(
     author_email="jahildeb@millersville.edu",
     license="MIT",
     packages=["scruml"],
-    install_requires=["pyyaml>=5<6"],
+    package_data={"scruml": ["assets/*"]},
+    install_requires=["pyyaml>=5<6", "pywebview[qt]"],
     entry_points={"console_scripts": ["scruml = scruml:main"]},
     zip_safe=False,
 )
