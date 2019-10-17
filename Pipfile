@@ -13,6 +13,7 @@ python-coveralls = "*"
 
 [packages]
 scruml = {editable = true,path = "."}
+pywebview = "*"
 
 [requires]
 python_version = "3.6"
