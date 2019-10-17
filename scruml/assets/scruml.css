@@ -1,0 +1,142 @@
+/* ScrUML */
+/* scruml.css */
+/* Team JJARS */
+
+/*
+   Colors:
+   Light -     #FFFFFF | #E5E5E5
+   Off-Light - #F2E9E1 | #D9D1CA
+   Dark -      #1C140D | #090703
+   Accent -    #DBF87B | #A6C050
+*/
+
+*
+{
+    box-sizing: border-box;
+}
+html, body
+{
+    margin: 0;
+    padding: 0;
+}
+body
+{
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main
+{
+    display: flex;
+    flex: 1;
+}
+
+
+/* Menubar */
+
+#menubar ul
+{
+    list-style-type: none;
+    margin: 0px;
+    padding: 8px;
+    overflow: hidden;
+    color: #FFF;
+    background-color: #1C140D;
+    border-bottom: 5px solid #090703;
+}
+#menubar li
+{
+    display: inline;
+}
+#menubar a
+{
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+}
+#menubar a:hover
+{
+    cursor: pointer;
+    color: #1C140D;
+    background-color: #FFF;
+}
+#menubar a:active
+{
+    background-color: #D9D1CA;
+}
+
+
+/* Diagram Canvas */
+
+#diagram-canvas
+{
+    flex: 1;
+    background: #F2E9E1;
+    overflow: scroll;
+}
+
+
+/* Properties Panel */
+
+#properties-panel
+{
+    flex: 0 0 320px;
+    padding: 20px;
+    border-left: solid 5px #E5E5E5;
+}
+#properties-panel #header
+{
+    color: #1C140D;
+}
+#properties-panel hr
+{
+    border: none;
+    border-bottom: solid 2px #A6C050;
+}
+#properties-panel #properties-no-object-selected
+{
+    font-style: italic;
+}
+
+
+/* Toolbar */
+
+#toolbar ul
+{
+    list-style-type: none;
+    margin: 0px;
+    padding: 8px;
+    overflow: hidden;
+    color: #FFF;
+    background-color: #1C140D;
+    border-top: 5px solid #090703;
+}
+#toolbar li
+{
+    display: inline;
+}
+#toolbar a
+{
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+}
+#toolbar a:hover
+{
+    cursor: pointer;
+    color: #1C140D;
+    background-color: #FFF;
+}
+#toolbar a.selected
+{
+    color: #1C140D;
+    background-color: #B6D060;
+}
+#toolbar a.selected:hover
+{
+    background-color: #DBF87B;
+}
+#toolbar a:active
+{
+    background-color: #D9D1CA;
+}
