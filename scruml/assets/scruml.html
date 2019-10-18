@@ -14,12 +14,16 @@
 
   <body>
 
+    <!-- Behavior -->
+    <script src="lib/svg.min.js"></script>
+    <script src="scruml.js"></script>
+
     <!-- Menubar -->
     <header id="menubar">
       <ul>
-        <li><a>★ New</a></li>
-        <li><a>🖿 Load</a></li>
-        <li><a>🖪 Save</a></li>
+        <li><a title="Create new blank diagram (Ctrl+N)" onclick="menubarNewButtonClicked()">★ New</a></li>
+        <li><a title="Load an existing diagram file (Ctrl+L)" onclick="menubarLoadButtonClicked()">🖿 Load</a></li>
+        <li><a title="Save the current diagram to a file (Ctrl+S)" onclick="menubarSaveButtonClicked()">🖪 Save</a></li>
       </ul>
     </header>
 
