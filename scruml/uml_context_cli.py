@@ -287,4 +287,5 @@ Exits ScrUML"""
 
 
 def activate() -> None:
+    """Activates the CLI context."""
     __UMLShell().cmdloop()
