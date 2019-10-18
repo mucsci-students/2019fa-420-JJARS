@@ -10,9 +10,16 @@
    Accent -    #DBF87B | #A6C050
 */
 
+
+/* Global App Settings */
+
 *
 {
     box-sizing: border-box;
+}
+html
+{
+    font-family: sans-serif;
 }
 html, body
 {
@@ -70,6 +77,7 @@ main
 
 #diagram-canvas
 {
+    cursor: default;
     flex: 1;
     background: #F2E9E1;
     overflow: scroll;
