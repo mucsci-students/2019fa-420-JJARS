@@ -78,7 +78,9 @@ document.addEventListener("keyup", handleKeys);
 // Menubar button click event functions
 
 function menubarNewButtonClicked(element)
-{}
+{
+    pywebview.api.newDiagramFile();
+}
 
 function menubarLoadButtonClicked(element)
 {

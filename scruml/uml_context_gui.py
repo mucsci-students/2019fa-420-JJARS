@@ -18,6 +18,11 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
 
     __diagram: UMLDiagram = UMLDiagram()
 
+    def newDiagramFile(self, params: str) -> None:
+        """Creates a new, blank diagram."""
+        # TODO: Add a confirmation prompt
+        self.__diagram = UMLDiagram()
+
     def loadDiagramFile(self, params: str) -> None:
         """Opens a file selector dialog and loads the selected diagram file."""
         file_types: Tuple[str, str] = (
