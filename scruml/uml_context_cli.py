@@ -128,8 +128,8 @@ For help with identifiers, type in 'help identifiers'"""
             self.__add_class(arg)
         elif identifier_class == "relationship":
             self.__add_relationship(arg)
-#	elif identifier_class == "attribute":
-#	    self.__add_attribute(arg)
+#	Add code her!!!!!
+
         else:
             print("Invalid argument provided.\n")
             print(self.do_add.__doc__)
@@ -146,25 +146,40 @@ For help with identifiers, type in 'help identifiers'"""
         """Adds new relationship if one with that identifier does not already exist"""
         print("Sorry! Relationships are coming in a future version of ScrUML.")
 
- #   def do_set(self, arg: str) -> None:
+    def do_set(self, arg: str) -> None:
         """Usage: set <id>
 Adds new attribute if one with that id does not already exist"""
-        names: List[str] = arg.split()
-        identifier_class: Optional[str] = self.__classify_identifier(arg)
-        if identifier_class == "class":
-            self.__set_class(arg)
-        elif identifier_class == "relationship":
-            self.__set_relationship(arg)
-        else:
-            print("Invalid argument provided.\n")
-            print(self.do_add.__doc__)
+        arg = arg.split()
+        arg_list: List[str] = arg.split(",")
 
-#    def do_split(self, arg: str) -> None:
-        """Usage: split <id>
-Removes an attribute if one with that id exists in the diagram"""
-		
-    # ----------
-    # "Remove" command
+        # Make sure that there were enough values provided in the identifier
+        if len(arg_list) <= 1 or len(arg_list) >= 2:
+            return None
+        else:
+            self.__set_attribute(arg)
+        
+      
+    def __set_attributes(self, arg: str) -> None:
+        """Sets a new attribute to a class
+        arg = arg.strip()
+        if not self.__diagram.set_class_attribute(arg):
+            print("Attribute '{}' already exist in the diagram".format(arg))
+        else:
+            print("Set Attribute '{}'".format(arg))
+
+# ADD CODE HERE!!!
+#    def do_strip(self, arg: str) -> None:
+#Usage strip <id>
+#Removes attribute if one with that id exist in the diagram
+        
+
+    def __strip_attribute(self, arg: str) -> None:
+        """Strips an attribute from its class
+        arg = arg.strip()
+        if not self.__diagram.remove_class_attribute(arg):
+            print("Attribute '{}' does not exist in the diagram".format(arg))
+        else:
+            print("Removed Attribute '{}'".format(arg))
 
     def do_remove(self, arg: str) -> None:
         """Usage: remove <identifier>
