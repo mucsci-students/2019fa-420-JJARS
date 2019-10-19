@@ -17,4 +17,8 @@ install:
 
 # Testing: run black, mypy, and pytest
 script:
-    - black --target-version py36 --check . && mypy && pytest && coveralls
+    - black --target-version py36 --check . && mypy && pytest
+
+# Post-testing: generate online coverage report
+after_success:
+    - coveralls
