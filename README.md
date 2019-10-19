@@ -1,10 +1,10 @@
-# ScrUML [![Build Status](https://travis-ci.org/mucs420f19/JJARS.svg?branch=develop)](https://travis-ci.org/mucs420f19/JJARS) [![Coverage Status](https://coveralls.io/repos/github/mucs420f19/JJARS/badge.svg?branch=develop)](https://coveralls.io/github/mucs420f19/JJARS?branch=develop) 
+# ScrUML [![Build Status](https://travis-ci.org/mucs420f19/JJARS.svg?branch=develop)](https://travis-ci.org/mucs420f19/JJARS) [![Coverage Status](https://coveralls.io/repos/github/mucs420f19/JJARS/badge.svg?branch=develop)](https://coveralls.io/github/mucs420f19/JJARS?branch=develop)
 
 Version 1.0.0
 
 ### Description
 
-A Simple UML editor written in Python 3.
+A Simple UML editor written in Python 3 using [pywebview](https://github.com/r0x0r/pywebview).
 
 ### Requirements
 
@@ -17,6 +17,16 @@ PIP is required for the installation process.
 To build and install ScrUML, run:
 
     pip install .
+
+### Running
+
+To open ScrUML after installation, just run:
+
+    scruml
+
+If you want to use the command line interface:
+
+    scruml --cli
 
 ### Contributing
 
