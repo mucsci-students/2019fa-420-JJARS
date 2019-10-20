@@ -128,7 +128,7 @@ For help with identifiers, type in 'help identifiers'"""
             self.__add_class(arg)
         elif identifier_class == "relationship":
             self.__add_relationship(arg)
-#	Add code her!!!!!
+#ADD CODE HERE!!!!!
 
         else:
             print("Invalid argument provided.\n")
@@ -149,19 +149,21 @@ For help with identifiers, type in 'help identifiers'"""
     def do_set(self, arg: str) -> None:
         """Usage: set <id>
 Adds new attribute if one with that id does not already exist"""
+	#Returns a list of all words in the string, sets them to arg
         arg = arg.split()
         arg_list: List[str] = arg.split(",")
 
-        # Make sure that there were enough values provided in the identifier
-        if len(arg_list) <= 1 or len(arg_list) >= 2:
-            return None
+        # Make sure that there were enough values provided, a class and attribute name
+        if len(arg_list) != 2:
+            print("Please provide a class name and attribute name.\n")
         else:
             self.__set_attribute(arg)
         
       
     def __set_attributes(self, arg: str) -> None:
         """Sets a new attribute to a class
-        arg = arg.strip()
+        #Trying to add an attribute unless one with the name already exist
+        arg = arg.split()
         if not self.__diagram.set_class_attribute(arg):
             print("Attribute '{}' already exist in the diagram".format(arg))
         else:
@@ -174,8 +176,9 @@ Adds new attribute if one with that id does not already exist"""
         
 
     def __strip_attribute(self, arg: str) -> None:
-        """Strips an attribute from its class
-        arg = arg.strip()
+        """Strip an attribute from its class"""
+        #Trying to remove an attribute unless the attribute does not exist in diagram
+        arg = arg.split()
         if not self.__diagram.remove_class_attribute(arg):
             print("Attribute '{}' does not exist in the diagram".format(arg))
         else:
