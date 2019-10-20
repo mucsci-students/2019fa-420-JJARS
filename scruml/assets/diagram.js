@@ -4,13 +4,17 @@
 
 class Diagram {
 
-    constructor(element) {
-        if (!element || !element.nodeType)
-            console.error("Invalid element provided in Diagram constructor.");
-        this.element = element;
+    constructor(canvasID) {
+        if (!canvasID)
+            console.error("No canvas ID provided in Diagram constructor.");
+        this.canvasID = canvasID;
     }
 
     update() {
+
+        var draw = new SVG(this.canvasID).size(500, 500);
+        var rect = draw.rect(100, 50);
+        rect.draggable();
 
     }
 
