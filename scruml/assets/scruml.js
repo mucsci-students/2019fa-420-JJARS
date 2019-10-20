@@ -19,6 +19,7 @@ const UI_STATES = {
 
 var currentUIState = UI_STATES.SELECT;
 var selectedElement = null;
+var diagram = Diagram();
 
 
 // ---------

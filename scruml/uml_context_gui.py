@@ -1,6 +1,7 @@
 # ScruML
 # uml_context_gui.py
 # Team JJARS
+from typing import Dict
 from typing import Optional
 from typing import Tuple
 
@@ -17,6 +18,11 @@ class __API:
 Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
 
     __diagram: UMLDiagram = UMLDiagram()
+
+    def getDiagram(self, params: str) -> Dict[str, str]:
+        """Returns a dictionary containing all diagram information"""
+
+        pass
 
     def newDiagramFile(self, params: str) -> None:
         """Creates a new, blank diagram."""
