@@ -1,6 +1,7 @@
-# ScruML
+# ScrUML
 # uml_context_gui.py
 # Team JJARS
+from typing import Dict
 from typing import Optional
 from typing import Tuple
 
@@ -29,11 +30,10 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
             "ScrUML Files (*.scruml;*.yaml)",
             "All Filles (*.*)",
         )
-        print(
-            webview.windows[0].create_file_dialog(
-                webview.OPEN_DIALOG, file_types=file_types
-            )
+        file_path: str = webview.windows[0].create_file_dialog(
+            webview.OPEN_DIALOG, file_types=file_types
         )
+        self.__diagram = uml_filesystem_io.load_diagram(file_path)
 
     def saveDiagramFile(self, params: str) -> None:
         """Opens a file save dialog and saves to the specified diagram file."""
@@ -41,13 +41,67 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
             "ScrUML Files (*.scruml;*.yaml)",
             "All Filles (*.*)",
         )
-        print(
-            webview.windows[0].create_file_dialog(
-                webview.SAVE_DIALOG,
-                file_types=file_types,
-                save_filename="diagram.scruml",
-            )
+        file_path: str = webview.windows[0].create_file_dialog(
+            webview.SAVE_DIALOG, file_types=file_types, save_filename="diagram.scruml"
         )
+        if uml_filesystem_io.save_diagram(self.__diagram, file_path):
+            print("Diagram successfully saved to '{}'".format(file_path))
+        else:
+            print("Failed to save diagram to '{}'".format(file_path))
+
+    def getClassAttributes(self, class_name: str) -> Dict[str, str]:
+        attr_dict: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
+            class_name
+        )
+        if not attr_dict:
+            raise Exception("Class not found in diagram: " + class_name)
+        return attr_dict
+
+    def completelyRemoveClass(self, class_name: str) -> None:
+        if not self.__diagram.complete_remove(
+            class_name
+        ):  # TODO: make sure complete remove is implemented
+            raise Exception("Class not found in diagram: " + class_name)
+
+    def addRelationship(
+        self, class_name_a: str, class_name_b: str, relationship_name: str
+    ) -> str:
+        rel_name_arg: Optional[str] = None
+        if len(relationship_name) != 0:
+            rel_name_arg = relationship_name
+        if not self.__diagram.add_relationship(
+            class_name_a, class_name_b, rel_name_arg
+        ):
+            return (
+                "Class name(s) not found or relationship already exists: [ "
+                + class_name_a
+                + ", "
+                + class_name_b
+                + ", "
+                + relationship_name
+                + "]"
+            )
+        return ""
+
+    def removeRelationship(
+        self, class_name_a: str, class_name_b: str, relationship_name: str
+    ) -> str:
+        rel_name_arg: Optional[str] = None
+        if len(relationship_name) != 0:
+            rel_name_arg = relationship_name
+        if not self.__diagram.remove_relationship(
+            class_name_a, class_name_b, rel_name_arg
+        ):
+            return (
+                "Relationship not found in diagram: [ "
+                + class_name_a
+                + ", "
+                + class_name_b
+                + ", "
+                + relationship_name
+                + "]"
+            )
+        return ""
 
 
 def activate() -> None:
