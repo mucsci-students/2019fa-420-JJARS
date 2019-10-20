@@ -19,6 +19,16 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
 
     __diagram: UMLDiagram = UMLDiagram()
 
+    def __parse_class_identifier(self, ident: str) -> Optional[str]:
+        """Returns valid class identifier on success, or None on failure
+Valid class identifiers contain no whitespace and are not surrounded by brackets"""
+        ident = ident.strip()
+        if " " in ident:
+            return None
+        if ident.startswith("[") and ident.endswith("]"):
+            return None
+        return ident
+
     def newDiagramFile(self, params: str) -> None:
         """Creates a new, blank diagram."""
         # TODO: Add a confirmation prompt
@@ -33,6 +43,7 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
         file_path: str = webview.windows[0].create_file_dialog(
             webview.OPEN_DIALOG, file_types=file_types
         )
+        # TODO: Add a confirmation prompt
         self.__diagram = uml_filesystem_io.load_diagram(file_path)
 
     def saveDiagramFile(self, params: str) -> None:
@@ -49,19 +60,30 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
         else:
             print("Failed to save diagram to '{}'".format(file_path))
 
+    def addClass(self, class_name: str) -> str:
+        if not self.__parse_class_identifier(class_name):
+            return "Class name is invalid (cannot contain whitespace nor be surrounded by brackets."
+        if not self.__diagram.add_class(class_name):
+            return 'Class "' + class_name + '" already exists in the diagram.'
+        return ""
+
+    def setClassCoordinates(self, class_name: str, x_pos: int, y_pos: int) -> None:
+        self.__diagram.set_class_attribute(class_name, "[X Position]", str(x_pos))
+        self.__diagram.set_class_attribute(class_name, "[Y Position]", str(y_pos))
+
     def getClassAttributes(self, class_name: str) -> Dict[str, str]:
         attr_dict: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
             class_name
         )
         if not attr_dict:
-            raise Exception("Class not found in diagram: " + class_name)
+            raise Exception("Selected class not found in diagram: " + class_name)
         return attr_dict
 
     def completelyRemoveClass(self, class_name: str) -> None:
         if not self.__diagram.complete_remove(
             class_name
         ):  # TODO: make sure complete remove is implemented
-            raise Exception("Class not found in diagram: " + class_name)
+            raise Exception("Selected class not found in diagram: " + class_name)
 
     def addRelationship(
         self, class_name_a: str, class_name_b: str, relationship_name: str

@@ -183,6 +183,20 @@ function elementRemove(element)
     }
 }
 
+function tryAddClass(event)
+{
+    if (currentUIState != UI_STATES.ADD)
+    {
+        return;
+    }
+
+    var newClassName = prompt("Enter the name of the new class:");
+    pywebview.api.addClass(newClassName);
+    pywebview.api.setClassCoordinates(newClassName, event.clientX, event.clientY);
+    // TODO: Update/redraw diagram
+}
+
+
 // ----------
 // Toolbar button click event function
 
