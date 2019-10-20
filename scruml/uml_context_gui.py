@@ -75,7 +75,18 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     def setClassCoordinates(self, class_name: str, x_pos: int, y_pos: int) -> None:
         self.__diagram.set_class_attribute(class_name, "[X Position]", str(x_pos))
         self.__diagram.set_class_attribute(class_name, "[Y Position]", str(y_pos))
+        
+    def setClassAttribute(self, class_name: str, attribute_name: str, attribute_value: str ) -> None:
+        if not self.__parse_class_identifier(attribute_name):
+            return "Attribute name is invalid (cannot contain whitespace nor be surrounded by brackets."
+        if not self.__diagram.set_class_attribute(class_name, attribute_name, attribute_value):
+            return "Class '" + class_name + "' does not exist in the diagram. Unable to add Attribute '" + attribute_name + "'"
+        return ""
 
+    def removeClassAttribute (self, class_name: str, attribute_name: str) -> None:
+        if not self.__diagram.remove_class_attribute(class_name, attribute_name):
+            return "Attribute '" + attribute_name + "' not found in Class '" + class_name + "'"
+        return ""
     def getClassAttributes(self, class_name: str) -> Dict[str, str]:
         attr_dict: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
             class_name
