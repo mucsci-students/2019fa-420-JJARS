@@ -12,7 +12,7 @@ class Diagram {
 
     update() {
 
-        var draw = new SVG(this.canvasID).size(500, 500);
+        var draw = new SVG(this.canvasID).size(1920, 1080);
         var rect = draw.rect(100, 50);
         rect.draggable();
 

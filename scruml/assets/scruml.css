@@ -81,6 +81,7 @@ main
     flex: 1;
     background: #F2E9E1;
     overflow: scroll;
+    max-height: 90%;
 }
 
 
