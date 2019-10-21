@@ -80,20 +80,17 @@ document.addEventListener("keyup", handleKeys);
 
 function menubarNewButtonClicked(element)
 {
-    pywebview.api.newDiagramFile();
-    // TODO: Update/redraw diagram
+    pywebview.api.newDiagramFile().then(function(){diagram.update();});
 }
 
 function menubarLoadButtonClicked(element)
 {
-    pywebview.api.loadDiagramFile();
-    // TODO: Update/redraw diagram
+    pywebview.api.loadDiagramFile().then(function(){diagram.update();});
 }
 
 function menubarSaveButtonClicked(element)
 {
-    pywebview.api.saveDiagramFile();
-    // TODO: Update/redraw diagram
+    pywebview.api.saveDiagramFile().then(function(){diagram.update();});
 }
 
 
@@ -102,6 +99,10 @@ function menubarSaveButtonClicked(element)
 
 function elementClicked(element)
 {
+
+    // DEBUG: remove me later
+    console.log(element);
+
     switch (currentUIState)
     {
         case UI_STATES.SELECT:
@@ -180,9 +181,13 @@ function elementRemove(element)
         relArgs[2] = relArgs[2].slice(0,-1);
 
         pywebview.api.removeRelationship(relArgs[0],relArgs[1],relArgs[2]);
-        // TODO: Update/redraw diagram
+
+        diagram.update();
     }
 }
+
+// ----------
+// Diagram canvas class add event function
 
 function tryAddClass(event)
 {
@@ -191,10 +196,22 @@ function tryAddClass(event)
         return;
     }
 
+    var rect = event.target.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+
     var newClassName = prompt("Enter the name of the new class:");
-    pywebview.api.addClass(newClassName);
-    pywebview.api.setClassCoordinates(newClassName, event.clientX, event.clientY);
-    // TODO: Update/redraw diagram
+
+    pywebview.api.addClass({"class_name": newClassName,
+                            "x": x,
+                            "y": y}).then(function(response) {
+        if (response !== "")
+        {
+            alert(response);
+        }
+        diagram.update();
+    });
+
 }
 
 
@@ -252,6 +269,8 @@ function clearSelection()
 
 // ----------
 document.addEventListener("DOMContentLoaded", function() {
-    diagram = new Diagram("diagram-canvas");
-    diagram.update()
+    setTimeout(function() {
+        diagram = new Diagram("diagram-canvas");
+        diagram.update();
+    }, 100);
 });

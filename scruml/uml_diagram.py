@@ -9,9 +9,7 @@ from typing import Tuple
 
 import yaml
 
-ClassPair = FrozenSet[str]
-RelationshipName = Optional[str]
-RelationshipID = Tuple[ClassPair, RelationshipName]
+ClassPair = Tuple[str, str]
 
 AttributeDict = Dict[str, str]
 RelationshipDict = Dict[str, AttributeDict]
@@ -20,7 +18,10 @@ RelationshipDict = Dict[str, AttributeDict]
 class UMLDiagram(yaml.YAMLObject):
     def __init__(self) -> None:
         self.__classes: Dict[str, AttributeDict] = dict()
-        self.__relationships: Dict[RelationshipID, RelationshipDict] = dict()
+        self.__relationships: Dict[ClassPair, RelationshipDict] = dict()
+
+    # ----------
+    # Class functions
 
     def add_class(self, class_name: str) -> Optional[str]:
         if class_name in self.__classes:
@@ -32,11 +33,8 @@ class UMLDiagram(yaml.YAMLObject):
         if class_name not in self.__classes:
             return None
         del self.__classes[class_name]
+        # TODO: Implement removing a class and all of its relationships
         return class_name
-
-    # TODO: Implement removing a class and all of its relationships
-    def complete_remove(self, class_name: str) -> Optional[str]:
-        pass
 
     def get_all_class_names(self) -> List[str]:
         return list(self.__classes.keys())
@@ -45,7 +43,11 @@ class UMLDiagram(yaml.YAMLObject):
         if old_class_name not in self.__classes or new_class_name in self.__classes:
             return None
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
+        # TODO: change relationships that reference this class
         return new_class_name
+
+    # ----------
+    # Class attribute functions
 
     def set_class_attribute(
         self, class_name: str, attribute_name: str, attribute_value: str
@@ -71,40 +73,59 @@ class UMLDiagram(yaml.YAMLObject):
             return None
         return self.__classes[class_name]
 
+    # ----------
+    # Relationship functions
+
     def add_relationship(
         self,
         class_name_a: str,
         class_name_b: str,
-        relationship_name: RelationshipName = None,
-    ) -> Optional[RelationshipID]:
-        rel_id: RelationshipID = (
-            frozenset((class_name_a, class_name_b)),
-            relationship_name,
-        )
+        relationship_name: Optional[str] = None,
+    ) -> bool:
+        class_pair: ClassPair = (class_name_a, class_name_b)
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or rel_id in self.__relationships
+            or class_pair not in self.__relationships
+            or relationship_name in self.__relationships[class_pair]
         ):
-            return None
-        self.__relationships[rel_id] = dict()
-        return rel_id
+            return False
+        self.__relationships[class_pair][relationship_name] = AttributeDict()
+        return True
 
     def remove_relationship(
         self,
         class_name_a: str,
         class_name_b: str,
-        relationship_name: RelationshipName = None,
-    ) -> Optional[RelationshipID]:
-        rel_id: RelationshipID = (
-            frozenset((class_name_a, class_name_b)),
-            relationship_name,
-        )
+        relationship_name: Optional[str] = None,
+    ) -> bool:
+        class_pair: ClassPair = (class_name_a, class_name_b)
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or rel_id not in self.__relationships
+            or class_pair not in self.__relationships
+            or relationship_name not in self.__relationships[class_pair]
+        ):
+            return False
+        del self.__relationships[class_pair][relationship_name]
+        return True
+
+    def get_relationships_between(
+        self, class_name_a: str, class_name_b: str
+    ) -> Optional[RelationshipDict]:
+        class_pair: ClassPair = (class_name_a, class_name_b)
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or class_pair not in self.__relationships
         ):
             return None
-        del self.__relationships[rel_id]
-        return rel_id
+        return self.__relationships[class_pair]
+
+    def get_all_relationship_pairs(self) -> List[ClassPair]:
+        return list(self.__relationships.keys())
+
+    # ----------
+    # Relationship attribute functions
+
+    # TODO
