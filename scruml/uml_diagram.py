@@ -59,7 +59,9 @@ Returns 'class_name' on success, or 'None' on failure."""
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
-        self.__relationships = [class_pair for class_pair in self.__relationships if class_name not in class_pair]
+        for class_pair in self.__relationships:
+            if class_name in class_pair:
+                del self.__relationships[class_pair]
 
         return class_name
 
@@ -85,7 +87,10 @@ Returns 'new_name' on success or 'None' on failure."""
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
 
         # Update all relationships that refer to this class
-        self.__relationships == [tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair) for class_pair in self.__relationships]
+        for class_pair in self.__relationships:
+            if old_class_name in class_pair:
+                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
+                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
 
         return new_class_name
 
@@ -221,6 +226,9 @@ Returns 'None' on failure."""
             return None
 
         return self.__relationships[class_pair]
+
+    # ----------
+    # get_all_relationship_pairs
 
     def get_all_relationship_pairs(self) -> List[ClassPair]:
         """Returns a 'List[Tuple[str, str]]' containing every pair of related classes in the diagram."""

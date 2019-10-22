@@ -88,6 +88,7 @@ main
 #diagram-canvas .uml-class
 {
     stroke-opacity: 1;
+    stroke-width: 2;
     stroke: #1C140D;
     fill: #FFFFFF;
 }
@@ -106,8 +107,6 @@ main
 
 #diagram-canvas text
 {
-    x: 15px;
-    y: 5px;
     stroke: none;
     fill: #1C140D;
 }
@@ -129,7 +128,7 @@ main
     border: none;
     border-bottom: solid 2px #A6C050;
 }
-#properties-panel #properties-no-object-selected
+#properties-panel #properties-static-text
 {
     font-style: italic;
 }

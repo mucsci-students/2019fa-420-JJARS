@@ -63,15 +63,11 @@ class Diagram {
         pywebview.api.getDiagram().then(function(response) {
 
             // Remove classes from the canvas that are no longer in the diagram
-            console.log("Classes in diagram: ");
-            console.log(response.classes);
             me.canvas.each(function(i, children) {
                 if (this.hasClass("uml-class"))
                 {
-                    console.log("ID: " + this.id());
                     if (!(this.id() in response.classes))
                     {
-                        console.log("ID: " + this.id() + " not in diagram, removing.");
                         this.remove();
                     }
                 }
@@ -86,6 +82,10 @@ class Diagram {
 
                 }
             }
+
+            // Remove relationships from the canvas that are no longer in the diagram
+
+            // Add new relationships in the diagram that are not yet on the canvas
 
         });
 

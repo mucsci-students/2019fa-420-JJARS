@@ -13,27 +13,30 @@ from scruml import uml_filesystem_io
 from scruml.uml_diagram import UMLDiagram
 
 
+# ----------
+# __API
+
 class __API:
     """Provides an API to the JavaScript running in the GUI window.
 Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
 
+    # ----------
+    # Static variables
+
     __diagram: UMLDiagram = UMLDiagram()
+
+    # ----------
+    # getDiagram
 
     def getDiagram(self, params: str) -> Dict[str, Dict[str, Dict[str, str]]]:
         """Returns a dictionary containing all diagram information"""
+
         response: Dict[str, Dict[str, Dict[str, str]]] = {}
 
         # Populate response dictionary with classes
         response["classes"] = {}
         for class_name in self.__diagram.get_all_class_names():
-            response["classes"][class_name] = {}
-            class_attributes: Optional[
-                Dict[str, str]
-            ] = self.__diagram.get_class_attributes(class_name)
-            for attribute_name in class_attributes:
-                response["classes"][class_name][attribute_name] = class_attributes[
-                    attribute_name
-                ]
+            response["classes"][class_name] = self.__diagram.get_class_attributes(class_name)
 
         # Populate response dictionary with relationships
         response["relationships"] = {}
@@ -51,6 +54,9 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
 
         return response
 
+    # ----------
+    # __parse_class_identifier
+
     def __parse_class_identifier(self, ident: str) -> Optional[str]:
         """Returns valid class identifier on success, or None on failure
 Valid class identifiers contain no whitespace and are not surrounded by brackets"""
@@ -65,10 +71,19 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             return None
         return ident
 
+    # ----------
+    # Diagram file functions
+
+    # ----------
+    # newDiagramFile
+
     def newDiagramFile(self, params: str) -> None:
         """Creates a new, blank diagram."""
         # TODO: Add a confirmation prompt
         self.__diagram = UMLDiagram()
+
+    # ----------
+    # loadDiagramFile
 
     def loadDiagramFile(self, params: str) -> None:
         """Opens a file selector dialog and loads the selected diagram file."""
@@ -81,6 +96,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
         )[0]
         # TODO: Add a confirmation prompt
         self.__diagram = uml_filesystem_io.load_diagram(file_path)
+
+    # ----------
+    # saveDiagramFile
 
     def saveDiagramFile(self, params: str) -> None:
         """Opens a file save dialog and saves to the specified diagram file."""
@@ -95,6 +113,12 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             print("Diagram successfully saved to '{}'".format(file_path))
         else:
             print("Failed to save diagram to '{}'".format(file_path))
+
+    # ----------
+    # Class functions
+
+    # ----------
+    # addClass
 
     def addClass(self, class_properties: Dict[str, str]) -> str:
         class_name: str = class_properties["class_name"]
@@ -111,6 +135,21 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
         self.__diagram.set_class_attribute(class_name, "[x]", x)
         self.__diagram.set_class_attribute(class_name, "[y]", y)
         return ""
+
+    # ----------
+    # removeClass
+
+    def removeClass(self, class_name: str) -> None:
+        if not self.__diagram.remove_class(
+            class_name
+        ):
+            raise Exception("Selected class not found in diagram: " + class_name)
+
+    # ----------
+    # Class attribute functions
+
+    # ----------
+    # setClassAttribute
 
     def setClassAttribute(
         self, class_name: str, attribute_name: str, attribute_value: str
@@ -129,6 +168,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             )
         return ""
 
+    # ----------
+    # removeClassAttribute
+
     def removeClassAttribute(self, class_name: str, attribute_name: str) -> None:
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
             return (
@@ -140,6 +182,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             )
         return ""
 
+    # ----------
+    # getClassAttributes
+
     def getClassAttributes(self, class_name: str) -> Dict[str, str]:
         attr_dict: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
             class_name
@@ -148,11 +193,11 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             raise Exception("Selected class not found in diagram: " + class_name)
         return attr_dict
 
-    def removeClass(self, class_name: str) -> None:
-        if not self.__diagram.remove_class(
-            class_name
-        ):
-            raise Exception("Selected class not found in diagram: " + class_name)
+    # ----------
+    # Relationship functions
+
+    # ----------
+    # addRelationship
 
     def addRelationship(
         self, class_name_a: str, class_name_b: str, relationship_name: str
@@ -174,6 +219,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             )
         return ""
 
+    # ----------
+    # removeRelationship
+
     def removeRelationship(
         self, class_name_a: str, class_name_b: str, relationship_name: str
     ) -> str:
@@ -194,6 +242,14 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             )
         return ""
 
+    # ----------
+    # Relationship attribute functions
+
+    # TODO: Sprint 3
+
+
+# ----------
+# activate
 
 def activate() -> None:
     """Activates the GUI context."""

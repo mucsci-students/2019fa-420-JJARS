@@ -99,10 +99,6 @@ function menubarSaveButtonClicked(element)
 
 function elementClicked(element)
 {
-
-    // DEBUG: remove me later
-    console.log(element);
-
     switch (currentUIState)
     {
         case UI_STATES.SELECT:
