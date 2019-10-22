@@ -26,7 +26,7 @@ class UMLDiagram:
 
     def __init__(self) -> None:
         self.__classes: Dict[str, AttributeDict] = dict()
-        self.__relationships: Dict[ClassPair, RelationshipDict] = dict()
+        self.__relationships: Dict[RelationshipID, RelationshipDict] = dict()
 
     # ----------
     # Class functions
