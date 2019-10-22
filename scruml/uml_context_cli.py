@@ -67,22 +67,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
                 return None
 
         return (str(class_A_name), str(class_B_name), relationship_name)
-
-<<<<<<< HEAD
-    def __parse_attribute_identifier(self, ident: str) -> Optional[Dict[str, str]]:
-        """Returns valid attribute identifier on success, or None on failure
-	Valid attribute identifier are surrounded by brackets, contain one valid
-	class and one valid attribute identifier"""
-
-        ident = ident.strip()
-        #Check for start and end brackets
-        if ident.startswith("[") and ident.endswith("]"):
-                ident = ident[1:-1]
-        else:
-                return None
-
-=======
->>>>>>> quick changes for setup on code
+	
     def __classify_identifier(self, ident: str) -> Optional[str]:
         """Returns a string identifying the kind of identifier that "ident" represents
 Possible values: "class", "relationship", None"""
