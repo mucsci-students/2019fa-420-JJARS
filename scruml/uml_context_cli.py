@@ -291,7 +291,7 @@ For help with identifiers, type in 'help identifiers'"""
             self.__remove_relationship(arg)
         else:
             print("Invalid argument provided.\n")
-            print(self.do_add.__doc__)
+            print(self.do_remove.__doc__)
 
     def complete_remove(
         self, text: str, line: str, begidx: str, endidx: str
