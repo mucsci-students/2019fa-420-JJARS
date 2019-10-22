@@ -12,7 +12,7 @@ import yaml
 ClassPair = Tuple[str, str]
 
 AttributeDict = Dict[str, str]
-RelationshipDict = Dict[str, AttributeDict]
+RelationshipDict = Dict[Optional[str], AttributeDict]
 
 # ----------
 # UMLDiagram class
@@ -26,7 +26,7 @@ class UMLDiagram:
 
     def __init__(self) -> None:
         self.__classes: Dict[str, AttributeDict] = dict()
-        self.__relationships: Dict[RelationshipID, RelationshipDict] = dict()
+        self.__relationships: Dict[ClassPair, RelationshipDict] = dict()
 
     # ----------
     # Class functions
@@ -90,9 +90,9 @@ Returns 'new_name' on success or 'None' on failure."""
         # Update all relationships that refer to this class
         for class_pair in self.__relationships:
             if old_class_name in class_pair:
-                new_class_pair: Tuple[str, str] = tuple(
-                    class_name if class_name != old_class_name else new_class_name
-                    for class_name in class_pair
+                new_class_pair: Tuple[str, str] = (
+                    class_pair[0] if class_pair[0] != old_class_name else new_class_name,
+                    class_pair[1] if class_pair[1] != old_class_name else new_class_name
                 )
                 self.__relationships[new_class_pair] = self.__relationships.pop(
                     class_pair
@@ -241,7 +241,7 @@ Returns 'True' on success, or 'False' on failure."""
     def get_relationships_between(
         self, class_name_a: str, class_name_b: str
     ) -> Optional[RelationshipDict]:
-        """Returns a Dict[str, Dict[str, str]] containing every relationship (with attributes) between 'class_name_a' and 'class_name_b'.
+        """Returns a Dict[Optional[str], Dict[str, str]] containing every relationship (with attributes) between 'class_name_a' and 'class_name_b'.
 Fails if class 'class_name_a' or class 'class_name_b' is not present in the diagram.
 Fails if a relationship between 'class_name_a' and 'class_name_b' does not exist.
 Returns 'None' on failure."""

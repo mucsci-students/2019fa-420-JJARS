@@ -4,6 +4,7 @@
 from typing import Dict
 from typing import Optional
 from typing import Tuple
+from typing import Union
 
 import pkg_resources
 import webview
@@ -27,33 +28,57 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
     __diagram: UMLDiagram = UMLDiagram()
 
     # ----------
-    # getDiagram
+    # Diagram information functions
 
-    def getDiagram(self, params: str) -> Dict[str, Dict[str, Dict[str, str]]]:
-        """Returns a dictionary containing all diagram information"""
+    # ----------
+    # getClassses
+
+    def getClasses(self, params: str) -> Dict[str, Dict[str, str]]:
+        """Returns a dictionary containing all class information in the diagram.
+Structure: dictionary[className][attributeName] == attributeValue"""
+
+        response: Dict[str, Dict[str, str]] = {}
+
+        # Populate response dictionary with classes
+        for class_name in self.__diagram.get_all_class_names():
+
+            class_attributes: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(class_name)
+
+            if class_attributes is not None:
+                response[class_name] = class_attributes
+            else:
+                raise Exception("Class not found in diagram: " + class_name)
+
+        return response
+
+    # ----------
+    # getRelationships
+
+    def getRelationships(self, params: str) -> Dict[str, Dict[str, Dict[str, str]]]:
+        """Returns a dictionary containing all relationship infromation in the diagram.
+Structure: dictionary[classPair][relationshipName][attributeName] == attributeValue"""
 
         response: Dict[str, Dict[str, Dict[str, str]]] = {}
 
-        # Populate response dictionary with classes
-        response["classes"] = {}
-        for class_name in self.__diagram.get_all_class_names():
-            response["classes"][class_name] = self.__diagram.get_class_attributes(
-                class_name
-            )
-
         # Populate response dictionary with relationships
-        response["relationships"] = {}
         for class_pair in self.__diagram.get_all_relationship_pairs():
+
             class_pair_string: str = "[" + class_pair[0] + "," + class_pair[1] + "]"
-            response["relationships"][class_pair_string] = {}
-            relationships: Dict[
-                str, Dict[str, str]
-            ] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
-            for relationship_name in relationships:
-                if not relationship_name:
-                    relationship_name = ""
-                response["relationships"][class_pair_string][relationship_name] = {}
-                # TODO: another for-each, relationship attributes, god DARNIT
+
+            response[class_pair_string] = {}
+
+            relationships: Optional[Dict[
+                Optional[str], Dict[str, str]
+            ]] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
+
+            if relationships is not None:
+                for relationship_name in relationships:
+                    if not relationship_name:
+                        relationship_name = ""
+                    response[class_pair_string][relationship_name] = {}
+                    # TODO: Relationship Attributes, Sprint 3
+            else:
+                raise Exception("Class pair not found in diagram: " + class_pair_string)
 
         return response
 
@@ -154,7 +179,7 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
 
     def setClassAttribute(
         self, class_name: str, attribute_name: str, attribute_value: str
-    ) -> None:
+    ) -> str:
         if not self.__parse_class_identifier(attribute_name):
             return "Attribute name is invalid (cannot contain whitespace nor be surrounded by brackets."
         if not self.__diagram.set_class_attribute(
@@ -172,7 +197,7 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # ----------
     # removeClassAttribute
 
-    def removeClassAttribute(self, class_name: str, attribute_name: str) -> None:
+    def removeClassAttribute(self, class_name: str, attribute_name: str) -> str:
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
             return (
                 "Attribute '"
@@ -204,18 +229,15 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
 
         class_name_a: str = relationship_properties["class_name_a"]
         class_name_b: str = relationship_properties["class_name_b"]
-        relationship_name: Optional[str] = relationship_properties["relationship_name"]
+        relationship_name: str = relationship_properties["relationship_name"]
 
         if not class_name_a in self.__diagram.get_all_class_names():
             return "Class " + class_name_a + " not found in the diagram."
         if not class_name_b in self.__diagram.get_all_class_names():
             return "Class " + class_name_b + " not found in the diagram."
 
-        if len(relationship_name) == 0:
-            relationship_name = None
-
         if not self.__diagram.add_relationship(
-            class_name_a, class_name_b, relationship_name
+            class_name_a, class_name_b, relationship_name if len(relationship_name) > 0 else None
         ):
             return (
                 "Relationship already exists: ["
