@@ -128,15 +128,13 @@ For help with identifiers, type in 'help identifiers'"""
             self.__add_class(arg)
         elif identifier_class == "relationship":
             self.__add_relationship(arg)
-#ADD CODE HERE!!!!!
-
         else:
             print("Invalid argument provided.\n")
             print(self.do_add.__doc__)
 
     def __add_class(self, arg: str) -> None:
         """Adds new class if one with that name does not already exist"""
-        arg = str(self.__parse_class_identifier(arg))
+        arg = arg.strip()
         if not self.__diagram.add_class(arg):
             print("Class '{}' already exists in the diagram".format(arg))
         else:
@@ -144,62 +142,143 @@ For help with identifiers, type in 'help identifiers'"""
 
     def __add_relationship(self, arg: str) -> None:
         """Adds new relationship if one with that identifier does not already exist"""
-        print("Sorry! Relationships are coming in a future version of ScrUML.")
-
-    def do_set(self, arg, class_name: str, attribute_name: str) -> Optional[str]:
-        """Usage: set <id>
-Adds new attribute if one with that id does not already exist"""
-	#Returns a list of all words in the string, sets them to arg
-        arg = arg.split()
+        arg = arg.strip()
         arg_list: List[str] = arg.split(",")
+        # Remove bracket from beginning of first argument
+        arg_list[0] = arg_list[0][1:]
+        # Remove bracket from end of last argument
+        arg_list[-1] = arg_list[-1][:-1]
+        # Get the relationship name
+        rel_name: Optional[str] = None if len(arg_list) == 2 else arg_list[2]
 
-        # Make sure that there were enough values provided, a class and attribute name
-        if len(arg_list) != 3:
-            print("Please provide a class name and attribute name and attribute value.\n")
+        # Check whether both classes exist
+        isValid: bool = True
+        class_list: List[str] = self.__diagram.get_all_class_names()
+        if arg_list[0] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(arg_list[0]))
+            isValid = False
+        if arg_list[1] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(arg_list[1]))
+            isValid = False
+        if not isValid:
+            return
+
+        if not self.__diagram.add_relationship(arg_list[0], arg_list[1], rel_name):
+            print(
+                "Relationship  ['{}','{}','{}'] already exists in the diagram.".format(
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                )
+            )
         else:
-            self.__diagram.set_class_attribute(class_name, attribute_name, attribute_name)
-       
-      
-    def __set_attributes(self, class_name: str, attribute_name: str, attribute_value: str) -> None:
-        """Sets a new attribute to a class
-        #Trying to add an attribute unless one with the name already exist
-        check_class_name = self.__diagram.get_all_class_names(class_name)
-        if not check_class_name:
-            print("Class '{}' already exist in the diagram".format(class_name))
-        check_attribute_name = self.__diagram.get_class_attribute(attribute_name)
-        if not check_attribute_name:
-            print("Attribute '{}' already exist in the diagram".format(attribute_name))
+            print(
+                "Added relationship ['{}','{}','{}'].".format(
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                )
+            )
+
+    # ----------
+    # "Set" command
+
+    def do_set(self, arg: str) -> None:
+        """Usage: set <identifier> <attribute_name> <attribute_value>
+Adds or modifies the attribute for the specified class"""
+        args: List[str] = arg.split()
+        if len(args) != 3:
+            print("Please provide the proper arguments.\n")
+            print(self.do_set.__doc__)
+            return
+        # Ensure attribute name is valid
+        if not self.__parse_class_identifier(args[1]):
+            print(
+                "Please provide a valid attribute name (no whitespace and no brackets)."
+            )
+            return
+        identifier_class = self.__classify_identifier(args[0])
+        if identifier_class == "class":
+            self.__set_class_attribute(args[0], args[1], args[2])
+        elif identifier_class == "relationship":
+            self.__set_relationship_attribute(args[0], args[1], args[2])
         else:
-            print("Set Attribute '{}'".format(attribute_name))
+            print("Invalid argument provided.\n")
+            print(self.do_set.__doc__)
+
+    def __set_class_attribute(
+        self, class_name: str, attribute_name: str, attribute_value: str
+    ) -> None:
+        """Adds or modifies the attribute with attribute_name for the specified class"""
+        if not self.__diagram.set_class_attribute(
+            class_name, attribute_name, attribute_value
+        ):
+            print("Class '{}' does not exist in the diagram".format(class_name))
+        else:
+            print(
+                "Class '{}' now contains attribute '{}' with value '{}'.".format(
+                    class_name, attribute_name, attribute_value
+                )
+            )
+
+    def __set_relationship_attribute(
+        self, relationship_ID: str, attribute_name: str, attribute_value: str
+    ) -> None:
+        """Adds or modifies the attribute with attribute_name for the specified relationship."""
+        print(
+            "Sorry! Relationship attributes are coming in a future version of ScrUML."
+        )
+
+    # ----------
+    # "Strip" command
 
     def do_strip(self, arg: str) -> None:
-        """Usage strip <id>
-        Removes attribute if one with that id exist in the diagram"""
-        arg = arg.split()
-        arg_list: List[str] = arg.split(",")
-	
-        if len(arg_list) != 2:
-             identifier_class = self.__classify_identifier(arg)
-             if identifier_class == "class":
-                self.__strip_class_attribute(arg)
-             elif identifier_class == "relationship":
-                self.__strip_relationship_attribute(arg)              
+        """Usage strip <identifier> <attribute_name>
+Removes the attribute for the specified class"""
+        args: List[str] = arg.split()
+        if len(args) != 2:
+            print("Please provide the proper arguments.\n")
+            print(self.do_strip.__doc__)
+            return
+        # Ensure attribute name is valid
+        if not self.__parse_class_identifier(args[1]):
+            print(
+                "Please provide a valid attribute name (no whitespace and no brackets)."
+            )
+            return
+        identifier_class = self.__classify_identifier(args[0])
+        if identifier_class == "class":
+            self.__strip_class_attribute(args[0], args[1])
+        elif identifier_class == "relationship":
+            self.__strip_relationship_attribute(args[0], args[1])
         else:
-            print("Invalid amount of arguments entered")
+            print("Invalid argument provided.\n")
+            print(self.do_strip.__doc__)
 
-    def __strip_attribute(self, class_name: str, attribute_name: str) -> Optional[str]:
-        """Strip an attribute from its class"""
-        #Trying to remove an attribute unless the attribute does not exist in diagram
-	check_class_name = self.__diagram.get_all_class_names(class_name)
-        check_attribute_name = self.__diagram.get_class_attribute(attribute_name)
-        if not check_class_name:
+    def __strip_class_attribute(self, class_name: str, attribute_name: str) -> None:
+        """Removes the attribute for the specified class"""
+        if class_name not in self.__diagram.get_all_class_names():
             print("Class '{}' does not exist in the diagram".format(class_name))
-        elif not check_attribute_name:
-            print("Attribute '{}' does not exist in the diagram".format(attribute_name))
+            return
+        if not self.__diagram.remove_class_attribute(class_name, attribute_name):
+            print(
+                "Class '{}' does not have an attribute with name '{}'".format(
+                    class_name, attribute_name
+                )
+            )
         else:
-            print("Removed Attribute '{}'".format(attribute_name))
-            self.remove_class_attribute(class_name, attribute_name)
+            print(
+                "Removed Attribute '{}' from class '{}'".format(
+                    attribute_name, class_name
+                )
+            )
 
+    def __strip_relationship_attribute(
+        self, relationship_ID: str, attribute_name: str
+    ) -> None:
+        """Removes the attribute with attribute_name for the specified relationship."""
+        print(
+            "Sorry! Relationship attributes are coming in a future version of ScrUML."
+        )
+
+    # ----------
+    # "Remove" command
 
     def do_remove(self, arg: str) -> None:
         """Usage: remove <identifier>
@@ -234,7 +313,39 @@ For help with identifiers, type in 'help identifiers'"""
 
     def __remove_relationship(self, arg: str) -> None:
         """Removes relationship if one with that identifier exists"""
-        print("Sorry! Relationships are coming in a future version of ScrUML.")
+        arg = arg.strip()
+        arg_list: List[str] = arg.split(",")
+        # Remove bracket from beginning of first argument
+        arg_list[0] = arg_list[0][1:]
+        # Remove bracket from end of last argument
+        arg_list[-1] = arg_list[-1][:-1]
+        # Get the relationship name
+        rel_name: Optional[str] = None if len(arg_list) == 2 else arg_list[2]
+
+        # Check whether both classes exist
+        isValid: bool = True
+        class_list: List[str] = self.__diagram.get_all_class_names()
+        if arg_list[0] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(arg_list[0]))
+            isValid = False
+        if arg_list[1] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(arg_list[1]))
+            isValid = False
+        if not isValid:
+            return
+
+        if not self.__diagram.remove_relationship(arg_list[0], arg_list[1], rel_name):
+            print(
+                "Relationship  ['{}','{}','{}'] does not exist in the diagram.".format(
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                )
+            )
+        else:
+            print(
+                "Relationship  ['{}','{}','{}'] has been removed from the diagram.".format(
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                )
+            )
 
     # ----------
     # "Rename" command
