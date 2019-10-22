@@ -56,9 +56,10 @@ Returns 'class_name' on success, or 'None' on failure."""
         if class_name not in self.__classes:
             return None
 
-        # remove relationships
         del self.__classes[class_name]
-        # TODO: Implement removing a class and all of its relationships
+
+        # Remove all relationships that refer to this class
+        self.__relationships = [class_pair for class_pair in self.__relationships if class_name not in class_pair]
 
         return class_name
 
@@ -82,7 +83,9 @@ Returns 'new_name' on success or 'None' on failure."""
             return None
 
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
-        # TODO: change relationships that reference this class
+
+        # Update all relationships that refer to this class
+        self.__relationships == [tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair) for class_pair in self.__relationships]
 
         return new_class_name
 
