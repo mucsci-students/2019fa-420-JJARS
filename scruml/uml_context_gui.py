@@ -16,6 +16,7 @@ from scruml.uml_diagram import UMLDiagram
 # ----------
 # __API
 
+
 class __API:
     """Provides an API to the JavaScript running in the GUI window.
 Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
@@ -36,7 +37,9 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
         # Populate response dictionary with classes
         response["classes"] = {}
         for class_name in self.__diagram.get_all_class_names():
-            response["classes"][class_name] = self.__diagram.get_class_attributes(class_name)
+            response["classes"][class_name] = self.__diagram.get_class_attributes(
+                class_name
+            )
 
         # Populate response dictionary with relationships
         response["relationships"] = {}
@@ -140,9 +143,7 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # removeClass
 
     def removeClass(self, class_name: str) -> None:
-        if not self.__diagram.remove_class(
-            class_name
-        ):
+        if not self.__diagram.remove_class(class_name):
             raise Exception("Selected class not found in diagram: " + class_name)
 
     # ----------
@@ -251,6 +252,7 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
 # ----------
 # activate
 
+
 def activate() -> None:
     """Activates the GUI context."""
 
@@ -258,11 +260,7 @@ def activate() -> None:
     html_file = pkg_resources.resource_filename("scruml", "assets/scruml.html")
 
     webview.create_window(
-        "ScrUML",
-        html_file,
-        min_size=(640, 480),
-        js_api=api,
-        confirm_close=True)
+        "ScrUML", html_file, min_size=(640, 480), js_api=api, confirm_close=True
+    )
 
-    webview.start(debug=True,
-                  gui="cef")
+    webview.start(debug=True, gui="cef")
