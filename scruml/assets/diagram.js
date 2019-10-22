@@ -4,11 +4,17 @@
 
 class Diagram {
 
+    // ----------
+    // Constructor
+
     constructor(canvasID) {
         if (!canvasID)
             console.error("No canvas ID provided in Diagram constructor.");
         this.canvas = new SVG(canvasID).size(1000, 1000);
     }
+
+    // ----------
+    // buildClassElement
 
     buildClassElement(className, classAttr) {
 
@@ -19,8 +25,8 @@ class Diagram {
         var element = this.canvas.nested().id(className).addClass("uml-class");
 
         // Add body and text
-        element.rect(W,H).fill("#ffffff");
-        element.text(className).fill("#1C140D");
+        element.rect(W,H);
+        element.text(className).move(10, 10);
 
         // Place element at the appropriate coordinates, if in the attributes
         if (classAttr["[x]"] && classAttr["[y]"])
@@ -38,37 +44,49 @@ class Diagram {
 
     }
 
+    // ----------
+    // buildRelationshipElement
+
+    buildRelationshipElement(relationshipID, relationshipAttr) {
+
+    }
+
+    // ----------
+    // update
+
     update() {
 
         // "this" is shadowed by a reference to the promise in the callback
         var me = this;
 
-        // Get the diagram and get to work
+        // Get the diagram object and get to work
         pywebview.api.getDiagram().then(function(response) {
 
-            // Remove classes that are no longer in the diagram
+            // Remove classes from the canvas that are no longer in the diagram
+            console.log("Classes in diagram: ");
+            console.log(response.classes);
             me.canvas.each(function(i, children) {
                 if (this.hasClass("uml-class"))
                 {
-                    if (!(this.id in response.classes))
+                    console.log("ID: " + this.id());
+                    if (!(this.id() in response.classes))
                     {
+                        console.log("ID: " + this.id() + " not in diagram, removing.");
                         this.remove();
                     }
                 }
             });
 
-            // Check for new classes in the diagram
+            // Add new classes in the diagram that are not yet on the canvas
             for (let [key, value] of Object.entries(response.classes))
             {
-
-                // If the class isn't on the diagram yet, add it
                 if (!SVG.get(key))
                 {
                     me.buildClassElement(key, value);
 
                 }
-
             }
+
         });
 
     }

@@ -85,6 +85,32 @@ main
     max-height: 90%;
 }
 
+#diagram-canvas .uml-class
+{
+    stroke-opacity: 1;
+    stroke: #1C140D;
+    fill: #FFFFFF;
+}
+
+#diagram-canvas .uml-relationship
+{
+    stroke-opacity: 1;
+    stroke: #1C140D;
+    fill: #FFFFFF;
+}
+
+#diagram-canvas .selected
+{
+    stroke: #A6C050;
+}
+
+#diagram-canvas text
+{
+    x: 15px;
+    y: 5px;
+    stroke: none;
+    fill: #1C140D;
+}
 
 /* Properties Panel */
 

@@ -148,10 +148,10 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             raise Exception("Selected class not found in diagram: " + class_name)
         return attr_dict
 
-    def completelyRemoveClass(self, class_name: str) -> None:
-        if not self.__diagram.complete_remove(
+    def removeClass(self, class_name: str) -> None:
+        if not self.__diagram.remove_class(
             class_name
-        ):  # TODO: make sure complete remove is implemented
+        ):
             raise Exception("Selected class not found in diagram: " + class_name)
 
     def addRelationship(
@@ -197,9 +197,16 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
 
 def activate() -> None:
     """Activates the GUI context."""
+
     api = __API()
     html_file = pkg_resources.resource_filename("scruml", "assets/scruml.html")
+
     webview.create_window(
-        "ScrUML", html_file, min_size=(640, 480), js_api=api, confirm_close=True
-    )
-    webview.start(debug=True)
+        "ScrUML",
+        html_file,
+        min_size=(640, 480),
+        js_api=api,
+        confirm_close=True)
+
+    webview.start(debug=True,
+                  gui="cef")

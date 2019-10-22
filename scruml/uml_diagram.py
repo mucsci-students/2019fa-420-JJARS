@@ -14,8 +14,15 @@ ClassPair = Tuple[str, str]
 AttributeDict = Dict[str, str]
 RelationshipDict = Dict[str, AttributeDict]
 
+# ----------
+# UMLDiagram class
 
-class UMLDiagram(yaml.YAMLObject):
+class UMLDiagram():
+    """Interactive model representing a UML diagram containing relationships and classes with attributes."""
+
+    # ----------
+    # Constructor
+
     def __init__(self) -> None:
         self.__classes: Dict[str, AttributeDict] = dict()
         self.__relationships: Dict[ClassPair, RelationshipDict] = dict()
@@ -23,58 +30,121 @@ class UMLDiagram(yaml.YAMLObject):
     # ----------
     # Class functions
 
+    # ----------
+    # add_class
+
     def add_class(self, class_name: str) -> Optional[str]:
+        """Adds a class with name 'class_name' to the diagram.
+Fails if a class with 'class_name' is already present in the diagram.
+Returns 'class_name' on success, or 'None' on failure."""
+
         if class_name in self.__classes:
             return None
+
         self.__classes[class_name] = dict()
+
         return class_name
+
+    # ----------
+    # remove_class
 
     def remove_class(self, class_name: str) -> Optional[str]:
+        """Removes the class with name 'class_name' from the diagram.
+Fails if a class with 'class_name' is not present in the diagram.
+Returns 'class_name' on success, or 'None' on failure."""
+
         if class_name not in self.__classes:
             return None
+
+        # remove relationships
         del self.__classes[class_name]
         # TODO: Implement removing a class and all of its relationships
+
         return class_name
 
+    # ----------
+    # get_all_class_names
+
     def get_all_class_names(self) -> List[str]:
+        """Returns a 'List[str]' containing the name of every class in the diagram."""
+
         return list(self.__classes.keys())
 
+    # ----------
+    # rename_class
+
     def rename_class(self, old_class_name: str, new_class_name: str) -> Optional[str]:
+        """Renames the class with name 'old_name' to 'new_name' in the diagram.
+Fails if a class with 'old_name' is not present in the diagram or a class with 'new_name' already exists in the diagram.
+Returns 'new_name' on success or 'None' on failure."""
+
         if old_class_name not in self.__classes or new_class_name in self.__classes:
             return None
+
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
         # TODO: change relationships that reference this class
+
         return new_class_name
 
     # ----------
     # Class attribute functions
 
+    # ----------
+    # set_class_attribute
+
     def set_class_attribute(
         self, class_name: str, attribute_name: str, attribute_value: str
     ) -> Optional[str]:
+        """Sets the value of 'attribute_name' to 'attribute_value' for the class with name 'class_name' in the diagram.
+If the class does not yet have an attribute with the name 'attribute_name', one will be created.
+Fails if a class with 'class_name' is not present in the diagram.
+Returns 'attribute_value' on success, or 'None' on failure."""
+
         if class_name not in self.__classes:
             return None
+
         self.__classes[class_name][attribute_name] = attribute_value
+
         return attribute_value
+
+    # ----------
+    # remove_class_attribute
 
     def remove_class_attribute(
         self, class_name: str, attribute_name: str
     ) -> Optional[str]:
+        """Removes the attribute with name 'attribute_name' from class 'class_name'.
+Fails if an attribute with 'attribute_name' is not found in 'class_name'.
+Fails if a class with 'class_name' is not present in the diagram.
+Returns 'attribute_name' on success, or 'None' on failure."""
+
         if (
             class_name not in self.__classes
             or attribute_name not in self.__classes[class_name]
         ):
             return None
+
         del self.__classes[class_name][attribute_name]
+
         return attribute_name
 
+    # ----------
+    # get_class_attributes
+
     def get_class_attributes(self, class_name: str) -> Optional[AttributeDict]:
+        """Returns a Dict[str, str] containing the attribute names and values of class 'class_name'.
+Fails and returns 'None' if a class with 'class_name' is not present in the diagram."""
+
         if class_name not in self.__classes:
             return None
+
         return self.__classes[class_name]
 
     # ----------
     # Relationship functions
+
+    # ----------
+    # add_relationship
 
     def add_relationship(
         self,
@@ -82,7 +152,12 @@ class UMLDiagram(yaml.YAMLObject):
         class_name_b: str,
         relationship_name: Optional[str] = None,
     ) -> bool:
+        """Adds a relationship between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' to the diagram.
+Fails if a relation between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' is already present in the diagram.
+Returns 'True' on success, or 'False' on failure."""
+
         class_pair: ClassPair = (class_name_a, class_name_b)
+
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
@@ -90,8 +165,13 @@ class UMLDiagram(yaml.YAMLObject):
             or relationship_name in self.__relationships[class_pair]
         ):
             return False
+
         self.__relationships[class_pair][relationship_name] = AttributeDict()
+
         return True
+
+    # ----------
+    # remove_relationship
 
     def remove_relationship(
         self,
@@ -99,7 +179,12 @@ class UMLDiagram(yaml.YAMLObject):
         class_name_b: str,
         relationship_name: Optional[str] = None,
     ) -> bool:
+        """Removes the relationship between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' from the diagram.
+Fails if a relationship between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' is not present in the diagram.
+Returns 'True' on success, or 'False' on failure."""
+
         class_pair: ClassPair = (class_name_a, class_name_b)
+
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
@@ -107,22 +192,36 @@ class UMLDiagram(yaml.YAMLObject):
             or relationship_name not in self.__relationships[class_pair]
         ):
             return False
+
         del self.__relationships[class_pair][relationship_name]
+
         return True
+
+    # ----------
+    # get_relationships_between
 
     def get_relationships_between(
         self, class_name_a: str, class_name_b: str
     ) -> Optional[RelationshipDict]:
+        """Returns a Dict[str, Dict[str, str]] containing every relationship (with attributes) between 'class_name_a' and 'class_name_b'.
+Fails if class 'class_name_a' or class 'class_name_b' is not present in the diagram.
+Fails if a relationship between 'class_name_a' and 'class_name_b' does not exist.
+Returns 'None' on failure."""
+
         class_pair: ClassPair = (class_name_a, class_name_b)
+
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
             or class_pair not in self.__relationships
         ):
             return None
+
         return self.__relationships[class_pair]
 
     def get_all_relationship_pairs(self) -> List[ClassPair]:
+        """Returns a 'List[Tuple[str, str]]' containing every pair of related classes in the diagram."""
+
         return list(self.__relationships.keys())
 
     # ----------

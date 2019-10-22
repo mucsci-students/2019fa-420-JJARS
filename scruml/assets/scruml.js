@@ -124,73 +124,49 @@ function elementClicked(element)
 
 function elementSelect(element)
 {
-    if (element.className != "class")
-    {
-        return;
-    }
 
-    selectedElement = element;
-    highlightElement(element);
-    var className = element.textContent; // TODO: Get the actual class name from element
-    var attrDict = pywebview.api.getClassAttributes(className);
-    var propertiesList = document.getElementById("properties-list");
-
-    // TODO: Display class name
+    changeSelection(element);
     // TODO: Loop through dictionary. For each key-value pair, append 2 input elements to propertiesList
 
 }
 
 function elementConnect(element)
 {
-    if (element.className != "class")
-    {
-        return;
-    }
+    // if (element.className != "class")
+    // {
+    //     return;
+    // }
 
-    if (selectedElement == null)
-    {
-        selectedElement = element;
-        highlightElement(element, "#FF00FF");
-        return;
-    }
+    // if (selectedElement == null)
+    // {
+    //     selectedElement = element;
+    //     highlightElement(element, "#FF00FF");
+    //     return;
+    // }
 
-    var classAName = selectedElement.textContent; // TODO: Get the actual class name from element
-    var classBName = element.textContent; // TODO: Get the actual class name from element
-    var relationshipName = prompt("Enter the relationship name (leave blank for no name):");
-    pywebview.api.addRelationship(classAName, classBName, relationshipName);
-    clearSelection();
-    // TODO: Update/redraw diagram
+    // var classAName = selectedElement.textContent; // TODO: Get the actual class name from element
+    // var classBName = element.textContent; // TODO: Get the actual class name from element
+    // var relationshipName = prompt("Enter the relationship name (leave blank for no name):");
+    // pywebview.api.addRelationship(classAName, classBName, relationshipName);
+    // // TODO: Update/redraw diagram
 }
 
 function elementRemove(element)
 {
-    if (element.className == "class")
+    if (element == selectedElement)
     {
-        var className = element.textContent; // TODO: Get the actual class name from element
-        pywebview.api.completelyRemoveClass(classname); // TODO: Remove class and its relationships
-        // TODO: Update/redraw diagram
+        clearSelection();
     }
-    else if (element.className == "relationship")
-    {
-        var relationshipID = element.title; // TODO: Get the actual relationship ID name from element
-        // RelationshipID is a string in the form "[ClassA,ClassB,RelationshipName]". Split it into individual arguments
-        var relArgs = relationshipID.split(",");
-        // Remove leading '[' from first arg
-        relArgs[0] = relArgs[0].slice(1);
-        // Remove trailing ']' from final arg
-        relArgs[2] = relArgs[2].slice(0,-1);
-
-        pywebview.api.removeRelationship(relArgs[0],relArgs[1],relArgs[2]);
-
-        diagram.update();
-    }
+    pywebview.api.removeClass(element.id()).then(function() { diagram.update(); });
 }
+
 
 // ----------
 // Diagram canvas class add event function
 
 function tryAddClass(event)
 {
+
     if (currentUIState != UI_STATES.ADD)
     {
         return;
@@ -220,8 +196,6 @@ function tryAddClass(event)
 
 function toolbarButtonClicked(element)
 {
-    var prevUIState = currentUIState;
-
     switch (element.id)
     {
         case "toolbar-select":
@@ -233,6 +207,7 @@ function toolbarButtonClicked(element)
         break;
 
         case "toolbar-connect":
+        clearSelection();
         currentUIState = UI_STATES.CONNECT;
         break;
 
@@ -240,34 +215,32 @@ function toolbarButtonClicked(element)
         currentUIState = UI_STATES.REMOVE;
         break;
     }
-    // Clear selected element upon state change
-    if (prevUIState != currentUIState)
-    {
-        clearSelection();
-    }
-    document.querySelectorAll("#toolbar a.selected")[0].classList.remove("selected");
+    document.querySelector("#toolbar a.selected").classList.remove("selected");
     element.classList.add("selected");
 }
 
-function highlightElement(element, hexVal = "#00FFFF")
-{
-    if (element)
-    {
-        element.style.border = "2px solid " + hexVal;
-        element.style.borderRadius = "6px";
-    }
-}
+
+// ----------
+// Selection functions
 
 function clearSelection()
 {
-    if (selectedElement)
-    {
-        selectedElement.style.border = "none";
-    }
+    if (selectedElement != null)
+        document.querySelector("#diagram-canvas .selected").classList.remove("selected");
     selectedElement = null;
 }
 
+function changeSelection(element)
+{
+    clearSelection();
+    element.addClass("selected");
+    selectedElement = element;
+}
+
+
 // ----------
+// Page initialization
+
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         diagram = new Diagram("diagram-canvas");
