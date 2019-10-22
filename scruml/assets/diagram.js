@@ -2,6 +2,9 @@
 // diagram.js
 // Team JJARS
 
+const CLASS_WIDTH = 150;
+const CLASS_HEIGHT = 50;
+
 class Diagram {
 
     // ----------
@@ -18,20 +21,17 @@ class Diagram {
 
     buildClassElement(className, classAttr) {
 
-        const W = 150; // Rectangle width
-        const H = 50;  // Rectangle height
-
         // Build element on the canvas
         var element = this.canvas.nested().id(className).addClass("uml-class");
 
         // Add body and text
-        element.rect(W,H);
+        element.rect(CLASS_WIDTH, CLASS_HEIGHT);
         element.text(className).move(10, 10);
 
         // Place element at the appropriate coordinates, if in the attributes
         if (classAttr["[x]"] && classAttr["[y]"])
         {
-            element.move(classAttr["[x]"] - (W/2), classAttr["[y]"] - (H/2));
+            element.move(classAttr["[x]"] - (CLASS_WIDTH/2), classAttr["[y]"] - (CLASS_HEIGHT/2));
         }
 
         // Make element draggable
@@ -39,7 +39,7 @@ class Diagram {
 
         // Hook element in to click event handler
         element.click(function() {
-            elementClicked(this);
+            classElementClicked(this);
         });
 
     }
@@ -48,6 +48,28 @@ class Diagram {
     // buildRelationshipElement
 
     buildRelationshipElement(relationshipID, relationshipAttr) {
+
+        // Remove starting and ending brackets from relationship ID
+        var relationshipID = relationshipID.slice(1, -1);
+
+        // Get class names from relationship ID
+        var names = relationshipID.split(",");
+        var classNameA = names[0];
+        var classNameB = names[1];
+
+        // Build element on the canvas
+        var element = this.canvas.nested().id(relationshipID).addClass("uml-relationship");
+
+        // Draw line on the canvas
+        var classAElem = SVG.get(classNameA);
+        var classBElem = SVG.get(classNameB);
+        element.line(classAElem.x() + (CLASS_WIDTH/2), classAElem.y() + (CLASS_HEIGHT/2),
+                     classBElem.x() + (CLASS_WIDTH/2), classBElem.y() + (CLASS_HEIGHT/2));
+
+        // Hook element in to click event handler
+        element.click(function() {
+            relationshipElementClicked(this);
+        });
 
     }
 
@@ -62,14 +84,11 @@ class Diagram {
         // Get the diagram object and get to work
         pywebview.api.getDiagram().then(function(response) {
 
-            // Remove classes from the canvas that are no longer in the diagram
+            // Remove relationships and classes from the canvas that are no longer in the diagram
             me.canvas.each(function(i, children) {
-                if (this.hasClass("uml-class"))
+                if (!(this.id() in response.classes) || !(this.id() in response.relationships))
                 {
-                    if (!(this.id() in response.classes))
-                    {
-                        this.remove();
-                    }
+                    this.remove();
                 }
             });
 
@@ -83,9 +102,14 @@ class Diagram {
                 }
             }
 
-            // Remove relationships from the canvas that are no longer in the diagram
-
             // Add new relationships in the diagram that are not yet on the canvas
+            for (let [key, value] of Object.entries(response.relationships))
+            {
+                if (!SVG.get(key))
+                {
+                    me.buildRelationshipElement(key, value);
+                }
+            }
 
         });
 

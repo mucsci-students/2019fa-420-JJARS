@@ -95,59 +95,65 @@ function menubarSaveButtonClicked(element)
 
 
 // ---------
-// UML element click event functions
+// UML class element click event functions
 
-function elementClicked(element)
+function classElementClicked(element)
 {
     switch (currentUIState)
     {
         case UI_STATES.SELECT:
-        elementSelect(element);
+        classElementSelect(element);
         break;
 
         case UI_STATES.ADD:
         break;
 
         case UI_STATES.CONNECT:
-        elementConnect(element);
+        classElementConnect(element);
         break;
 
         case UI_STATES.REMOVE:
-        elementRemove(element);
+        classElementRemove(element);
         break;
     }
 }
 
-function elementSelect(element)
+function classElementSelect(element)
 {
 
     changeSelection(element);
+
     // TODO: Loop through dictionary. For each key-value pair, append 2 input elements to propertiesList
 
 }
 
-function elementConnect(element)
+function classElementConnect(element)
 {
-    // if (element.className != "class")
-    // {
-    //     return;
-    // }
 
-    // if (selectedElement == null)
-    // {
-    //     selectedElement = element;
-    //     highlightElement(element, "#FF00FF");
-    //     return;
-    // }
+    if (selectedElement == null)
+    {
+        changeSelection(element);
+        return;
+    }
 
-    // var classAName = selectedElement.textContent; // TODO: Get the actual class name from element
-    // var classBName = element.textContent; // TODO: Get the actual class name from element
-    // var relationshipName = prompt("Enter the relationship name (leave blank for no name):");
-    // pywebview.api.addRelationship(classAName, classBName, relationshipName);
-    // // TODO: Update/redraw diagram
+    var classAName = selectedElement.id();
+    var classBName = element.id();
+    clearSelection();
+
+    var relationshipName = prompt("Enter the relationship name (leave blank for no name):");
+    pywebview.api.addRelationship({"class_name_a": classAName,
+                            "class_name_b": classBName,
+                            "relationship_name": relationshipName}).then(function(response) {
+        if (response !== "")
+        {
+            alert(response);
+        }
+        diagram.update();
+    });
+
 }
 
-function elementRemove(element)
+function classElementRemove(element)
 {
     if (element == selectedElement)
     {

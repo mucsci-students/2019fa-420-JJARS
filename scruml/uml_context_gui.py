@@ -42,14 +42,15 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
         response["relationships"] = {}
         for class_pair in self.__diagram.get_all_relationship_pairs():
             class_pair_string: str = "[" + class_pair[0] + "," + class_pair[1] + "]"
-            response["relationships"][class_pair] = {}
+            print(class_pair_string)
+            response["relationships"][class_pair_string] = {}
             relationships: Dict[
                 str, Dict[str, str]
             ] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
             for relationship_name in relationships:
                 if not relationship_name:
                     relationship_name = ""
-                response["relationships"][class_pair][relationship_name] = {}
+                response["relationships"][class_pair_string][relationship_name] = {}
                 # TODO: another for-each, relationship attributes, god DARNIT
 
         return response
@@ -200,23 +201,33 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # addRelationship
 
     def addRelationship(
-        self, class_name_a: str, class_name_b: str, relationship_name: str
+        self, relationship_properties: Dict[str, str]
     ) -> str:
-        rel_name_arg: Optional[str] = None
-        if len(relationship_name) != 0:
-            rel_name_arg = relationship_name
+
+        class_name_a: str = relationship_properties["class_name_a"]
+        class_name_b: str = relationship_properties["class_name_b"]
+        relationship_name: Optional[str] = relationship_properties["relationship_name"]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return "Class " + class_name_a + " not found in the diagram."
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return "Class " + class_name_b + " not found in the diagram."
+
+        if len(relationship_name) == 0:
+            relationship_name = None
+
         if not self.__diagram.add_relationship(
-            class_name_a, class_name_b, rel_name_arg
+            class_name_a, class_name_b, relationship_name
         ):
             return (
-                "Class name(s) not found or relationship already exists: [ "
+                "Relationship already exists: ["
                 + class_name_a
-                + ", "
+                + ","
                 + class_name_b
-                + ", "
-                + relationship_name
+                + (( "," + relationship_name ) if relationship_name else "")
                 + "]"
             )
+
         return ""
 
     # ----------

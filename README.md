@@ -1,6 +1,6 @@
 # ScrUML [![Build Status](https://travis-ci.org/mucs420f19/JJARS.svg?branch=develop)](https://travis-ci.org/mucs420f19/JJARS) [![Coverage Status](https://coveralls.io/repos/github/mucs420f19/JJARS/badge.svg?branch=develop)](https://coveralls.io/github/mucs420f19/JJARS?branch=develop)
 
-Version 1.0.0
+Version 2.0.0
 
 ### Description
 
