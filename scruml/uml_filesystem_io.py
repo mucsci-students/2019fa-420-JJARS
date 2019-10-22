@@ -3,7 +3,7 @@
 # Team JJARS
 import yaml
 
-from uml_diagram import UMLDiagram
+from scruml.uml_diagram import UMLDiagram
 
 
 def save_diagram(diagram: UMLDiagram, file_path: str) -> bool:

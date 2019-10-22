@@ -5,8 +5,8 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
-import uml_filesystem_io
-from uml_diagram import UMLDiagram
+from scruml import uml_filesystem_io
+from scruml.uml_diagram import UMLDiagram
 
 
 class __UMLShell(cmd.Cmd):
@@ -67,7 +67,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
                 return None
 
         return (str(class_A_name), str(class_B_name), relationship_name)
-	
+
     def __classify_identifier(self, ident: str) -> Optional[str]:
         """Returns a string identifying the kind of identifier that "ident" represents
 Possible values: "class", "relationship", None"""
@@ -166,13 +166,13 @@ For help with identifiers, type in 'help identifiers'"""
         if not self.__diagram.add_relationship(arg_list[0], arg_list[1], rel_name):
             print(
                 "Relationship  ['{}','{}','{}'] already exists in the diagram.".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
                 )
             )
         else:
             print(
                 "Added relationship ['{}','{}','{}'].".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
                 )
             )
 
@@ -337,13 +337,13 @@ For help with identifiers, type in 'help identifiers'"""
         if not self.__diagram.remove_relationship(arg_list[0], arg_list[1], rel_name):
             print(
                 "Relationship  ['{}','{}','{}'] does not exist in the diagram.".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
                 )
             )
         else:
             print(
                 "Relationship  ['{}','{}','{}'] has been removed from the diagram.".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[3]
+                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
                 )
             )
 

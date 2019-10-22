@@ -3,14 +3,13 @@
 # Team JJARS
 # type: ignore
 from pathlib import Path
+from typing import List
 
 import pytest
 
 import scruml.uml_context_cli
 from scruml.uml_context_cli import __UMLShell
 from scruml.uml_diagram import UMLDiagram
-
-from typing import List
 
 
 def test_add_and_remove_classes() -> None:
@@ -81,40 +80,49 @@ def test_rename() -> None:
     shell._UMLShell__rename_class("Not implemented")
     shell._UMLShell__rename_relationship("Not implemented")
 
+
 def test_add_and_remove_relationships() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
 
     shell.onecmd("add classA")
     shell.onecmd("add classB")
-    
+
     shell.onecmd("add [classA,classB]")
     shell.onecmd("add [classA,classB,inherits]")
     shell.onecmd("add [classB,classA,extends]")
-    
+
     shell.onecmd("remove [classA,classB]")
     shell.onecmd("remove [classA,classB,inherits]")
     shell.onecmd("remove [classB,classA,extends]")
-    
+
     shell.onecmd("add [classA,fakeClass]")
     shell.onecmd("remove [fakeClass,classB]")
-    
+
+
 def test_set_and_strip_class_attributes() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
 
     shell.onecmd("add classA")
-    
+
     shell.onecmd("set classA length size_t")
     shell.onecmd("set classA isValid bool")
-    
+
+    assert shell._UMLShell__diagram.get_class_attributes("classA") == {
+        "length": "size_t",
+        "isValid": "bool",
+    }
+
     shell.onecmd("strip classA length")
     shell.onecmd("strip classA isValid")
-    
+
+    assert not shell._UMLShell__diagram.get_class_attributes("classA")
+
     shell.onecmd("strip classA fakeAttr")
     shell.onecmd("set fakeClass length size_t")
     shell.onecmd("strip fakeClass fakeAttr")
-    
+
 
 def test_rename() -> None:
     shell: __UMLShell = __UMLShell()
