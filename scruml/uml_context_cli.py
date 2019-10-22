@@ -145,9 +145,9 @@ For help with identifiers, type in 'help identifiers'"""
         arg = arg.strip()
         arg_list: List[str] = arg.split(",")
         # Remove bracket from beginning of first argument
-        arg_list[0] = arg_list[0][1:]
+        arg_list[0] = arg_list[0][1:].strip()
         # Remove bracket from end of last argument
-        arg_list[-1] = arg_list[-1][:-1]
+        arg_list[-1] = arg_list[-1][:-1].strip()
         # Get the relationship name
         rel_name: Optional[str] = None if len(arg_list) == 2 else arg_list[2]
 
@@ -316,9 +316,9 @@ For help with identifiers, type in 'help identifiers'"""
         arg = arg.strip()
         arg_list: List[str] = arg.split(",")
         # Remove bracket from beginning of first argument
-        arg_list[0] = arg_list[0][1:]
+        arg_list[0] = arg_list[0][1:].strip()
         # Remove bracket from end of last argument
-        arg_list[-1] = arg_list[-1][:-1]
+        arg_list[-1] = arg_list[-1][:-1].strip()
         # Get the relationship name
         rel_name: Optional[str] = None if len(arg_list) == 2 else arg_list[2]
 
