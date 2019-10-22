@@ -39,43 +39,49 @@ from scruml import uml_filesystem_io
 from scruml.uml_diagram import UMLDiagram
 
 
+# ----------
+# __API
+
 class __API:
     &#34;&#34;&#34;Provides an API to the JavaScript running in the GUI window.
 Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )&#34;&#34;&#34;
 
+    # ----------
+    # Static variables
+
     __diagram: UMLDiagram = UMLDiagram()
+
+    # ----------
+    # getDiagram
 
     def getDiagram(self, params: str) -&gt; Dict[str, Dict[str, Dict[str, str]]]:
         &#34;&#34;&#34;Returns a dictionary containing all diagram information&#34;&#34;&#34;
+
         response: Dict[str, Dict[str, Dict[str, str]]] = {}
 
         # Populate response dictionary with classes
         response[&#34;classes&#34;] = {}
         for class_name in self.__diagram.get_all_class_names():
-            response[&#34;classes&#34;][class_name] = {}
-            class_attributes: Optional[
-                Dict[str, str]
-            ] = self.__diagram.get_class_attributes(class_name)
-            for attribute_name in class_attributes:
-                response[&#34;classes&#34;][class_name][attribute_name] = class_attributes[
-                    attribute_name
-                ]
+            response[&#34;classes&#34;][class_name] = self.__diagram.get_class_attributes(class_name)
 
         # Populate response dictionary with relationships
         response[&#34;relationships&#34;] = {}
         for class_pair in self.__diagram.get_all_relationship_pairs():
             class_pair_string: str = &#34;[&#34; + class_pair[0] + &#34;,&#34; + class_pair[1] + &#34;]&#34;
-            response[&#34;relationships&#34;][class_pair] = {}
+            response[&#34;relationships&#34;][class_pair_string] = {}
             relationships: Dict[
                 str, Dict[str, str]
             ] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
             for relationship_name in relationships:
                 if not relationship_name:
                     relationship_name = &#34;&#34;
-                response[&#34;relationships&#34;][class_pair][relationship_name] = {}
+                response[&#34;relationships&#34;][class_pair_string][relationship_name] = {}
                 # TODO: another for-each, relationship attributes, god DARNIT
 
         return response
+
+    # ----------
+    # __parse_class_identifier
 
     def __parse_class_identifier(self, ident: str) -&gt; Optional[str]:
         &#34;&#34;&#34;Returns valid class identifier on success, or None on failure
@@ -91,10 +97,19 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             return None
         return ident
 
+    # ----------
+    # Diagram file functions
+
+    # ----------
+    # newDiagramFile
+
     def newDiagramFile(self, params: str) -&gt; None:
         &#34;&#34;&#34;Creates a new, blank diagram.&#34;&#34;&#34;
         # TODO: Add a confirmation prompt
         self.__diagram = UMLDiagram()
+
+    # ----------
+    # loadDiagramFile
 
     def loadDiagramFile(self, params: str) -&gt; None:
         &#34;&#34;&#34;Opens a file selector dialog and loads the selected diagram file.&#34;&#34;&#34;
@@ -107,6 +122,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
         )[0]
         # TODO: Add a confirmation prompt
         self.__diagram = uml_filesystem_io.load_diagram(file_path)
+
+    # ----------
+    # saveDiagramFile
 
     def saveDiagramFile(self, params: str) -&gt; None:
         &#34;&#34;&#34;Opens a file save dialog and saves to the specified diagram file.&#34;&#34;&#34;
@@ -121,6 +139,12 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             print(&#34;Diagram successfully saved to &#39;{}&#39;&#34;.format(file_path))
         else:
             print(&#34;Failed to save diagram to &#39;{}&#39;&#34;.format(file_path))
+
+    # ----------
+    # Class functions
+
+    # ----------
+    # addClass
 
     def addClass(self, class_properties: Dict[str, str]) -&gt; str:
         class_name: str = class_properties[&#34;class_name&#34;]
@@ -137,6 +161,21 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
         self.__diagram.set_class_attribute(class_name, &#34;[x]&#34;, x)
         self.__diagram.set_class_attribute(class_name, &#34;[y]&#34;, y)
         return &#34;&#34;
+
+    # ----------
+    # removeClass
+
+    def removeClass(self, class_name: str) -&gt; None:
+        if not self.__diagram.remove_class(
+            class_name
+        ):
+            raise Exception(&#34;Selected class not found in diagram: &#34; + class_name)
+
+    # ----------
+    # Class attribute functions
+
+    # ----------
+    # setClassAttribute
 
     def setClassAttribute(
         self, class_name: str, attribute_name: str, attribute_value: str
@@ -155,6 +194,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             )
         return &#34;&#34;
 
+    # ----------
+    # removeClassAttribute
+
     def removeClassAttribute(self, class_name: str, attribute_name: str) -&gt; None:
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
             return (
@@ -166,6 +208,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             )
         return &#34;&#34;
 
+    # ----------
+    # getClassAttributes
+
     def getClassAttributes(self, class_name: str) -&gt; Dict[str, str]:
         attr_dict: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
             class_name
@@ -174,31 +219,44 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             raise Exception(&#34;Selected class not found in diagram: &#34; + class_name)
         return attr_dict
 
-    def removeClass(self, class_name: str) -&gt; None:
-        if not self.__diagram.remove_class(
-            class_name
-        ):
-            raise Exception(&#34;Selected class not found in diagram: &#34; + class_name)
+    # ----------
+    # Relationship functions
+
+    # ----------
+    # addRelationship
 
     def addRelationship(
-        self, class_name_a: str, class_name_b: str, relationship_name: str
+        self, relationship_properties: Dict[str, str]
     ) -&gt; str:
-        rel_name_arg: Optional[str] = None
-        if len(relationship_name) != 0:
-            rel_name_arg = relationship_name
+
+        class_name_a: str = relationship_properties[&#34;class_name_a&#34;]
+        class_name_b: str = relationship_properties[&#34;class_name_b&#34;]
+        relationship_name: Optional[str] = relationship_properties[&#34;relationship_name&#34;]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_a + &#34; not found in the diagram.&#34;
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_b + &#34; not found in the diagram.&#34;
+
+        if len(relationship_name) == 0:
+            relationship_name = None
+
         if not self.__diagram.add_relationship(
-            class_name_a, class_name_b, rel_name_arg
+            class_name_a, class_name_b, relationship_name
         ):
             return (
-                &#34;Class name(s) not found or relationship already exists: [ &#34;
+                &#34;Relationship already exists: [&#34;
                 + class_name_a
-                + &#34;, &#34;
+                + &#34;,&#34;
                 + class_name_b
-                + &#34;, &#34;
-                + relationship_name
+                + (( &#34;,&#34; + relationship_name ) if relationship_name else &#34;&#34;)
                 + &#34;]&#34;
             )
+
         return &#34;&#34;
+
+    # ----------
+    # removeRelationship
 
     def removeRelationship(
         self, class_name_a: str, class_name_b: str, relationship_name: str
@@ -220,6 +278,14 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             )
         return &#34;&#34;
 
+    # ----------
+    # Relationship attribute functions
+
+    # TODO: Sprint 3
+
+
+# ----------
+# activate
 
 def activate() -&gt; None:
     &#34;&#34;&#34;Activates the GUI context.&#34;&#34;&#34;

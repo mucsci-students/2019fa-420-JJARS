@@ -51,9 +51,13 @@ class __UMLShell(cmd.Cmd):
 
     def __parse_class_identifier(self, ident: str) -&gt; Optional[str]:
         &#34;&#34;&#34;Returns valid class identifier on success, or None on failure
-Valid class identifiers contain no whitespace and are not surrounded by brackets&#34;&#34;&#34;
+Valid class identifiers contain no whitespace, no quotes, and are not surrounded by brackets&#34;&#34;&#34;
         ident = ident.strip()
         if &#34; &#34; in ident:
+            return None
+        if &#39;&#34;&#39; in ident:
+            return None
+        if &#34;&#39;&#34; in ident:
             return None
         if ident.startswith(&#34;[&#34;) and ident.endswith(&#34;]&#34;):
             return None
@@ -128,12 +132,12 @@ Possible values: &#34;class&#34;, &#34;relationship&#34;, None&#34;&#34;&#34;
         )
         print(&#34;Valid identifier types: Classes, Relationships\n&#34;)
         print(&#34;Classes:&#34;)
-        print(&#34;  Class identifiers consist of a single string with no whitespace.&#34;)
+        print(&#34;  Class identifiers consist of a single string with no whitespace or quotes.&#34;)
         print(&#34;  Class identifiers cannot start and end with an opening and&#34;)
         print(&#34;  closing bracket.&#34;)
         print(&#34;Examples:&#34;)
         print(&#39;  Valid: &#34;MyClass&#34;, &#34;--lispObject!&#34;, &#34;class20-ab&#34;&#39;)
-        print(&#39;  Invalid: &#34;[someclass]&#34;, &#34;my class&#34;\n&#39;)
+        print(&#39;  Invalid: &#34;[someclass]&#34;, &#34;my class&#34;, &#34;class\&#39;\&#34;&#34;\n&#39;)
         print(&#34;Relationships:&#34;)
         print(&#34;  Relationship identifiers consist of a bracketed list of&#34;)
         print(&#34;  2-3 valid class identifiers. The first two class identifiers&#34;)

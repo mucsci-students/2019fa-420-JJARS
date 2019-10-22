@@ -227,7 +227,7 @@ function toolbarButtonClicked(element)
 
 function clearSelection()
 {
-    if (selectedElement != null)
+    if (selectedElement != null && document.querySelector("#diagram-canvas .selected"))
         document.querySelector("#diagram-canvas .selected").classList.remove("selected");
     selectedElement = null;
 }

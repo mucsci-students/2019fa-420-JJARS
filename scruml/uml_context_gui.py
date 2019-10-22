@@ -42,7 +42,6 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
         response["relationships"] = {}
         for class_pair in self.__diagram.get_all_relationship_pairs():
             class_pair_string: str = "[" + class_pair[0] + "," + class_pair[1] + "]"
-            print(class_pair_string)
             response["relationships"][class_pair_string] = {}
             relationships: Dict[
                 str, Dict[str, str]

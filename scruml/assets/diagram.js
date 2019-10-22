@@ -42,6 +42,13 @@ class Diagram {
             classElementClicked(this);
         });
 
+        // Hook drag stop event to handler
+        var me = this;
+        element.on("dragend", function(event) {
+            // TODO: Fix relationships on drag
+            // me.update();
+        });
+
     }
 
     // ----------

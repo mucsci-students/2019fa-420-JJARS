@@ -85,7 +85,9 @@ Returns &#39;class_name&#39; on success, or &#39;None&#39; on failure.&#34;&#34;
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
-        self.__relationships = [class_pair for class_pair in self.__relationships if class_name not in class_pair]
+        for class_pair in self.__relationships:
+            if class_name in class_pair:
+                del self.__relationships[class_pair]
 
         return class_name
 
@@ -111,7 +113,10 @@ Returns &#39;new_name&#39; on success or &#39;None&#39; on failure.&#34;&#34;&#3
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
 
         # Update all relationships that refer to this class
-        self.__relationships == [tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair) for class_pair in self.__relationships]
+        for class_pair in self.__relationships:
+            if old_class_name in class_pair:
+                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
+                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
 
         return new_class_name
 
@@ -173,6 +178,21 @@ Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not pre
     # Relationship functions
 
     # ----------
+    # __resolve_class_pair
+
+    def __resolve_class_pair(self, class_name_a: str, class_name_b: str) -&gt; ClassPair:
+        &#34;&#34;&#34;Returns (class_name_b, class_name_a) if that key exists as a pair in the diagram.
+Otherwise, returns (class_name_a, class_name_b).&#34;&#34;&#34;
+
+        class_pair: ClassPair = (class_name_a, class_name_b)
+
+        # If the reverse of the current pair exists already, just use that
+        if (class_name_b, class_name_a) in self.__relationships:
+            class_pair = (class_name_b, class_name_a)
+
+        return class_pair
+
+    # ----------
     # add_relationship
 
     def add_relationship(
@@ -185,17 +205,23 @@ Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not pre
 Fails if a relation between the classes &#39;class_name_a&#39; and &#39;class_name_b&#39; with optional &#39;relationship_name&#39; is already present in the diagram.
 Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        # If the reverse of the current pair exists already, just use that
+        if (class_name_b, class_name_a) in self.__relationships:
+            class_pair = (class_name_b, class_name_a)
 
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or class_pair not in self.__relationships
-            or relationship_name in self.__relationships[class_pair]
+            or (class_pair in self.__relationships and relationship_name in self.__relationships[class_pair])
         ):
             return False
 
-        self.__relationships[class_pair][relationship_name] = AttributeDict()
+        if class_pair not in self.__relationships:
+            self.__relationships[class_pair] = {}
+
+        self.__relationships[class_pair][relationship_name] = {}
 
         return True
 
@@ -212,7 +238,7 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 Fails if a relationship between the classes &#39;class_name_a&#39; and &#39;class_name_b&#39; with optional &#39;relationship_name&#39; is not present in the diagram.
 Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
         if (
             class_name_a not in self.__classes
@@ -237,7 +263,7 @@ Fails if class &#39;class_name_a&#39; or class &#39;class_name_b&#39; is not pre
 Fails if a relationship between &#39;class_name_a&#39; and &#39;class_name_b&#39; does not exist.
 Returns &#39;None&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
         if (
             class_name_a not in self.__classes
@@ -322,7 +348,9 @@ Returns &#39;class_name&#39; on success, or &#39;None&#39; on failure.&#34;&#34;
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
-        self.__relationships = [class_pair for class_pair in self.__relationships if class_name not in class_pair]
+        for class_pair in self.__relationships:
+            if class_name in class_pair:
+                del self.__relationships[class_pair]
 
         return class_name
 
@@ -348,7 +376,10 @@ Returns &#39;new_name&#39; on success or &#39;None&#39; on failure.&#34;&#34;&#3
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
 
         # Update all relationships that refer to this class
-        self.__relationships == [tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair) for class_pair in self.__relationships]
+        for class_pair in self.__relationships:
+            if old_class_name in class_pair:
+                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
+                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
 
         return new_class_name
 
@@ -410,6 +441,21 @@ Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not pre
     # Relationship functions
 
     # ----------
+    # __resolve_class_pair
+
+    def __resolve_class_pair(self, class_name_a: str, class_name_b: str) -&gt; ClassPair:
+        &#34;&#34;&#34;Returns (class_name_b, class_name_a) if that key exists as a pair in the diagram.
+Otherwise, returns (class_name_a, class_name_b).&#34;&#34;&#34;
+
+        class_pair: ClassPair = (class_name_a, class_name_b)
+
+        # If the reverse of the current pair exists already, just use that
+        if (class_name_b, class_name_a) in self.__relationships:
+            class_pair = (class_name_b, class_name_a)
+
+        return class_pair
+
+    # ----------
     # add_relationship
 
     def add_relationship(
@@ -422,17 +468,23 @@ Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not pre
 Fails if a relation between the classes &#39;class_name_a&#39; and &#39;class_name_b&#39; with optional &#39;relationship_name&#39; is already present in the diagram.
 Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        # If the reverse of the current pair exists already, just use that
+        if (class_name_b, class_name_a) in self.__relationships:
+            class_pair = (class_name_b, class_name_a)
 
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or class_pair not in self.__relationships
-            or relationship_name in self.__relationships[class_pair]
+            or (class_pair in self.__relationships and relationship_name in self.__relationships[class_pair])
         ):
             return False
 
-        self.__relationships[class_pair][relationship_name] = AttributeDict()
+        if class_pair not in self.__relationships:
+            self.__relationships[class_pair] = {}
+
+        self.__relationships[class_pair][relationship_name] = {}
 
         return True
 
@@ -449,7 +501,7 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 Fails if a relationship between the classes &#39;class_name_a&#39; and &#39;class_name_b&#39; with optional &#39;relationship_name&#39; is not present in the diagram.
 Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
         if (
             class_name_a not in self.__classes
@@ -474,7 +526,7 @@ Fails if class &#39;class_name_a&#39; or class &#39;class_name_b&#39; is not pre
 Fails if a relationship between &#39;class_name_a&#39; and &#39;class_name_b&#39; does not exist.
 Returns &#39;None&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
         if (
             class_name_a not in self.__classes
@@ -540,17 +592,23 @@ Returns 'True' on success, or 'False' on failure.</p></section>
 Fails if a relation between the classes &#39;class_name_a&#39; and &#39;class_name_b&#39; with optional &#39;relationship_name&#39; is already present in the diagram.
 Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        # If the reverse of the current pair exists already, just use that
+        if (class_name_b, class_name_a) in self.__relationships:
+            class_pair = (class_name_b, class_name_a)
 
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or class_pair not in self.__relationships
-            or relationship_name in self.__relationships[class_pair]
+            or (class_pair in self.__relationships and relationship_name in self.__relationships[class_pair])
         ):
             return False
 
-        self.__relationships[class_pair][relationship_name] = AttributeDict()
+        if class_pair not in self.__relationships:
+            self.__relationships[class_pair] = {}
+
+        self.__relationships[class_pair][relationship_name] = {}
 
         return True</code></pre>
 </details>
@@ -625,7 +683,7 @@ Fails if class &#39;class_name_a&#39; or class &#39;class_name_b&#39; is not pre
 Fails if a relationship between &#39;class_name_a&#39; and &#39;class_name_b&#39; does not exist.
 Returns &#39;None&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
         if (
             class_name_a not in self.__classes
@@ -659,7 +717,9 @@ Returns &#39;class_name&#39; on success, or &#39;None&#39; on failure.&#34;&#34;
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
-        self.__relationships = [class_pair for class_pair in self.__relationships if class_name not in class_pair]
+        for class_pair in self.__relationships:
+            if class_name in class_pair:
+                del self.__relationships[class_pair]
 
         return class_name</code></pre>
 </details>
@@ -716,7 +776,7 @@ Returns 'True' on success, or 'False' on failure.</p></section>
 Fails if a relationship between the classes &#39;class_name_a&#39; and &#39;class_name_b&#39; with optional &#39;relationship_name&#39; is not present in the diagram.
 Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
-        class_pair: ClassPair = (class_name_a, class_name_b)
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
         if (
             class_name_a not in self.__classes
@@ -753,7 +813,10 @@ Returns &#39;new_name&#39; on success or &#39;None&#39; on failure.&#34;&#34;&#3
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
 
         # Update all relationships that refer to this class
-        self.__relationships == [tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair) for class_pair in self.__relationships]
+        for class_pair in self.__relationships:
+            if old_class_name in class_pair:
+                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
+                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
 
         return new_class_name</code></pre>
 </details>
