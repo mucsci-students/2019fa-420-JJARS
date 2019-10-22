@@ -17,7 +17,8 @@ RelationshipDict = Dict[str, AttributeDict]
 # ----------
 # UMLDiagram class
 
-class UMLDiagram():
+
+class UMLDiagram:
     """Interactive model representing a UML diagram containing relationships and classes with attributes."""
 
     # ----------
@@ -89,8 +90,13 @@ Returns 'new_name' on success or 'None' on failure."""
         # Update all relationships that refer to this class
         for class_pair in self.__relationships:
             if old_class_name in class_pair:
-                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
-                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
+                new_class_pair: Tuple[str, str] = tuple(
+                    class_name if class_name != old_class_name else new_class_name
+                    for class_name in class_pair
+                )
+                self.__relationships[new_class_pair] = self.__relationships.pop(
+                    class_pair
+                )
 
         return new_class_name
 
@@ -188,7 +194,10 @@ Returns 'True' on success, or 'False' on failure."""
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or (class_pair in self.__relationships and relationship_name in self.__relationships[class_pair])
+            or (
+                class_pair in self.__relationships
+                and relationship_name in self.__relationships[class_pair]
+            )
         ):
             return False
 

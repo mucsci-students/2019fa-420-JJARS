@@ -106,12 +106,14 @@ Possible values: "class", "relationship", None"""
         )
         print("Valid identifier types: Classes, Relationships\n")
         print("Classes:")
-        print("  Class identifiers consist of a single string with no whitespace or quotes.")
+        print(
+            "  Class identifiers consist of a single string with no whitespace or quotes."
+        )
         print("  Class identifiers cannot start and end with an opening and")
         print("  closing bracket.")
         print("Examples:")
         print('  Valid: "MyClass", "--lispObject!", "class20-ab"')
-        print('  Invalid: "[someclass]", "my class", "class\'\""\n')
+        print('  Invalid: "[someclass]", "my class", "class\'""\n')
         print("Relationships:")
         print("  Relationship identifiers consist of a bracketed list of")
         print("  2-3 valid class identifiers. The first two class identifiers")
