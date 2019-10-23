@@ -6,6 +6,7 @@
    Colors:
    Light -     #FFFFFF | #E5E5E5
    Off-Light - #F2E9E1 | #D9D1CA
+   Mid-Tone -  #EFEFEF | #DDDDDD
    Dark -      #1C140D | #090703
    Accent -    #DBF87B | #A6C050
 */
@@ -80,22 +81,25 @@ main
 {
     cursor: default;
     flex: 1;
-    background: #F2E9E1;
     overflow: scroll;
     max-height: 90%;
+    background-image: url("img/background.png");
 }
 
-#diagram-canvas .uml-class
+#diagram-canvas svg
 {
-    stroke-opacity: 1;
-    stroke-width: 2;
-    stroke: #1C140D;
-    fill: #FFFFFF;
+    background: #F2E9E1;
+    border: #D9D1CA dashed 2px;
 }
 
+
+/* SVG UML Elements */
+
+#diagram-canvas .uml-class,
 #diagram-canvas .uml-relationship
 {
     stroke-opacity: 1;
+    stroke-width: 2;
     stroke: #1C140D;
     fill: #FFFFFF;
 }
@@ -110,6 +114,53 @@ main
     stroke: none;
     fill: #1C140D;
 }
+
+/* SVG Diagram/Element Mode Modifiers */
+
+#diagram-canvas svg.select
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.add
+{
+    cursor: copy;
+}
+
+#diagram-canvas svg.connect
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.remove
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.select svg.uml-class,
+#diagram-canvas svg.select svg.uml-relationship
+{
+    cursor: pointer;
+}
+
+#diagram-canvas svg.add svg.uml-class,
+#diagram-canvas svg.add svg.uml-relationship
+{
+    cursor: copy;
+}
+
+#diagram-canvas svg.connect svg.uml-class,
+#diagram-canvas svg.connect svg.uml-relationship
+{
+    cursor: cell;
+}
+
+#diagram-canvas svg.remove svg.uml-class,
+#diagram-canvas svg.remove svg.uml-relationship
+{
+    cursor: no-drop;
+}
+
 
 /* Properties Panel */
 

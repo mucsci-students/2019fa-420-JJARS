@@ -31,9 +31,9 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )"""
     # Diagram information functions
 
     # ----------
-    # getClassses
+    # getAllClassses
 
-    def getClasses(self, params: str) -> Dict[str, Dict[str, str]]:
+    def getAllClasses(self, params: str) -> Dict[str, Dict[str, str]]:
         """Returns a dictionary containing all class information in the diagram.
 Structure: dictionary[className][attributeName] == attributeValue"""
 
@@ -52,9 +52,9 @@ Structure: dictionary[className][attributeName] == attributeValue"""
         return response
 
     # ----------
-    # getRelationships
+    # getAllRelationships
 
-    def getRelationships(self, params: str) -> Dict[str, Dict[str, Dict[str, str]]]:
+    def getAllRelationships(self, params: str) -> Dict[str, Dict[str, Dict[str, str]]]:
         """Returns a dictionary containing all relationship infromation in the diagram.
 Structure: dictionary[classPair][relationshipName][attributeName] == attributeValue"""
 

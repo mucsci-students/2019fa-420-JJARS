@@ -198,22 +198,27 @@ function tryAddClass(event)
 
 function toolbarButtonClicked(element)
 {
+    diagram.canvas.removeClass("select").removeClass("add").removeClass("connect").removeClass("remove");
     switch (element.id)
     {
         case "toolbar-select":
+        diagram.canvas.addClass("select");
         currentUIState = UI_STATES.SELECT;
         break;
 
         case "toolbar-add":
+        diagram.canvas.addClass("add");
         currentUIState = UI_STATES.ADD;
         break;
 
         case "toolbar-connect":
         clearSelection();
+        diagram.canvas.addClass("connect");
         currentUIState = UI_STATES.CONNECT;
         break;
 
         case "toolbar-remove":
+        diagram.canvas.addClass("remove");
         currentUIState = UI_STATES.REMOVE;
         break;
     }
