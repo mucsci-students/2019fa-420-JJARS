@@ -88,16 +88,32 @@ def test_add_and_remove_relationships() -> None:
     shell.onecmd("add classA")
     shell.onecmd("add classB")
 
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
+
     shell.onecmd("add [classA,classB]")
     shell.onecmd("add [classA,classB,inherits]")
     shell.onecmd("add [classB,classA,extends]")
 
+    assert sorted(shell._UMLShell__diagram.get_all_relationship_pairs()) == [
+        ("classA", "classB"),
+        ("classB", "classA"),
+    ]
+
     shell.onecmd("remove [classA,classB]")
     shell.onecmd("remove [classA,classB,inherits]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
+        ("classB", "classA")
+    ]
+
     shell.onecmd("remove [classB,classA,extends]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 
     shell.onecmd("add [classA,fakeClass]")
     shell.onecmd("remove [fakeClass,classB]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 
 
 def test_set_and_strip_class_attributes() -> None:
@@ -117,7 +133,7 @@ def test_set_and_strip_class_attributes() -> None:
     shell.onecmd("strip classA length")
     shell.onecmd("strip classA isValid")
 
-    assert not shell._UMLShell__diagram.get_class_attributes("classA")
+    assert shell._UMLShell__diagram.get_class_attributes("classA") == {}
 
     shell.onecmd("strip classA fakeAttr")
     shell.onecmd("set fakeClass length size_t")
