@@ -254,23 +254,30 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # removeRelationship
 
     def removeRelationship(
-        self, class_name_a: str, class_name_b: str, relationship_name: str
+        self, relationship_properties: Dict[str, str,]
     ) -> str:
-        rel_name_arg: Optional[str] = None
-        if len(relationship_name) != 0:
-            rel_name_arg = relationship_name
+
+        class_name_a: str = relationship_properties["class_name_a"]
+        class_name_b: str = relationship_properties["class_name_b"]
+        relationship_name: str = relationship_properties["relationship_name"]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return "Class " + class_name_a + " not found in the diagram."
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return "Class " + class_name_b + " not found in the diagram."
+
         if not self.__diagram.remove_relationship(
-            class_name_a, class_name_b, rel_name_arg
+                class_name_a, class_name_b, relationship_name if len(relationship_name) > 0 else None
         ):
             return (
                 "Relationship not found in diagram: [ "
                 + class_name_a
-                + ", "
+                + ","
                 + class_name_b
-                + ", "
-                + relationship_name
+                + (("," + relationship_name) if relationship_name else "")
                 + "]"
             )
+
         return ""
 
     # ----------

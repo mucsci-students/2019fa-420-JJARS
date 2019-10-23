@@ -111,24 +111,24 @@ main
     fill: #1C140D;
 }
 
-/* Properties Panel */
+/* Info Panel */
 
-#properties-panel
+#info-panel
 {
     flex: 0 0 320px;
     padding: 20px;
     border-left: solid 5px #E5E5E5;
 }
-#properties-panel #header
+#info-panel #info-panel-header
 {
     color: #1C140D;
 }
-#properties-panel hr
+#info-panel hr
 {
     border: none;
     border-bottom: solid 2px #A6C050;
 }
-#properties-panel #properties-static-text
+#info-panel .
 {
     font-style: italic;
 }

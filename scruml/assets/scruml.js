@@ -163,6 +163,48 @@ function classElementRemove(element)
 }
 
 
+// ---------
+// UML relationship element click event functions
+
+function relationshipElementClicked(element)
+{
+    switch (currentUIState)
+    {
+        case UI_STATES.SELECT:
+        relationshipElementSelect(element);
+        break;
+
+        case UI_STATES.ADD:
+        break;
+
+        case UI_STATES.CONNECT:
+        break;
+
+        case UI_STATES.REMOVE:
+        relationshipElementRemove(element);
+        break;
+    }
+}
+
+function relationshipElementSelect(element)
+{
+
+    changeSelection(element);
+
+    // TODO: Loop through dictionary. For each key-value pair, append 2 input elements to propertiesList
+
+}
+
+function relationshipElementRemove(element)
+{
+    if (element == selectedElement)
+    {
+        clearSelection();
+    }
+    pywebview.api.removeRelationship(element.id()).then(function() { diagram.update(); });
+}
+
+
 // ----------
 // Diagram canvas class add event function
 
