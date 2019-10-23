@@ -60,9 +60,12 @@ Returns 'class_name' on success, or 'None' on failure."""
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
+        # (We work on a copy to avoid working on a dictionary while iterating over it)
+        new_relationships: Dict[ClassPair, RelationshipDict] = self.__relationships.copy()
         for class_pair in self.__relationships:
             if class_name in class_pair:
-                del self.__relationships[class_pair]
+                del new_relationships[class_pair]
+        self.__relationships = new_relationships
 
         return class_name
 
