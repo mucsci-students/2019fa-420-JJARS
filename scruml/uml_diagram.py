@@ -149,7 +149,7 @@ Returns 'attribute_name' on success, or 'None' on failure."""
     # get_class_attributes
 
     def get_class_attributes(self, class_name: str) -> Optional[AttributeDict]:
-        """Returns a Dict[str, str] containing the attribute names and values of class 'class_name'.
+        """Returns a Dict[str, str] containing the attribute names and values for class 'class_name'.
 Fails and returns 'None' if a class with 'class_name' is not present in the diagram."""
 
         if class_name not in self.__classes:
@@ -236,7 +236,6 @@ Returns 'True' on success, or 'False' on failure."""
 
         del self.__relationships[class_pair][relationship_name]
 
-        print(self.__relationships)
         if self.__relationships[class_pair] == []:
             del self.__relationships[class_pair]
 
