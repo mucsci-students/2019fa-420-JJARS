@@ -172,15 +172,24 @@ function classElementRemove(element)
 function classElementDragged(element)
 {
 
+    // Get element information
+    var class_name = element.id();
+    var new_x = element.x();
+    var new_y = element.y();
+
+    // Ensure non-null property values
+    if (new_x === null) { new_x = 0; }
+    if (new_y === null) { new_y = 0; }
+
     // Update class X, then class Y attributes in the backend model
-    pywebview.api.setClassAttribute({"class_name": element.id(),
+    pywebview.api.setClassAttribute({"class_name": class_name,
                                      "attribute_name": "[x]",
-                                     "attribute_value": element.x(),
+                                     "attribute_value": new_x,
                                      "ignore_naming_rules": "true"
                                     }).then(function classXUpdateThen() {
-                                        pywebview.api.setClassAttribute({"class_name": element.id(),
+                                        pywebview.api.setClassAttribute({"class_name": class_name,
                                                                          "attribute_name": "[y]",
-                                                                         "attribute_value": element.y(),
+                                                                         "attribute_value": new_y,
                                                                          "ignore_naming_rules": "true"
                                                                         });
                                     });

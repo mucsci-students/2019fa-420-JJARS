@@ -17,6 +17,8 @@ RelationshipDict = Dict[Optional[str], AttributeDict]
 # ----------
 # UMLDiagram class
 
+# TODO: Change return types, they are causing issues
+
 
 class UMLDiagram:
     """Interactive model representing a UML diagram containing relationships and classes with attributes."""

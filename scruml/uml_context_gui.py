@@ -225,9 +225,9 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         # Save file and return status message
         if uml_filesystem_io.save_diagram(self.__diagram, file_path):
-            return "Diagram successfully saved to '{}'".format(file_path)
+            return "Diagram successfully saved to: {}".format(file_path)
         else:
-            return "Failed to save diagram to '{}'".format(file_path)
+            return "Failed to save diagram to: {}".format(file_path)
 
     # ----------
     # Class functions
@@ -243,9 +243,9 @@ separated by a comma, and an optional relationship name (also comma separated)""
             return "Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
         if not self.__diagram.add_class(class_properties["class_name"]):
             return (
-                'Class "'
+                "Class "
                 + class_properties["class_name"]
-                + '" already exists in the diagram.'
+                + " already exists in the diagram."
             )
         self.__diagram.set_class_attribute(class_name, "[x]", x)
         self.__diagram.set_class_attribute(class_name, "[y]", y)
@@ -279,11 +279,10 @@ separated by a comma, and an optional relationship name (also comma separated)""
             class_name, attribute_name, attribute_value
         ):
             return (
-                "Class '"
+                "Class "
                 + class_name
-                + "' does not exist in the diagram. Unable to add attribute: '"
+                + " does not exist in the diagram. Unable to add attribute: "
                 + attribute_name
-                + "'"
             )
 
         return ""
@@ -295,11 +294,10 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
             return (
-                "Attribute '"
+                "Attribute "
                 + attribute_name
-                + "' not found in Class '"
+                + " not found in Class: "
                 + class_name
-                + "'"
             )
 
         return ""
