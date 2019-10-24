@@ -4,13 +4,20 @@ import os
 from typing import List
 from typing import Optional
 from typing import Tuple
+from typing import Dict
 
 from scruml import uml_filesystem_io
 from scruml.uml_diagram import UMLDiagram
 
 
+# ----------
+# __UMLShell class
+
 class __UMLShell(cmd.Cmd):
-    """Simple CLI context for interacting with ScrUML"""
+    """Simple CLI context for interacting with ScrUML."""
+
+    # ----------
+    # Static variables
 
     intro: str = "Welcome to ScrUML.\nType in 'help' to receive a list of possible commands."
     doc_header: str = "Commands (type 'help <command>'):"
@@ -18,11 +25,16 @@ class __UMLShell(cmd.Cmd):
     prompt: str = "ScrUML> "
     __diagram: UMLDiagram = UMLDiagram()
 
+    # TODO: Standardize print strings, refactor dispatch functions
+
     # ----------
     # Helper functions
 
+    # ----------
+    # __parse_class_identifier
+
     def __parse_class_identifier(self, ident: str) -> Optional[str]:
-        """Returns valid class identifier on success, or None on failure
+        """Returns valid class identifier on success, or None on failure.
 Valid class identifiers contain no whitespace, no quotes, and are not surrounded by brackets"""
         ident = ident.strip()
         if " " in ident:
@@ -35,12 +47,16 @@ Valid class identifiers contain no whitespace, no quotes, and are not surrounded
             return None
         return ident
 
+    # ----------
+    # __parse_relationship_identifier
+
     def __parse_relationship_identifier(
         self, ident: str
     ) -> Optional[Tuple[str, str, Optional[str]]]:
-        """Returns valid relationship identifier on success, or None on failure
+        """Returns valid relationship identifier on success, or None on failure.
 Valid relationship identifiers are surrounded by brackets, contain two valid class names
-separated by a comma, and an optional relationship name (also comma separated)"""
+separated by a comma, and an optional relationship name (also comma separated)."""
+
         ident = ident.strip()
 
         # Check for start and end brackets and then shear them away
@@ -72,8 +88,23 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         return (str(class_A_name), str(class_B_name), relationship_name)
 
+    # ----------
+    # __stringify_relationship_identifier
+
+    def __stringify_relationship_identifier(self, class_name_a: str, class_name_b: str, relationship_name: Optional[str]) -> str:
+        """Returns a stringified relationship identifier from the provided class names and (optional) relationship name."""
+
+        return "[{},{}{}]".format(
+            class_name_a,
+            class_name_b,
+            "" if not relationship_name else "," + relationship_name
+        )
+
+    # ----------
+    # __classify_identifier
+
     def __classify_identifier(self, ident: str) -> Optional[str]:
-        """Returns a string identifying the kind of identifier that "ident" represents
+        """Returns a string identifying the kind of identifier that "ident" represents.
 Possible values: "class", "relationship", None"""
         if self.__parse_class_identifier(ident):
             return "class"
@@ -83,7 +114,7 @@ Possible values: "class", "relationship", None"""
             return None
 
     def __yes_or_no_prompt(self, question: str) -> bool:
-        """Prompts the user with "question" and waits for a "y/n" answer """
+        """Prompts the user with "question" and waits for a "y/n" answer."""
         while "Waiting for valid reply":
             reply = str(input(question + " [y/n]: ")).lower().strip()
             if reply[:1] == "y":
@@ -96,6 +127,12 @@ Possible values: "class", "relationship", None"""
 
     # ----------
     # "Help" commands
+
+    def emptyline(self) -> bool:
+        """Outputs a help line when the user does not enter a command."""
+        print("Please enter a command.")
+        print("Type in 'help' to receive a list of possible commands.")
+        return False
 
     def help_identifiers(self) -> None:
         """Prints helpful information about identifier formatting."""
@@ -148,39 +185,32 @@ For help with identifiers, type in 'help identifiers'"""
 
     def __add_relationship(self, arg: str) -> None:
         """Adds new relationship if one with that identifier does not already exist"""
-        arg = arg.strip()
-        arg_list: List[str] = arg.split(",")
-        # Remove bracket from beginning of first argument
-        arg_list[0] = arg_list[0][1:].strip()
-        # Remove surrounding whitespace from second class name
-        arg_list[1] = arg_list[1].strip()
-        # Remove bracket from end of last argument
-        arg_list[-1] = arg_list[-1][:-1].strip()
-        # Get the relationship name
-        rel_name: Optional[str] = None if len(arg_list) == 2 else arg_list[2].strip()
+
+        rel_id: Optional[Tuple[str, str, Optional[str]]] = self.__parse_relationship_identifier(arg)
+
+        # TODO: Refactor
+        if rel_id is None:
+            raise Exception()
 
         # Check whether both classes exist
-        isValid: bool = True
         class_list: List[str] = self.__diagram.get_all_class_names()
-        if arg_list[0] not in class_list:
-            print("Class '{}' does not exist in the diagram".format(arg_list[0]))
-            isValid = False
-        if arg_list[1] not in class_list:
-            print("Class '{}' does not exist in the diagram".format(arg_list[1]))
-            isValid = False
-        if not isValid:
+        if rel_id[0] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(rel_id[0]))
+            return
+        if rel_id[1] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(rel_id[1]))
             return
 
-        if not self.__diagram.add_relationship(arg_list[0], arg_list[1], rel_name):
+        if not self.__diagram.add_relationship(rel_id[0], rel_id[1], rel_id[2]):
             print(
-                "Relationship  ['{}','{}','{}'] already exists in the diagram.".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
+                "Relationship {} already exists in the diagram".format(
+                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
                 )
             )
         else:
             print(
-                "Added relationship ['{}','{}','{}'].".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
+                "Added relationship {}".format(
+                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
                 )
             )
 
@@ -198,7 +228,7 @@ Adds or modifies the attribute for the specified class"""
         # Ensure attribute name is valid
         if not self.__parse_class_identifier(args[1]):
             print(
-                "Please provide a valid attribute name (no whitespace and no brackets)."
+                "Please provide a valid attribute name (no whitespace, quotes, or surrounding brackets)."
             )
             return
         identifier_class = self.__classify_identifier(args[0])
@@ -220,7 +250,7 @@ Adds or modifies the attribute for the specified class"""
             print("Class '{}' does not exist in the diagram".format(class_name))
         else:
             print(
-                "Class '{}' now contains attribute '{}' with value '{}'.".format(
+                "Class '{}' now contains attribute '{}' with value '{}'".format(
                     class_name, attribute_name, attribute_value
                 )
             )
@@ -229,6 +259,7 @@ Adds or modifies the attribute for the specified class"""
         self, relationship_ID: str, attribute_name: str, attribute_value: str
     ) -> None:
         """Adds or modifies the attribute with attribute_name for the specified relationship."""
+        # TODO: Relationship attributes, Sprint 3
         print(
             "Sorry! Relationship attributes are coming in a future version of ScrUML."
         )
@@ -247,7 +278,7 @@ Removes the attribute for the specified class"""
         # Ensure attribute name is valid
         if not self.__parse_class_identifier(args[1]):
             print(
-                "Please provide a valid attribute name (no whitespace and no brackets)."
+                "Please provide a valid attribute name (no whitespace, quotes, or surrounding brackets)."
             )
             return
         identifier_class = self.__classify_identifier(args[0])
@@ -266,7 +297,7 @@ Removes the attribute for the specified class"""
             return
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
             print(
-                "Class '{}' does not have an attribute with name '{}'".format(
+                "Class '{}' does not have an attribute with name: '{}'".format(
                     class_name, attribute_name
                 )
             )
@@ -281,6 +312,8 @@ Removes the attribute for the specified class"""
         self, relationship_ID: str, attribute_name: str
     ) -> None:
         """Removes the attribute with attribute_name for the specified relationship."""
+
+        # TODO: Relationship attributes, Sprint 3
         print(
             "Sorry! Relationship attributes are coming in a future version of ScrUML."
         )
@@ -305,6 +338,7 @@ For help with identifiers, type in 'help identifiers'"""
         self, text: str, line: str, begidx: str, endidx: str
     ) -> List[str]:
         """Return potential completions for the "remove" command"""
+        # TODO: Relationship completions
         return [
             name
             for name in self.__diagram.get_all_class_names()
@@ -321,39 +355,32 @@ For help with identifiers, type in 'help identifiers'"""
 
     def __remove_relationship(self, arg: str) -> None:
         """Removes relationship if one with that identifier exists"""
-        arg = arg.strip()
-        arg_list: List[str] = arg.split(",")
-        # Remove bracket from beginning of first argument
-        arg_list[0] = arg_list[0][1:].strip()
-        # Remove surrounding whitespace from second class name
-        arg_list[1] = arg_list[1].strip()
-        # Remove bracket from end of last argument
-        arg_list[-1] = arg_list[-1][:-1].strip()
-        # Get the relationship name
-        rel_name: Optional[str] = None if len(arg_list) == 2 else arg_list[2].strip()
+
+        rel_id: Optional[Tuple[str, str, Optional[str]]] = self.__parse_relationship_identifier(arg)
+
+        # TODO: Refactor
+        if rel_id is None:
+            raise Exception()
 
         # Check whether both classes exist
-        isValid: bool = True
         class_list: List[str] = self.__diagram.get_all_class_names()
-        if arg_list[0] not in class_list:
-            print("Class '{}' does not exist in the diagram".format(arg_list[0]))
-            isValid = False
-        if arg_list[1] not in class_list:
-            print("Class '{}' does not exist in the diagram".format(arg_list[1]))
-            isValid = False
-        if not isValid:
+        if rel_id[0] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(rel_id[0]))
+            return
+        if rel_id[1] not in class_list:
+            print("Class '{}' does not exist in the diagram".format(rel_id[1]))
             return
 
-        if not self.__diagram.remove_relationship(arg_list[0], arg_list[1], rel_name):
+        if not self.__diagram.remove_relationship(rel_id[0], rel_id[1], rel_id[2]):
             print(
-                "Relationship  ['{}','{}','{}'] does not exist in the diagram.".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
+                "Relationship {} does not exist in the diagram".format(
+                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
                 )
             )
         else:
             print(
-                "Relationship  ['{}','{}','{}'] has been removed from the diagram.".format(
-                    arg_list[0], arg_list[1], "" if len(arg_list) == 2 else arg_list[2]
+                "Relationship {} has been removed from the diagram".format(
+                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
                 )
             )
 
@@ -394,6 +421,7 @@ For help with identifiers, type in 'help identifiers"""
         self, text: str, line: str, begidx: str, endidx: str
     ) -> List[str]:
         """Return potential completions for the "rename" command"""
+        # TODO: Relationship completions, split arguments
         return [
             name
             for name in self.__diagram.get_all_class_names()
@@ -411,15 +439,65 @@ For help with identifiers, type in 'help identifiers"""
     # ----------
     # Other functions
 
+    # ----------
+    # do_print
+
     def do_print(self, arg: str) -> None:
         """Usage: print
 Prints all elements present in the current diagram"""
+
         class_names: List[str] = self.__diagram.get_all_class_names()
+
         if not class_names:
-            print("The current diagram is empty")
-        else:
-            print("All classes in the current diagram:")
-            print("\n".join(class_names))
+            print("The current diagram is empty.")
+            return
+
+        print("All classes in the current diagram:")
+
+        for class_name in class_names:
+
+            print(" " + class_name + ":")
+
+            attributes: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(class_name)
+
+            if attributes is None:
+                raise Exception("Fatal: Attributes entry for class '{}' not found.".format(class_name))
+
+            if attributes == {}:
+                print("   No attributes")
+
+            for attribute_name, attribute_value in attributes.items():
+                print("   {} = {}".format(attribute_name, attribute_value))
+
+        relationship_pairs: List[Tuple[str, str]] = self.__diagram.get_all_relationship_pairs()
+
+        print("All relationships in the current diagram:")
+
+        if not relationship_pairs:
+            print(" No relationships")
+
+        for relationship_pair in relationship_pairs:
+
+            relationships: Optional[Dict[Optional[str], Dict[str, str]]] = self.__diagram.get_relationships_between(relationship_pair[0], relationship_pair[1])
+
+            if relationships is None:
+                raise Exception("Fatal: Relationships entry for class pair '[{},{}]'".format(
+                    relationship_pair[0],
+                    relationship_pair[1]
+                ))
+
+            for relationship_name in relationships:
+
+                print(" {} <-> {}{}:".format(
+                    relationship_pair[0],
+                    relationship_pair[1],
+                    "" if relationship_name is None else " (" + relationship_name + ")"))
+
+                # TODO: Relationship attributes, Sprint 3
+                print("   No attributes")
+
+    # ----------
+    # do_save
 
     def do_save(self, arg: str) -> None:
         """Usage: save <file name>
@@ -432,6 +510,9 @@ Saves the current UML diagram to a file"""
             print("Diagram successfully saved to '{}'".format(arg))
         else:
             print("Failed to save diagram to '{}'".format(arg))
+
+    # ----------
+    # do_load
 
     def do_load(self, arg: str) -> None:
         """Usage: load <file name>
@@ -450,6 +531,9 @@ Loads an existing UML diagram from a file"""
         print("Loading diagram from '{}'".format(arg))
         self.__diagram = uml_filesystem_io.load_diagram(arg)
 
+    # ----------
+    # do_exit
+
     def do_exit(self, arg: str) -> bool:
         """Usage: exit
 Exits ScrUML"""
@@ -458,6 +542,9 @@ Exits ScrUML"""
             return True
         return False
 
+
+# ----------
+# activate
 
 def activate() -> None:
     """Activates the CLI context."""
