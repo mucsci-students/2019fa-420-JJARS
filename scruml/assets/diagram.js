@@ -16,7 +16,7 @@ class Diagram {
         if (!canvasID)
             console.error("No canvas ID provided in Diagram constructor.");
         this.canvas = new SVG(canvasID).size(500, 500);
-        this.canvas.mousedown(function(event) {
+        this.canvas.mousedown(function canvasMouseDown(event) {
             tryAddClass(event);
         })
 
@@ -44,12 +44,12 @@ class Diagram {
         }
 
         // Hook element in to click event handler
-        element.mousedown(function() {
+        element.mousedown(function classMouseDown(event) {
             classElementClicked(this);
         });
 
         // Hook drag stop event to handler
-        element.on("dragend", function(event) {
+        element.on("dragend", function classDragEnd(event) {
             classElementDragged(this);
         });
 
@@ -77,7 +77,7 @@ class Diagram {
         connector.id(relationshipID).addClass("uml-relationship");
 
         // Hook element in to click event handler
-        connector.click(function() {
+        connector.mousedown(function relationshipMouseDown() {
             relationshipElementClicked(this);
         });
 
@@ -95,7 +95,7 @@ class Diagram {
         var me = this;
 
         // Set dragging behavior of every UML class
-        this.canvas.each(function(i, children) {
+        this.canvas.each(function setDraggingCanvasEach(i, children) {
             if (this.hasClass("uml-class")) {
 
                 // Enable dragging
@@ -126,17 +126,17 @@ class Diagram {
         var me = this;
 
         // Get the classes in the diagram
-        pywebview.api.getAllClasses().then(function(response) {
+        pywebview.api.getAllClasses().then(function getClasses(response) {
 
             var classes = response;
 
             // Get the relationships in the diagram
-            pywebview.api.getAllRelationships().then(function(response) {
+            pywebview.api.getAllRelationships().then(function getRelationships(response) {
 
                 var relationships = response;
 
                 // Remove elements from the canvas that are no longer in the diagram
-                me.canvas.each(function(i, children) {
+                me.canvas.each(function updateCanvasEach(i, children) {
                     if (!(this.id() in classes) || !(this.id() in relationships))
                     {
                         this.remove();

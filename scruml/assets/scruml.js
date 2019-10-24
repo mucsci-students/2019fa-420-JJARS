@@ -82,18 +82,18 @@ function menubarNewButtonClicked(element)
 {
     if (confirm("Create a new diagram? (Unsaved work will be lost!)"))
     {
-        pywebview.api.newDiagramFile().then(function(){diagram.update();});
+        pywebview.api.newDiagramFile().then(function newFileUpdate(){diagram.update();});
     }
 }
 
 function menubarLoadButtonClicked(element)
 {
-    pywebview.api.loadDiagramFile().then(function(){diagram.update();});
+    pywebview.api.loadDiagramFile().then(function loadFileUpdate(){diagram.update();});
 }
 
 function menubarSaveButtonClicked(element)
 {
-    pywebview.api.saveDiagramFile().then(function(){diagram.update();});
+    pywebview.api.saveDiagramFile().then(function saveFileUpdate(){diagram.update();});
 }
 
 
@@ -150,7 +150,7 @@ function classElementConnect(element)
 
     pywebview.api.addRelationship({"class_name_a": classAName,
                                    "class_name_b": classBName,
-                                   "relationship_name": relationshipName}).then(function(response) {
+                                   "relationship_name": relationshipName}).then(function addRelationshipUpdate(response) {
                                        if (response !== "")
                                        {
                                            alert(response);
@@ -166,7 +166,7 @@ function classElementRemove(element)
     {
         clearSelection();
     }
-    pywebview.api.removeClass(element.id()).then(function() { diagram.update(); });
+    pywebview.api.removeClass(element.id()).then(function removeClassUpdate() { diagram.update(); });
 }
 
 function classElementDragged(element)
@@ -177,7 +177,7 @@ function classElementDragged(element)
                                      "attribute_name": "[x]",
                                      "attribute_value": element.x(),
                                      "ignore_naming_rules": "true"
-                                    }).then(function () {
+                                    }).then(function classXUpdateThen() {
                                         pywebview.api.setClassAttribute({"class_name": element.id(),
                                                                          "attribute_name": "[y]",
                                                                          "attribute_value": element.y(),
@@ -226,7 +226,7 @@ function relationshipElementRemove(element)
     {
         clearSelection();
     }
-    pywebview.api.removeRelationship(element.id()).then(function() { diagram.update(); });
+    pywebview.api.removeRelationship(element.id()).then(function removeRelationshipUpdate() { diagram.update(); });
 }
 
 
@@ -252,7 +252,7 @@ function tryAddClass(event)
 
     pywebview.api.addClass({"class_name": newClassName,
                             "x": x,
-                            "y": y}).then(function(response) {
+                            "y": y}).then(function addClassUpdate(response) {
                                 if (response !== "")
                                 {
                                     alert(response);
@@ -321,7 +321,7 @@ function changeSelection(element)
 // ----------
 // Page initialization
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function contentLoadedInit() {
     setTimeout(function() {
 
         diagram = new Diagram("diagram-canvas");
