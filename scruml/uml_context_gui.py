@@ -4,11 +4,13 @@
 from typing import Dict
 from typing import Optional
 from typing import Tuple
+from typing import List
 from typing import Union
 
 import pkg_resources
 import webview
-from webview import Window
+
+from os import path
 
 from scruml import uml_filesystem_io
 from scruml.uml_diagram import UMLDiagram
@@ -16,7 +18,6 @@ from scruml.uml_diagram import UMLDiagram
 
 # ----------
 # __API
-
 
 class __API:
     """Provides an API to the JavaScript running in the GUI window.
@@ -54,18 +55,14 @@ Structure: dictionary[className][attributeName] == attributeValue"""
     # ----------
     # getAllRelationships
 
-    def getAllRelationships(self, params: str) -> Dict[str, Dict[str, Dict[str, str]]]:
+    def getAllRelationships(self, params: str) -> Dict[str, Dict[str, str]]:
         """Returns a dictionary containing all relationship infromation in the diagram.
 Structure: dictionary[classPair][relationshipName][attributeName] == attributeValue"""
 
-        response: Dict[str, Dict[str, Dict[str, str]]] = {}
+        response: Dict[str, Dict[str, str]] = {}
 
         # Populate response dictionary with relationships
         for class_pair in self.__diagram.get_all_relationship_pairs():
-
-            class_pair_string: str = "[" + class_pair[0] + "," + class_pair[1] + "]"
-
-            response[class_pair_string] = {}
 
             relationships: Optional[Dict[
                 Optional[str], Dict[str, str]
@@ -73,12 +70,20 @@ Structure: dictionary[classPair][relationshipName][attributeName] == attributeVa
 
             if relationships is not None:
                 for relationship_name in relationships:
-                    if not relationship_name:
-                        relationship_name = ""
-                    response[class_pair_string][relationship_name] = {}
+
+                    relationship_id: str = ("["
+                                            + class_pair[0]
+                                            + ","
+                                            + class_pair[1]
+                                            + (("," + relationship_name) if relationship_name else "")
+                                            + "]")
+
+                    response[relationship_id] = {}
+
                     # TODO: Relationship Attributes, Sprint 3
+
             else:
-                raise Exception("Class pair not found in diagram: " + class_pair_string)
+                raise Exception("Class pair not found in diagram: [" + class_pair[0] + "," + class_pair[1] + "]")
 
         return response
 
@@ -147,7 +152,6 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
     def newDiagramFile(self, params: str) -> None:
         """Creates a new, blank diagram."""
-        # TODO: Add a confirmation prompt
         self.__diagram = UMLDiagram()
 
     # ----------
@@ -155,32 +159,75 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
     def loadDiagramFile(self, params: str) -> None:
         """Opens a file selector dialog and loads the selected diagram file."""
+
+        # Define supported file types
         file_types: Tuple[str, str] = (
             "ScrUML Files (*.scruml;*.yaml)",
             "All Filles (*.*)",
         )
-        file_path: str = webview.windows[0].create_file_dialog(
+
+        # Open load file dialog
+        dialog_result: Union[Tuple[str],
+                             str,
+                             None] = webview.windows[0].create_file_dialog(
             webview.OPEN_DIALOG, file_types=file_types
-        )[0]
-        # TODO: Add a confirmation prompt
+        )
+        file_path: str = ""
+
+        # Different platforms do different things here, why????
+        if not dialog_result:
+            return
+        elif isinstance(dialog_result, tuple):
+            file_path = dialog_result[0]
+        elif isinstance(dialog_result, str):
+            file_path = dialog_result
+
+        # Make sure the user selected a file
+        if len(file_path) == 0:
+            return
+
+        # Load the new diagram file
         self.__diagram = uml_filesystem_io.load_diagram(file_path)
 
     # ----------
     # saveDiagramFile
 
-    def saveDiagramFile(self, params: str) -> None:
+    def saveDiagramFile(self, params: str) -> str:
         """Opens a file save dialog and saves to the specified diagram file."""
+
         file_types: Tuple[str, str] = (
             "ScrUML Files (*.scruml;*.yaml)",
             "All Filles (*.*)",
         )
-        file_path: str = webview.windows[0].create_file_dialog(
-            webview.SAVE_DIALOG, file_types=file_types, save_filename="diagram.scruml"
-        )[0]
+
+        # Get OS-specific home path
+        home_path: str = path.abspath("~/")
+
+        # Open save file dialog
+        dialog_result: Union[Tuple[str],
+                             str,
+                             None] = webview.windows[0].create_file_dialog(
+                                 webview.SAVE_DIALOG, file_types=file_types, save_filename="diagram.scruml", directory=home_path
+                             )
+        file_path: str = ""
+
+        # Different platforms do different things here, why????
+        if not dialog_result:
+            return ""
+        elif isinstance(dialog_result, Tuple[str]):
+            file_path = dialog_result[0]
+        elif isinstance(dialog_result, str):
+            file_path = dialog_result
+
+        # Make sure the user selected a file
+        if len(file_path) == 0:
+            return ""
+
+        # Save file and return status message
         if uml_filesystem_io.save_diagram(self.__diagram, file_path):
-            print("Diagram successfully saved to '{}'".format(file_path))
+            return "Diagram successfully saved to '{}'".format(file_path)
         else:
-            print("Failed to save diagram to '{}'".format(file_path))
+            return "Failed to save diagram to '{}'".format(file_path)
 
     # ----------
     # Class functions
@@ -218,26 +265,34 @@ separated by a comma, and an optional relationship name (also comma separated)""
     # setClassAttribute
 
     def setClassAttribute(
-        self, class_name: str, attribute_name: str, attribute_value: str
+        self, class_attribute_properties: Dict[str, str]
     ) -> str:
-        if not self.__parse_class_identifier(attribute_name):
-            return "Attribute name is invalid (cannot contain whitespace nor be surrounded by brackets."
+
+        class_name: str = class_attribute_properties["class_name"]
+        attribute_name: str = class_attribute_properties["attribute_name"]
+        attribute_value: str = class_attribute_properties["attribute_value"]
+
+        if not class_attribute_properties["ignore_naming_rules"] and not self.__parse_class_identifier(attribute_name):
+            return "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+
         if not self.__diagram.set_class_attribute(
             class_name, attribute_name, attribute_value
         ):
             return (
                 "Class '"
                 + class_name
-                + "' does not exist in the diagram. Unable to add Attribute '"
+                + "' does not exist in the diagram. Unable to add attribute: '"
                 + attribute_name
                 + "'"
             )
+
         return ""
 
     # ----------
     # removeClassAttribute
 
     def removeClassAttribute(self, class_name: str, attribute_name: str) -> str:
+
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
             return (
                 "Attribute '"
@@ -246,6 +301,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
                 + class_name
                 + "'"
             )
+
         return ""
 
     # ----------

@@ -143,26 +143,28 @@ main
     cursor: default;
 }
 
-#diagram-canvas svg.select svg.uml-class,
-#diagram-canvas svg.select svg.uml-relationship
+#diagram-canvas svg.select svg.uml-class
+{
+    cursor: grab;
+}
+#diagram-canvas svg.select path.uml-relationship
 {
     cursor: pointer;
 }
 
 #diagram-canvas svg.add svg.uml-class,
-#diagram-canvas svg.add svg.uml-relationship
+#diagram-canvas svg.add path.uml-relationship
 {
     cursor: copy;
 }
 
-#diagram-canvas svg.connect svg.uml-class,
-#diagram-canvas svg.connect svg.uml-relationship
+#diagram-canvas svg.connect svg.uml-class
 {
     cursor: cell;
 }
 
 #diagram-canvas svg.remove svg.uml-class,
-#diagram-canvas svg.remove svg.uml-relationship
+#diagram-canvas svg.remove path.uml-relationship
 {
     cursor: no-drop;
 }

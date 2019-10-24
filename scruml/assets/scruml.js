@@ -80,7 +80,10 @@ document.addEventListener("keyup", handleKeys);
 
 function menubarNewButtonClicked(element)
 {
-    pywebview.api.newDiagramFile().then(function(){diagram.update();});
+    if (confirm("Create a new diagram? (Unsaved work will be lost!)"))
+    {
+        pywebview.api.newDiagramFile().then(function(){diagram.update();});
+    }
 }
 
 function menubarLoadButtonClicked(element)
@@ -141,6 +144,10 @@ function classElementConnect(element)
     clearSelection();
 
     var relationshipName = prompt("Enter the relationship name (leave blank for no name):");
+
+    // If the user hit "cancel", return
+    if (relationshipName == null) return;
+
     pywebview.api.addRelationship({"class_name_a": classAName,
                             "class_name_b": classBName,
                             "relationship_name": relationshipName}).then(function(response) {
@@ -159,7 +166,25 @@ function classElementRemove(element)
     {
         clearSelection();
     }
-    pywebview.api.removeClass(element.id().then(function() { diagram.update(); }));
+    pywebview.api.removeClass(element.id()).then(function() { diagram.update(); });
+}
+
+function classElementDragged(element)
+{
+
+    // Update class X, then class Y attributes in the backend model
+    pywebview.api.setClassAttribute({"class_name": element.id(),
+                                     "attribute_name": "[x]",
+                                     "attribute_value": element.x(),
+                                     "ignore_naming_rules": "true"
+                                    }).then(function () {
+                                        pywebview.api.setClassAttribute({"class_name": element.id(),
+                                                                         "attribute_name": "[y]",
+                                                                         "attribute_value": element.y(),
+                                                                         "ignore_naming_rules": "true"
+                                                                        });
+                                    });
+
 }
 
 
@@ -217,10 +242,13 @@ function tryAddClass(event)
     }
 
     var rect = event.target.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
+    var x = event.clientX - rect.left - (CLASS_WIDTH/2);
+    var y = event.clientY - rect.top - (CLASS_HEIGHT/2);
 
     var newClassName = prompt("Enter the name of the new class:");
+
+    // If the user hit "cancel", return
+    if (newClassName == null) return;
 
     pywebview.api.addClass({"class_name": newClassName,
                             "x": x,
@@ -241,10 +269,12 @@ function tryAddClass(event)
 function toolbarButtonClicked(element)
 {
     diagram.canvas.removeClass("select").removeClass("add").removeClass("connect").removeClass("remove");
+    diagram.setDragging(false);
     switch (element.id)
     {
         case "toolbar-select":
         diagram.canvas.addClass("select");
+        diagram.setDragging(true);
         currentUIState = UI_STATES.SELECT;
         break;
 
@@ -264,7 +294,8 @@ function toolbarButtonClicked(element)
         currentUIState = UI_STATES.REMOVE;
         break;
     }
-    document.querySelector("#toolbar a.selected").classList.remove("selected");
+    if (document.querySelector("#toolbar a.selected"))
+        document.querySelector("#toolbar a.selected").classList.remove("selected");
     element.classList.add("selected");
 }
 
@@ -292,7 +323,11 @@ function changeSelection(element)
 
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
+
         diagram = new Diagram("diagram-canvas");
         diagram.update();
-    }, 100);
+
+        document.getElementById("toolbar-select").click();
+
+    }, 50);
 });
