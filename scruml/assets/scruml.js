@@ -149,14 +149,14 @@ function classElementConnect(element)
     if (relationshipName == null) return;
 
     pywebview.api.addRelationship({"class_name_a": classAName,
-                            "class_name_b": classBName,
-                            "relationship_name": relationshipName}).then(function(response) {
-        if (response !== "")
-        {
-            alert(response);
-        }
-        diagram.update();
-    });
+                                   "class_name_b": classBName,
+                                   "relationship_name": relationshipName}).then(function(response) {
+                                       if (response !== "")
+                                       {
+                                           alert(response);
+                                       }
+                                       diagram.update();
+                                   });
 
 }
 
@@ -253,12 +253,12 @@ function tryAddClass(event)
     pywebview.api.addClass({"class_name": newClassName,
                             "x": x,
                             "y": y}).then(function(response) {
-        if (response !== "")
-        {
-            alert(response);
-        }
-        diagram.update();
-    });
+                                if (response !== "")
+                                {
+                                    alert(response);
+                                }
+                                diagram.update();
+                            });
 
 }
 

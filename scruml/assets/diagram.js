@@ -16,7 +16,7 @@ class Diagram {
         if (!canvasID)
             console.error("No canvas ID provided in Diagram constructor.");
         this.canvas = new SVG(canvasID).size(500, 500);
-        this.canvas.click(function(event) {
+        this.canvas.mousedown(function(event) {
             tryAddClass(event);
         })
 
@@ -44,7 +44,7 @@ class Diagram {
         }
 
         // Hook element in to click event handler
-        element.click(function() {
+        element.mousedown(function() {
             classElementClicked(this);
         });
 
@@ -90,7 +90,7 @@ class Diagram {
 
         // Set global dragging flag
         this.draggingEnabled = enable;
-        console.log("Setting dragging to " + this.draggingEnabled);
+
         // "this" is shadowed by a reference to the element in the "each" loop
         var me = this;
 
