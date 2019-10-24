@@ -48,7 +48,7 @@ class Diagram {
             classElementClicked(this);
         });
 
-        // Hook drag stop event to handler
+        // Hook drag end event to handler
         element.on("dragend", function classDragEnd(event) {
             classElementDragged(this);
         });

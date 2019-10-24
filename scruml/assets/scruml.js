@@ -174,12 +174,8 @@ function classElementDragged(element)
 
     // Get element information
     var class_name = element.id();
-    var new_x = element.x();
-    var new_y = element.y();
-
-    // Ensure non-null property values
-    if (new_x === null) { new_x = 0; }
-    if (new_y === null) { new_y = 0; }
+    var new_x = element.node.attributes.x.nodeValue; // Only reliable way to get coordinates here. Why???
+    var new_y = element.node.attributes.y.nodeValue;
 
     // Update class X, then class Y attributes in the backend model
     pywebview.api.setClassAttribute({"class_name": class_name,
