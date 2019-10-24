@@ -389,14 +389,18 @@ separated by a comma, and an optional relationship name (also comma separated)""
 # activate
 
 
-def activate() -> None:
-    """Activates the GUI context."""
+def activate(enable_debug: bool = False) -> None:
+    """Activates the GUI context.
+If 'enable_debug' is set to 'True', enables the web console."""
 
     api = __API()
     html_file = pkg_resources.resource_filename("scruml", "assets/scruml.html")
+
+    if enable_debug:
+        print("Developer console enabled!")
 
     webview.create_window(
         "ScrUML", html_file, min_size=(640, 480), js_api=api, confirm_close=True
     )
 
-    webview.start(debug=True, gui="cef")
+    webview.start(debug=enable_debug, gui="cef")
