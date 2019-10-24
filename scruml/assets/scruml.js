@@ -159,7 +159,7 @@ function classElementRemove(element)
     {
         clearSelection();
     }
-    pywebview.api.removeClass(element.id()).then(function() { diagram.update(); });
+    pywebview.api.removeClass(element.id().then(function() { diagram.update(); }));
 }
 
 

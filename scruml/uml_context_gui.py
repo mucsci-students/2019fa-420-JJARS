@@ -100,6 +100,46 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
         return ident
 
     # ----------
+    # __parse_relationship_identifier
+
+    def __parse_relationship_identifier(
+        self, ident: str
+    ) -> Optional[Tuple[str, str, Optional[str]]]:
+        """Returns valid relationship identifier on success, or None on failure
+Valid relationship identifiers are surrounded by brackets, contain two valid class names
+separated by a comma, and an optional relationship name (also comma separated)"""
+        ident = ident.strip()
+
+        # Check for start and end brackets and then shear them away
+        if ident.startswith("[") and ident.endswith("]"):
+            ident = ident[1:-1]
+        else:
+            return None
+
+        # Split up the string into a list
+        ident_list: List[str] = ident.split(",")
+
+        # Make sure that there were enough values provided in the identifier
+        if len(ident_list) <= 1 or len(ident_list) >= 4:
+            return None
+
+        # Pull out and validate the two class names that should be in the identifier
+        class_A_name: Optional[str] = self.__parse_class_identifier(ident_list[0])
+        class_B_name: Optional[str] = self.__parse_class_identifier(ident_list[1])
+        if not class_A_name or not class_B_name:
+            return None
+
+        # If a relationship name was provided, pull it out and validate it too
+        # (Relationship names follow the same rules as class names for simplicity)
+        relationship_name: Optional[str] = None
+        if len(ident_list) == 3:
+            relationship_name = self.__parse_class_identifier(ident_list[2])
+            if not relationship_name:
+                return None
+
+        return (str(class_A_name), str(class_B_name), relationship_name)
+
+    # ----------
     # Diagram file functions
 
     # ----------
@@ -253,13 +293,16 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # ----------
     # removeRelationship
 
-    def removeRelationship(
-        self, relationship_properties: Dict[str, str,]
-    ) -> str:
+    def removeRelationship(self, relationship_id: str) -> str:
 
-        class_name_a: str = relationship_properties["class_name_a"]
-        class_name_b: str = relationship_properties["class_name_b"]
-        relationship_name: str = relationship_properties["relationship_name"]
+        relationship_id_tuple: Optional[Tuple[str, str, Optional[str]]] = self.__parse_relationship_identifier(relationship_id)
+
+        if not relationship_id_tuple:
+            raise Exception("Invalid relationship identifier provided: " + relationship_id)
+
+        class_name_a: str = relationship_id_tuple[0]
+        class_name_b: str = relationship_id_tuple[1]
+        relationship_name: Optional[str] = relationship_id_tuple[2]
 
         if not class_name_a in self.__diagram.get_all_class_names():
             return "Class " + class_name_a + " not found in the diagram."
@@ -267,7 +310,7 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             return "Class " + class_name_b + " not found in the diagram."
 
         if not self.__diagram.remove_relationship(
-                class_name_a, class_name_b, relationship_name if len(relationship_name) > 0 else None
+                class_name_a, class_name_b, relationship_name
         ):
             return (
                 "Relationship not found in diagram: [ "

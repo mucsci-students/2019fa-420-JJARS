@@ -66,29 +66,26 @@ class Diagram {
 
     buildRelationshipElement(relationshipID, relationshipAttr) {
 
-        // Remove starting and ending brackets from relationship ID
-        var relationshipID = relationshipID.slice(1, -1);
-
         // Get class names from relationship ID
-        var names = relationshipID.split(",");
+        var names = relationshipID.slice(1, -1).split(",");
         var classNameA = names[0];
         var classNameB = names[1];
 
         // Build element on the canvas
-        var element = this.canvas.nested().id(relationshipID).addClass("uml-relationship");
+//        var element = this.canvas.nested().id(relationshipID).addClass("uml-relationship");
 
         // Draw line on the canvas
         var classAElem = SVG.get(classNameA);
         var classBElem = SVG.get(classNameB);
-        classAElem.connectable({"sourceAttach": "perifery",
-                                "targetAttach": "perifery",
-                                "type": "curved"},
-                               classBElem);
-        // element.line(classAElem.x() + (CLASS_WIDTH/2), classAElem.y() + (CLASS_HEIGHT/2),
-        //              classBElem.x() + (CLASS_WIDTH/2), classBElem.y() + (CLASS_HEIGHT/2));
+        var connector = classAElem.connectable({"sourceAttach": "perifery",
+                                                "targetAttach": "perifery",
+                                                "type": "curved"},
+                                               classBElem).connector;
+
+        connector.id(relationshipID).addClass("uml-relationship");
 
         // Hook element in to click event handler
-        element.click(function() {
+        connector.click(function() {
             relationshipElementClicked(this);
         });
 
@@ -105,13 +102,11 @@ class Diagram {
         // Get the classes in the diagram
         pywebview.api.getAllClasses().then(function(response) {
 
-            console.log(response);
             var classes = response;
 
             // Get the relationships in the diagram
             pywebview.api.getAllRelationships().then(function(response) {
 
-                console.log(response);
                 var relationships = response;
 
                 console.log(classes);

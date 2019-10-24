@@ -98,10 +98,15 @@ main
 #diagram-canvas .uml-class,
 #diagram-canvas .uml-relationship
 {
-    stroke-opacity: 1;
     stroke-width: 2;
     stroke: #1C140D;
-    fill: #FFFFFF;
+    fill: #FFF;
+    fill-opacity: 0;
+}
+
+#diagram-canvas .uml-class
+{
+    fill-opacity: 1;
 }
 
 #diagram-canvas .selected
