@@ -214,7 +214,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
         # Different platforms do different things here, why????
         if not dialog_result:
             return ""
-        elif isinstance(dialog_result, Tuple[str]):
+        elif isinstance(dialog_result, tuple):
             file_path = dialog_result[0]
         elif isinstance(dialog_result, str):
             file_path = dialog_result
