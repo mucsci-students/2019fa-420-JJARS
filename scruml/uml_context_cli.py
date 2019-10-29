@@ -1,10 +1,10 @@
 # ScruML uml_context_cli.py Team JJARS
 import cmd
 import os
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import Dict
 
 from scruml import uml_filesystem_io
 from scruml.uml_diagram import UMLDiagram
@@ -12,6 +12,7 @@ from scruml.uml_diagram import UMLDiagram
 
 # ----------
 # __UMLShell class
+
 
 class __UMLShell(cmd.Cmd):
     """Simple CLI context for interacting with ScrUML."""
@@ -91,13 +92,15 @@ separated by a comma, and an optional relationship name (also comma separated)."
     # ----------
     # __stringify_relationship_identifier
 
-    def __stringify_relationship_identifier(self, class_name_a: str, class_name_b: str, relationship_name: Optional[str]) -> str:
+    def __stringify_relationship_identifier(
+        self, class_name_a: str, class_name_b: str, relationship_name: Optional[str]
+    ) -> str:
         """Returns a stringified relationship identifier from the provided class names and (optional) relationship name."""
 
         return "[{},{}{}]".format(
             class_name_a,
             class_name_b,
-            "" if not relationship_name else "," + relationship_name
+            "" if not relationship_name else "," + relationship_name,
         )
 
     # ----------
@@ -186,7 +189,9 @@ For help with identifiers, type in 'help identifiers'"""
     def __add_relationship(self, arg: str) -> None:
         """Adds new relationship if one with that identifier does not already exist"""
 
-        rel_id: Optional[Tuple[str, str, Optional[str]]] = self.__parse_relationship_identifier(arg)
+        rel_id: Optional[
+            Tuple[str, str, Optional[str]]
+        ] = self.__parse_relationship_identifier(arg)
 
         # TODO: Refactor
         if rel_id is None:
@@ -204,13 +209,17 @@ For help with identifiers, type in 'help identifiers'"""
         if not self.__diagram.add_relationship(rel_id[0], rel_id[1], rel_id[2]):
             print(
                 "Relationship {} already exists in the diagram".format(
-                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
+                    self.__stringify_relationship_identifier(
+                        rel_id[0], rel_id[1], rel_id[2]
+                    )
                 )
             )
         else:
             print(
                 "Added relationship {}".format(
-                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
+                    self.__stringify_relationship_identifier(
+                        rel_id[0], rel_id[1], rel_id[2]
+                    )
                 )
             )
 
@@ -356,7 +365,9 @@ For help with identifiers, type in 'help identifiers'"""
     def __remove_relationship(self, arg: str) -> None:
         """Removes relationship if one with that identifier exists"""
 
-        rel_id: Optional[Tuple[str, str, Optional[str]]] = self.__parse_relationship_identifier(arg)
+        rel_id: Optional[
+            Tuple[str, str, Optional[str]]
+        ] = self.__parse_relationship_identifier(arg)
 
         # TODO: Refactor
         if rel_id is None:
@@ -374,13 +385,17 @@ For help with identifiers, type in 'help identifiers'"""
         if not self.__diagram.remove_relationship(rel_id[0], rel_id[1], rel_id[2]):
             print(
                 "Relationship {} does not exist in the diagram".format(
-                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
+                    self.__stringify_relationship_identifier(
+                        rel_id[0], rel_id[1], rel_id[2]
+                    )
                 )
             )
         else:
             print(
                 "Relationship {} has been removed from the diagram".format(
-                    self.__stringify_relationship_identifier(rel_id[0], rel_id[1], rel_id[2])
+                    self.__stringify_relationship_identifier(
+                        rel_id[0], rel_id[1], rel_id[2]
+                    )
                 )
             )
 
@@ -458,10 +473,16 @@ Prints all elements present in the current diagram"""
 
             print(" " + class_name + ":")
 
-            attributes: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(class_name)
+            attributes: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
+                class_name
+            )
 
             if attributes is None:
-                raise Exception("Fatal: Attributes entry for class '{}' not found.".format(class_name))
+                raise Exception(
+                    "Fatal: Attributes entry for class '{}' not found.".format(
+                        class_name
+                    )
+                )
 
             if attributes == {}:
                 print("   No attributes")
@@ -469,7 +490,9 @@ Prints all elements present in the current diagram"""
             for attribute_name, attribute_value in attributes.items():
                 print("   {} = {}".format(attribute_name, attribute_value))
 
-        relationship_pairs: List[Tuple[str, str]] = self.__diagram.get_all_relationship_pairs()
+        relationship_pairs: List[
+            Tuple[str, str]
+        ] = self.__diagram.get_all_relationship_pairs()
 
         print("All relationships in the current diagram:")
 
@@ -478,20 +501,30 @@ Prints all elements present in the current diagram"""
 
         for relationship_pair in relationship_pairs:
 
-            relationships: Optional[Dict[Optional[str], Dict[str, str]]] = self.__diagram.get_relationships_between(relationship_pair[0], relationship_pair[1])
+            relationships: Optional[
+                Dict[Optional[str], Dict[str, str]]
+            ] = self.__diagram.get_relationships_between(
+                relationship_pair[0], relationship_pair[1]
+            )
 
             if relationships is None:
-                raise Exception("Fatal: Relationships entry for class pair '[{},{}]'".format(
-                    relationship_pair[0],
-                    relationship_pair[1]
-                ))
+                raise Exception(
+                    "Fatal: Relationships entry for class pair '[{},{}]'".format(
+                        relationship_pair[0], relationship_pair[1]
+                    )
+                )
 
             for relationship_name in relationships:
 
-                print(" {} <-> {}{}:".format(
-                    relationship_pair[0],
-                    relationship_pair[1],
-                    "" if relationship_name is None else " (" + relationship_name + ")"))
+                print(
+                    " {} <-> {}{}:".format(
+                        relationship_pair[0],
+                        relationship_pair[1],
+                        ""
+                        if relationship_name is None
+                        else " (" + relationship_name + ")",
+                    )
+                )
 
                 # TODO: Relationship attributes, Sprint 3
                 print("   No attributes")
@@ -545,6 +578,7 @@ Exits ScrUML"""
 
 # ----------
 # activate
+
 
 def activate() -> None:
     """Activates the CLI context."""

@@ -63,7 +63,9 @@ Returns 'class_name' on success, or 'None' on failure."""
 
         # Remove all relationships that refer to this class
         # (We work on a copy to avoid working on a dictionary while iterating over it)
-        new_relationships: Dict[ClassPair, RelationshipDict] = self.__relationships.copy()
+        new_relationships: Dict[
+            ClassPair, RelationshipDict
+        ] = self.__relationships.copy()
         for class_pair in self.__relationships:
             if class_name in class_pair:
                 del new_relationships[class_pair]
@@ -96,8 +98,12 @@ Returns 'new_name' on success or 'None' on failure."""
         for class_pair in self.__relationships:
             if old_class_name in class_pair:
                 new_class_pair: Tuple[str, str] = (
-                    class_pair[0] if class_pair[0] != old_class_name else new_class_name,
-                    class_pair[1] if class_pair[1] != old_class_name else new_class_name
+                    class_pair[0]
+                    if class_pair[0] != old_class_name
+                    else new_class_name,
+                    class_pair[1]
+                    if class_pair[1] != old_class_name
+                    else new_class_name,
                 )
                 self.__relationships[new_class_pair] = self.__relationships.pop(
                     class_pair

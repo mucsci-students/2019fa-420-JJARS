@@ -2,10 +2,9 @@
 # __init__.py
 # Team JJARS
 import sys
-from typing import List
-
 from argparse import ArgumentParser
 from argparse import Namespace
+from typing import List
 
 from scruml import uml_context_cli
 from scruml import uml_context_gui
@@ -14,14 +13,23 @@ from scruml import uml_context_gui
 # ----------
 # main
 
+
 def main(argv: List[str] = sys.argv) -> None:
     """Act as primary entry point for the program."""
 
     arg_parser: ArgumentParser = ArgumentParser()
 
-    arg_parser.add_argument("--cli", action='store_true', help="run ScrUML in command line interface mode")
-    arg_parser.add_argument("--gui", action='store_true', help="run ScrUML in graphical user interface mode (default behavior)")
-    arg_parser.add_argument("--debug", action='store_true', help="enable the developer console (GUI only)")
+    arg_parser.add_argument(
+        "--cli", action="store_true", help="run ScrUML in command line interface mode"
+    )
+    arg_parser.add_argument(
+        "--gui",
+        action="store_true",
+        help="run ScrUML in graphical user interface mode (default behavior)",
+    )
+    arg_parser.add_argument(
+        "--debug", action="store_true", help="enable the developer console (GUI only)"
+    )
 
     args: Namespace = arg_parser.parse_args()
 

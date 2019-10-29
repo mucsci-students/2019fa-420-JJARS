@@ -1,16 +1,15 @@
 # ScrUML
 # uml_context_gui.py
 # Team JJARS
+from os import path
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import List
 from typing import Union
 
 import pkg_resources
 import webview
-
-from os import path
 
 from scruml import uml_filesystem_io
 from scruml.uml_diagram import UMLDiagram
@@ -18,6 +17,7 @@ from scruml.uml_diagram import UMLDiagram
 
 # ----------
 # __API
+
 
 class __API:
     """Provides an API to the JavaScript running in the GUI window.
@@ -43,7 +43,9 @@ Structure: dictionary[className][attributeName] == attributeValue"""
         # Populate response dictionary with classes
         for class_name in self.__diagram.get_all_class_names():
 
-            class_attributes: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(class_name)
+            class_attributes: Optional[
+                Dict[str, str]
+            ] = self.__diagram.get_class_attributes(class_name)
 
             if class_attributes is not None:
                 response[class_name] = class_attributes
@@ -64,26 +66,34 @@ Structure: dictionary[classPair][relationshipName][attributeName] == attributeVa
         # Populate response dictionary with relationships
         for class_pair in self.__diagram.get_all_relationship_pairs():
 
-            relationships: Optional[Dict[
-                Optional[str], Dict[str, str]
-            ]] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
+            relationships: Optional[
+                Dict[Optional[str], Dict[str, str]]
+            ] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
 
             if relationships is not None:
                 for relationship_name in relationships:
 
-                    relationship_id: str = ("["
-                                            + class_pair[0]
-                                            + ","
-                                            + class_pair[1]
-                                            + (("," + relationship_name) if relationship_name else "")
-                                            + "]")
+                    relationship_id: str = (
+                        "["
+                        + class_pair[0]
+                        + ","
+                        + class_pair[1]
+                        + (("," + relationship_name) if relationship_name else "")
+                        + "]"
+                    )
 
                     response[relationship_id] = {}
 
                     # TODO: Relationship Attributes, Sprint 3
 
             else:
-                raise Exception("Class pair not found in diagram: [" + class_pair[0] + "," + class_pair[1] + "]")
+                raise Exception(
+                    "Class pair not found in diagram: ["
+                    + class_pair[0]
+                    + ","
+                    + class_pair[1]
+                    + "]"
+                )
 
         return response
 
@@ -167,11 +177,9 @@ separated by a comma, and an optional relationship name (also comma separated)""
         )
 
         # Open load file dialog
-        dialog_result: Union[Tuple[str],
-                             str,
-                             None] = webview.windows[0].create_file_dialog(
-            webview.OPEN_DIALOG, file_types=file_types
-        )
+        dialog_result: Union[Tuple[str], str, None] = webview.windows[
+            0
+        ].create_file_dialog(webview.OPEN_DIALOG, file_types=file_types)
         file_path: str = ""
 
         # Different platforms do different things here, why????
@@ -204,11 +212,14 @@ separated by a comma, and an optional relationship name (also comma separated)""
         home_path: str = path.abspath("~/")
 
         # Open save file dialog
-        dialog_result: Union[Tuple[str],
-                             str,
-                             None] = webview.windows[0].create_file_dialog(
-                                 webview.SAVE_DIALOG, file_types=file_types, save_filename="diagram.scruml", directory=home_path
-                             )
+        dialog_result: Union[Tuple[str], str, None] = webview.windows[
+            0
+        ].create_file_dialog(
+            webview.SAVE_DIALOG,
+            file_types=file_types,
+            save_filename="diagram.scruml",
+            directory=home_path,
+        )
         file_path: str = ""
 
         # Different platforms do different things here, why????
@@ -264,15 +275,15 @@ separated by a comma, and an optional relationship name (also comma separated)""
     # ----------
     # setClassAttribute
 
-    def setClassAttribute(
-        self, class_attribute_properties: Dict[str, str]
-    ) -> str:
+    def setClassAttribute(self, class_attribute_properties: Dict[str, str]) -> str:
 
         class_name: str = class_attribute_properties["class_name"]
         attribute_name: str = class_attribute_properties["attribute_name"]
         attribute_value: str = class_attribute_properties["attribute_value"]
 
-        if not class_attribute_properties["ignore_naming_rules"] and not self.__parse_class_identifier(attribute_name):
+        if not class_attribute_properties[
+            "ignore_naming_rules"
+        ] and not self.__parse_class_identifier(attribute_name):
             return "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
 
         if not self.__diagram.set_class_attribute(
@@ -293,12 +304,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
     def removeClassAttribute(self, class_name: str, attribute_name: str) -> str:
 
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
-            return (
-                "Attribute "
-                + attribute_name
-                + " not found in Class: "
-                + class_name
-            )
+            return "Attribute " + attribute_name + " not found in Class: " + class_name
 
         return ""
 
@@ -331,7 +337,9 @@ separated by a comma, and an optional relationship name (also comma separated)""
             return "Class " + class_name_b + " not found in the diagram."
 
         if not self.__diagram.add_relationship(
-            class_name_a, class_name_b, relationship_name if len(relationship_name) > 0 else None
+            class_name_a,
+            class_name_b,
+            relationship_name if len(relationship_name) > 0 else None,
         ):
             return (
                 "Relationship already exists: ["
@@ -349,10 +357,14 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
     def removeRelationship(self, relationship_id: str) -> str:
 
-        relationship_id_tuple: Optional[Tuple[str, str, Optional[str]]] = self.__parse_relationship_identifier(relationship_id)
+        relationship_id_tuple: Optional[
+            Tuple[str, str, Optional[str]]
+        ] = self.__parse_relationship_identifier(relationship_id)
 
         if not relationship_id_tuple:
-            raise Exception("Invalid relationship identifier provided: " + relationship_id)
+            raise Exception(
+                "Invalid relationship identifier provided: " + relationship_id
+            )
 
         class_name_a: str = relationship_id_tuple[0]
         class_name_b: str = relationship_id_tuple[1]
@@ -364,7 +376,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
             return "Class " + class_name_b + " not found in the diagram."
 
         if not self.__diagram.remove_relationship(
-                class_name_a, class_name_b, relationship_name
+            class_name_a, class_name_b, relationship_name
         ):
             return (
                 "Relationship not found in diagram: [ "
