@@ -94,19 +94,18 @@ def test_add_and_remove_relationships() -> None:
     shell.onecmd("add [classA,classB,inherits]")
     shell.onecmd("add [classB,classA,extends]")
 
-    assert sorted(shell._UMLShell__diagram.get_all_relationship_pairs()) == [
-        ("classA", "classB"),
-        ("classB", "classA"),
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
+        ("classA", "classB")
     ]
 
     shell.onecmd("remove [classA,classB]")
     shell.onecmd("remove [classA,classB,inherits]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
-        ("classB", "classA")
+        ("classA", "classB")
     ]
 
-    shell.onecmd("remove [classB,classA,extends]")
+    shell.onecmd("remove [classA,classB,extends]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 

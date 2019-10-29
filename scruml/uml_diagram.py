@@ -244,7 +244,7 @@ Returns 'True' on success, or 'False' on failure."""
 
         del self.__relationships[class_pair][relationship_name]
 
-        if self.__relationships[class_pair] == []:
+        if self.__relationships[class_pair] == {}:
             del self.__relationships[class_pair]
 
         return True
