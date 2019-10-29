@@ -38,12 +38,15 @@ import yaml
 ClassPair = Tuple[str, str]
 
 AttributeDict = Dict[str, str]
-RelationshipDict = Dict[str, AttributeDict]
+RelationshipDict = Dict[Optional[str], AttributeDict]
 
 # ----------
 # UMLDiagram class
 
-class UMLDiagram():
+# TODO: Change return types, they are causing issues
+
+
+class UMLDiagram:
     &#34;&#34;&#34;Interactive model representing a UML diagram containing relationships and classes with attributes.&#34;&#34;&#34;
 
     # ----------
@@ -85,9 +88,14 @@ Returns &#39;class_name&#39; on success, or &#39;None&#39; on failure.&#34;&#34;
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
+        # (We work on a copy to avoid working on a dictionary while iterating over it)
+        new_relationships: Dict[
+            ClassPair, RelationshipDict
+        ] = self.__relationships.copy()
         for class_pair in self.__relationships:
             if class_name in class_pair:
-                del self.__relationships[class_pair]
+                del new_relationships[class_pair]
+        self.__relationships = new_relationships
 
         return class_name
 
@@ -115,8 +123,17 @@ Returns &#39;new_name&#39; on success or &#39;None&#39; on failure.&#34;&#34;&#3
         # Update all relationships that refer to this class
         for class_pair in self.__relationships:
             if old_class_name in class_pair:
-                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
-                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
+                new_class_pair: Tuple[str, str] = (
+                    class_pair[0]
+                    if class_pair[0] != old_class_name
+                    else new_class_name,
+                    class_pair[1]
+                    if class_pair[1] != old_class_name
+                    else new_class_name,
+                )
+                self.__relationships[new_class_pair] = self.__relationships.pop(
+                    class_pair
+                )
 
         return new_class_name
 
@@ -166,7 +183,7 @@ Returns &#39;attribute_name&#39; on success, or &#39;None&#39; on failure.&#34;&
     # get_class_attributes
 
     def get_class_attributes(self, class_name: str) -&gt; Optional[AttributeDict]:
-        &#34;&#34;&#34;Returns a Dict[str, str] containing the attribute names and values of class &#39;class_name&#39;.
+        &#34;&#34;&#34;Returns a Dict[str, str] containing the attribute names and values for class &#39;class_name&#39;.
 Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not present in the diagram.&#34;&#34;&#34;
 
         if class_name not in self.__classes:
@@ -214,7 +231,10 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or (class_pair in self.__relationships and relationship_name in self.__relationships[class_pair])
+            or (
+                class_pair in self.__relationships
+                and relationship_name in self.__relationships[class_pair]
+            )
         ):
             return False
 
@@ -250,6 +270,9 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
         del self.__relationships[class_pair][relationship_name]
 
+        if self.__relationships[class_pair] == {}:
+            del self.__relationships[class_pair]
+
         return True
 
     # ----------
@@ -258,7 +281,7 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
     def get_relationships_between(
         self, class_name_a: str, class_name_b: str
     ) -&gt; Optional[RelationshipDict]:
-        &#34;&#34;&#34;Returns a Dict[str, Dict[str, str]] containing every relationship (with attributes) between &#39;class_name_a&#39; and &#39;class_name_b&#39;.
+        &#34;&#34;&#34;Returns a Dict[Optional[str], Dict[str, str]] containing every relationship (with attributes) between &#39;class_name_a&#39; and &#39;class_name_b&#39;.
 Fails if class &#39;class_name_a&#39; or class &#39;class_name_b&#39; is not present in the diagram.
 Fails if a relationship between &#39;class_name_a&#39; and &#39;class_name_b&#39; does not exist.
 Returns &#39;None&#39; on failure.&#34;&#34;&#34;
@@ -306,7 +329,7 @@ Returns &#39;None&#39; on failure.&#34;&#34;&#34;
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class UMLDiagram():
+<pre><code class="python">class UMLDiagram:
     &#34;&#34;&#34;Interactive model representing a UML diagram containing relationships and classes with attributes.&#34;&#34;&#34;
 
     # ----------
@@ -348,9 +371,14 @@ Returns &#39;class_name&#39; on success, or &#39;None&#39; on failure.&#34;&#34;
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
+        # (We work on a copy to avoid working on a dictionary while iterating over it)
+        new_relationships: Dict[
+            ClassPair, RelationshipDict
+        ] = self.__relationships.copy()
         for class_pair in self.__relationships:
             if class_name in class_pair:
-                del self.__relationships[class_pair]
+                del new_relationships[class_pair]
+        self.__relationships = new_relationships
 
         return class_name
 
@@ -378,8 +406,17 @@ Returns &#39;new_name&#39; on success or &#39;None&#39; on failure.&#34;&#34;&#3
         # Update all relationships that refer to this class
         for class_pair in self.__relationships:
             if old_class_name in class_pair:
-                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
-                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
+                new_class_pair: Tuple[str, str] = (
+                    class_pair[0]
+                    if class_pair[0] != old_class_name
+                    else new_class_name,
+                    class_pair[1]
+                    if class_pair[1] != old_class_name
+                    else new_class_name,
+                )
+                self.__relationships[new_class_pair] = self.__relationships.pop(
+                    class_pair
+                )
 
         return new_class_name
 
@@ -429,7 +466,7 @@ Returns &#39;attribute_name&#39; on success, or &#39;None&#39; on failure.&#34;&
     # get_class_attributes
 
     def get_class_attributes(self, class_name: str) -&gt; Optional[AttributeDict]:
-        &#34;&#34;&#34;Returns a Dict[str, str] containing the attribute names and values of class &#39;class_name&#39;.
+        &#34;&#34;&#34;Returns a Dict[str, str] containing the attribute names and values for class &#39;class_name&#39;.
 Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not present in the diagram.&#34;&#34;&#34;
 
         if class_name not in self.__classes:
@@ -477,7 +514,10 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or (class_pair in self.__relationships and relationship_name in self.__relationships[class_pair])
+            or (
+                class_pair in self.__relationships
+                and relationship_name in self.__relationships[class_pair]
+            )
         ):
             return False
 
@@ -513,6 +553,9 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
         del self.__relationships[class_pair][relationship_name]
 
+        if self.__relationships[class_pair] == {}:
+            del self.__relationships[class_pair]
+
         return True
 
     # ----------
@@ -521,7 +564,7 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
     def get_relationships_between(
         self, class_name_a: str, class_name_b: str
     ) -&gt; Optional[RelationshipDict]:
-        &#34;&#34;&#34;Returns a Dict[str, Dict[str, str]] containing every relationship (with attributes) between &#39;class_name_a&#39; and &#39;class_name_b&#39;.
+        &#34;&#34;&#34;Returns a Dict[Optional[str], Dict[str, str]] containing every relationship (with attributes) between &#39;class_name_a&#39; and &#39;class_name_b&#39;.
 Fails if class &#39;class_name_a&#39; or class &#39;class_name_b&#39; is not present in the diagram.
 Fails if a relationship between &#39;class_name_a&#39; and &#39;class_name_b&#39; does not exist.
 Returns &#39;None&#39; on failure.&#34;&#34;&#34;
@@ -601,7 +644,10 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or (class_pair in self.__relationships and relationship_name in self.__relationships[class_pair])
+            or (
+                class_pair in self.__relationships
+                and relationship_name in self.__relationships[class_pair]
+            )
         ):
             return False
 
@@ -647,14 +693,14 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 <span>def <span class="ident">get_class_attributes</span></span>(<span>self, class_name: str) -> Union[Dict[str, str], NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Returns a Dict[str, str] containing the attribute names and values of class 'class_name'.
+<section class="desc"><p>Returns a Dict[str, str] containing the attribute names and values for class 'class_name'.
 Fails and returns 'None' if a class with 'class_name' is not present in the diagram.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">    def get_class_attributes(self, class_name: str) -&gt; Optional[AttributeDict]:
-        &#34;&#34;&#34;Returns a Dict[str, str] containing the attribute names and values of class &#39;class_name&#39;.
+        &#34;&#34;&#34;Returns a Dict[str, str] containing the attribute names and values for class &#39;class_name&#39;.
 Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not present in the diagram.&#34;&#34;&#34;
 
         if class_name not in self.__classes:
@@ -664,10 +710,10 @@ Fails and returns &#39;None&#39; if a class with &#39;class_name&#39; is not pre
 </details>
 </dd>
 <dt id="scruml.uml_diagram.UMLDiagram.get_relationships_between"><code class="name flex">
-<span>def <span class="ident">get_relationships_between</span></span>(<span>self, class_name_a: str, class_name_b: str) -> Union[Dict[str, Dict[str, str]], NoneType]</span>
+<span>def <span class="ident">get_relationships_between</span></span>(<span>self, class_name_a: str, class_name_b: str) -> Union[Dict[Union[str, NoneType], Dict[str, str]], NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Returns a Dict[str, Dict[str, str]] containing every relationship (with attributes) between 'class_name_a' and 'class_name_b'.
+<section class="desc"><p>Returns a Dict[Optional[str], Dict[str, str]] containing every relationship (with attributes) between 'class_name_a' and 'class_name_b'.
 Fails if class 'class_name_a' or class 'class_name_b' is not present in the diagram.
 Fails if a relationship between 'class_name_a' and 'class_name_b' does not exist.
 Returns 'None' on failure.</p></section>
@@ -678,7 +724,7 @@ Returns 'None' on failure.</p></section>
 <pre><code class="python">    def get_relationships_between(
         self, class_name_a: str, class_name_b: str
     ) -&gt; Optional[RelationshipDict]:
-        &#34;&#34;&#34;Returns a Dict[str, Dict[str, str]] containing every relationship (with attributes) between &#39;class_name_a&#39; and &#39;class_name_b&#39;.
+        &#34;&#34;&#34;Returns a Dict[Optional[str], Dict[str, str]] containing every relationship (with attributes) between &#39;class_name_a&#39; and &#39;class_name_b&#39;.
 Fails if class &#39;class_name_a&#39; or class &#39;class_name_b&#39; is not present in the diagram.
 Fails if a relationship between &#39;class_name_a&#39; and &#39;class_name_b&#39; does not exist.
 Returns &#39;None&#39; on failure.&#34;&#34;&#34;
@@ -717,9 +763,14 @@ Returns &#39;class_name&#39; on success, or &#39;None&#39; on failure.&#34;&#34;
         del self.__classes[class_name]
 
         # Remove all relationships that refer to this class
+        # (We work on a copy to avoid working on a dictionary while iterating over it)
+        new_relationships: Dict[
+            ClassPair, RelationshipDict
+        ] = self.__relationships.copy()
         for class_pair in self.__relationships:
             if class_name in class_pair:
-                del self.__relationships[class_pair]
+                del new_relationships[class_pair]
+        self.__relationships = new_relationships
 
         return class_name</code></pre>
 </details>
@@ -788,6 +839,9 @@ Returns &#39;True&#39; on success, or &#39;False&#39; on failure.&#34;&#34;&#34;
 
         del self.__relationships[class_pair][relationship_name]
 
+        if self.__relationships[class_pair] == {}:
+            del self.__relationships[class_pair]
+
         return True</code></pre>
 </details>
 </dd>
@@ -815,8 +869,17 @@ Returns &#39;new_name&#39; on success or &#39;None&#39; on failure.&#34;&#34;&#3
         # Update all relationships that refer to this class
         for class_pair in self.__relationships:
             if old_class_name in class_pair:
-                new_class_pair: Tuple[str, str] = tuple(class_name if class_name != old_class_name else new_class_name for class_name in class_pair)
-                self.__relationships[new_class_pair] = self.__relationships.pop(class_pair)
+                new_class_pair: Tuple[str, str] = (
+                    class_pair[0]
+                    if class_pair[0] != old_class_name
+                    else new_class_name,
+                    class_pair[1]
+                    if class_pair[1] != old_class_name
+                    else new_class_name,
+                )
+                self.__relationships[new_class_pair] = self.__relationships.pop(
+                    class_pair
+                )
 
         return new_class_name</code></pre>
 </details>

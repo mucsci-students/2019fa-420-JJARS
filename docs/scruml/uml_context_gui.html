@@ -27,13 +27,15 @@
 <pre><code class="python"># ScrUML
 # uml_context_gui.py
 # Team JJARS
+from os import path
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Tuple
+from typing import Union
 
 import pkg_resources
 import webview
-from webview import Window
 
 from scruml import uml_filesystem_io
 from scruml.uml_diagram import UMLDiagram
@@ -41,6 +43,7 @@ from scruml.uml_diagram import UMLDiagram
 
 # ----------
 # __API
+
 
 class __API:
     &#34;&#34;&#34;Provides an API to the JavaScript running in the GUI window.
@@ -52,31 +55,71 @@ Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )&#34
     __diagram: UMLDiagram = UMLDiagram()
 
     # ----------
-    # getDiagram
+    # Diagram information functions
 
-    def getDiagram(self, params: str) -&gt; Dict[str, Dict[str, Dict[str, str]]]:
-        &#34;&#34;&#34;Returns a dictionary containing all diagram information&#34;&#34;&#34;
+    # ----------
+    # getAllClassses
 
-        response: Dict[str, Dict[str, Dict[str, str]]] = {}
+    def getAllClasses(self, params: str) -&gt; Dict[str, Dict[str, str]]:
+        &#34;&#34;&#34;Returns a dictionary containing all class information in the diagram.
+Structure: dictionary[className][attributeName] == attributeValue&#34;&#34;&#34;
+
+        response: Dict[str, Dict[str, str]] = {}
 
         # Populate response dictionary with classes
-        response[&#34;classes&#34;] = {}
         for class_name in self.__diagram.get_all_class_names():
-            response[&#34;classes&#34;][class_name] = self.__diagram.get_class_attributes(class_name)
+
+            class_attributes: Optional[
+                Dict[str, str]
+            ] = self.__diagram.get_class_attributes(class_name)
+
+            if class_attributes is not None:
+                response[class_name] = class_attributes
+            else:
+                raise Exception(&#34;Class not found in diagram: &#34; + class_name)
+
+        return response
+
+    # ----------
+    # getAllRelationships
+
+    def getAllRelationships(self, params: str) -&gt; Dict[str, Dict[str, str]]:
+        &#34;&#34;&#34;Returns a dictionary containing all relationship infromation in the diagram.
+Structure: dictionary[classPair][relationshipName][attributeName] == attributeValue&#34;&#34;&#34;
+
+        response: Dict[str, Dict[str, str]] = {}
 
         # Populate response dictionary with relationships
-        response[&#34;relationships&#34;] = {}
         for class_pair in self.__diagram.get_all_relationship_pairs():
-            class_pair_string: str = &#34;[&#34; + class_pair[0] + &#34;,&#34; + class_pair[1] + &#34;]&#34;
-            response[&#34;relationships&#34;][class_pair_string] = {}
-            relationships: Dict[
-                str, Dict[str, str]
+
+            relationships: Optional[
+                Dict[Optional[str], Dict[str, str]]
             ] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
-            for relationship_name in relationships:
-                if not relationship_name:
-                    relationship_name = &#34;&#34;
-                response[&#34;relationships&#34;][class_pair_string][relationship_name] = {}
-                # TODO: another for-each, relationship attributes, god DARNIT
+
+            if relationships is not None:
+                for relationship_name in relationships:
+
+                    relationship_id: str = (
+                        &#34;[&#34;
+                        + class_pair[0]
+                        + &#34;,&#34;
+                        + class_pair[1]
+                        + ((&#34;,&#34; + relationship_name) if relationship_name else &#34;&#34;)
+                        + &#34;]&#34;
+                    )
+
+                    response[relationship_id] = {}
+
+                    # TODO: Relationship Attributes, Sprint 3
+
+            else:
+                raise Exception(
+                    &#34;Class pair not found in diagram: [&#34;
+                    + class_pair[0]
+                    + &#34;,&#34;
+                    + class_pair[1]
+                    + &#34;]&#34;
+                )
 
         return response
 
@@ -98,6 +141,46 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
         return ident
 
     # ----------
+    # __parse_relationship_identifier
+
+    def __parse_relationship_identifier(
+        self, ident: str
+    ) -&gt; Optional[Tuple[str, str, Optional[str]]]:
+        &#34;&#34;&#34;Returns valid relationship identifier on success, or None on failure
+Valid relationship identifiers are surrounded by brackets, contain two valid class names
+separated by a comma, and an optional relationship name (also comma separated)&#34;&#34;&#34;
+        ident = ident.strip()
+
+        # Check for start and end brackets and then shear them away
+        if ident.startswith(&#34;[&#34;) and ident.endswith(&#34;]&#34;):
+            ident = ident[1:-1]
+        else:
+            return None
+
+        # Split up the string into a list
+        ident_list: List[str] = ident.split(&#34;,&#34;)
+
+        # Make sure that there were enough values provided in the identifier
+        if len(ident_list) &lt;= 1 or len(ident_list) &gt;= 4:
+            return None
+
+        # Pull out and validate the two class names that should be in the identifier
+        class_A_name: Optional[str] = self.__parse_class_identifier(ident_list[0])
+        class_B_name: Optional[str] = self.__parse_class_identifier(ident_list[1])
+        if not class_A_name or not class_B_name:
+            return None
+
+        # If a relationship name was provided, pull it out and validate it too
+        # (Relationship names follow the same rules as class names for simplicity)
+        relationship_name: Optional[str] = None
+        if len(ident_list) == 3:
+            relationship_name = self.__parse_class_identifier(ident_list[2])
+            if not relationship_name:
+                return None
+
+        return (str(class_A_name), str(class_B_name), relationship_name)
+
+    # ----------
     # Diagram file functions
 
     # ----------
@@ -105,7 +188,6 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
 
     def newDiagramFile(self, params: str) -&gt; None:
         &#34;&#34;&#34;Creates a new, blank diagram.&#34;&#34;&#34;
-        # TODO: Add a confirmation prompt
         self.__diagram = UMLDiagram()
 
     # ----------
@@ -113,32 +195,76 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
 
     def loadDiagramFile(self, params: str) -&gt; None:
         &#34;&#34;&#34;Opens a file selector dialog and loads the selected diagram file.&#34;&#34;&#34;
+
+        # Define supported file types
         file_types: Tuple[str, str] = (
             &#34;ScrUML Files (*.scruml;*.yaml)&#34;,
             &#34;All Filles (*.*)&#34;,
         )
-        file_path: str = webview.windows[0].create_file_dialog(
-            webview.OPEN_DIALOG, file_types=file_types
-        )[0]
-        # TODO: Add a confirmation prompt
+
+        # Open load file dialog
+        dialog_result: Union[Tuple[str], str, None] = webview.windows[
+            0
+        ].create_file_dialog(webview.OPEN_DIALOG, file_types=file_types)
+        file_path: str = &#34;&#34;
+
+        # Different platforms do different things here, why????
+        if not dialog_result:
+            return
+        elif isinstance(dialog_result, tuple):
+            file_path = dialog_result[0]
+        elif isinstance(dialog_result, str):
+            file_path = dialog_result
+
+        # Make sure the user selected a file
+        if len(file_path) == 0:
+            return
+
+        # Load the new diagram file
         self.__diagram = uml_filesystem_io.load_diagram(file_path)
 
     # ----------
     # saveDiagramFile
 
-    def saveDiagramFile(self, params: str) -&gt; None:
+    def saveDiagramFile(self, params: str) -&gt; str:
         &#34;&#34;&#34;Opens a file save dialog and saves to the specified diagram file.&#34;&#34;&#34;
+
         file_types: Tuple[str, str] = (
             &#34;ScrUML Files (*.scruml;*.yaml)&#34;,
             &#34;All Filles (*.*)&#34;,
         )
-        file_path: str = webview.windows[0].create_file_dialog(
-            webview.SAVE_DIALOG, file_types=file_types, save_filename=&#34;diagram.scruml&#34;
-        )[0]
+
+        # Get OS-specific home path
+        home_path: str = path.abspath(&#34;~/&#34;)
+
+        # Open save file dialog
+        dialog_result: Union[Tuple[str], str, None] = webview.windows[
+            0
+        ].create_file_dialog(
+            webview.SAVE_DIALOG,
+            file_types=file_types,
+            save_filename=&#34;diagram.scruml&#34;,
+            directory=home_path,
+        )
+        file_path: str = &#34;&#34;
+
+        # Different platforms do different things here, why????
+        if not dialog_result:
+            return &#34;&#34;
+        elif isinstance(dialog_result, tuple):
+            file_path = dialog_result[0]
+        elif isinstance(dialog_result, str):
+            file_path = dialog_result
+
+        # Make sure the user selected a file
+        if len(file_path) == 0:
+            return &#34;&#34;
+
+        # Save file and return status message
         if uml_filesystem_io.save_diagram(self.__diagram, file_path):
-            print(&#34;Diagram successfully saved to &#39;{}&#39;&#34;.format(file_path))
+            return &#34;Diagram successfully saved to: {}&#34;.format(file_path)
         else:
-            print(&#34;Failed to save diagram to &#39;{}&#39;&#34;.format(file_path))
+            return &#34;Failed to save diagram to: {}&#34;.format(file_path)
 
     # ----------
     # Class functions
@@ -154,9 +280,9 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
             return &#34;Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)&#34;
         if not self.__diagram.add_class(class_properties[&#34;class_name&#34;]):
             return (
-                &#39;Class &#34;&#39;
+                &#34;Class &#34;
                 + class_properties[&#34;class_name&#34;]
-                + &#39;&#34; already exists in the diagram.&#39;
+                + &#34; already exists in the diagram.&#34;
             )
         self.__diagram.set_class_attribute(class_name, &#34;[x]&#34;, x)
         self.__diagram.set_class_attribute(class_name, &#34;[y]&#34;, y)
@@ -166,9 +292,7 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # removeClass
 
     def removeClass(self, class_name: str) -&gt; None:
-        if not self.__diagram.remove_class(
-            class_name
-        ):
+        if not self.__diagram.remove_class(class_name):
             raise Exception(&#34;Selected class not found in diagram: &#34; + class_name)
 
     # ----------
@@ -177,35 +301,37 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # ----------
     # setClassAttribute
 
-    def setClassAttribute(
-        self, class_name: str, attribute_name: str, attribute_value: str
-    ) -&gt; None:
-        if not self.__parse_class_identifier(attribute_name):
-            return &#34;Attribute name is invalid (cannot contain whitespace nor be surrounded by brackets.&#34;
+    def setClassAttribute(self, class_attribute_properties: Dict[str, str]) -&gt; str:
+
+        class_name: str = class_attribute_properties[&#34;class_name&#34;]
+        attribute_name: str = class_attribute_properties[&#34;attribute_name&#34;]
+        attribute_value: str = class_attribute_properties[&#34;attribute_value&#34;]
+
+        if not class_attribute_properties[
+            &#34;ignore_naming_rules&#34;
+        ] and not self.__parse_class_identifier(attribute_name):
+            return &#34;Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)&#34;
+
         if not self.__diagram.set_class_attribute(
             class_name, attribute_name, attribute_value
         ):
             return (
-                &#34;Class &#39;&#34;
+                &#34;Class &#34;
                 + class_name
-                + &#34;&#39; does not exist in the diagram. Unable to add Attribute &#39;&#34;
+                + &#34; does not exist in the diagram. Unable to add attribute: &#34;
                 + attribute_name
-                + &#34;&#39;&#34;
             )
+
         return &#34;&#34;
 
     # ----------
     # removeClassAttribute
 
-    def removeClassAttribute(self, class_name: str, attribute_name: str) -&gt; None:
+    def removeClassAttribute(self, class_name: str, attribute_name: str) -&gt; str:
+
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
-            return (
-                &#34;Attribute &#39;&#34;
-                + attribute_name
-                + &#34;&#39; not found in Class &#39;&#34;
-                + class_name
-                + &#34;&#39;&#34;
-            )
+            return &#34;Attribute &#34; + attribute_name + &#34; not found in Class: &#34; + class_name
+
         return &#34;&#34;
 
     # ----------
@@ -225,31 +351,28 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # ----------
     # addRelationship
 
-    def addRelationship(
-        self, relationship_properties: Dict[str, str]
-    ) -&gt; str:
+    def addRelationship(self, relationship_properties: Dict[str, str]) -&gt; str:
 
         class_name_a: str = relationship_properties[&#34;class_name_a&#34;]
         class_name_b: str = relationship_properties[&#34;class_name_b&#34;]
-        relationship_name: Optional[str] = relationship_properties[&#34;relationship_name&#34;]
+        relationship_name: str = relationship_properties[&#34;relationship_name&#34;]
 
         if not class_name_a in self.__diagram.get_all_class_names():
             return &#34;Class &#34; + class_name_a + &#34; not found in the diagram.&#34;
         if not class_name_b in self.__diagram.get_all_class_names():
             return &#34;Class &#34; + class_name_b + &#34; not found in the diagram.&#34;
 
-        if len(relationship_name) == 0:
-            relationship_name = None
-
         if not self.__diagram.add_relationship(
-            class_name_a, class_name_b, relationship_name
+            class_name_a,
+            class_name_b,
+            relationship_name if len(relationship_name) &gt; 0 else None,
         ):
             return (
                 &#34;Relationship already exists: [&#34;
                 + class_name_a
                 + &#34;,&#34;
                 + class_name_b
-                + (( &#34;,&#34; + relationship_name ) if relationship_name else &#34;&#34;)
+                + ((&#34;,&#34; + relationship_name) if relationship_name else &#34;&#34;)
                 + &#34;]&#34;
             )
 
@@ -258,24 +381,38 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
     # ----------
     # removeRelationship
 
-    def removeRelationship(
-        self, class_name_a: str, class_name_b: str, relationship_name: str
-    ) -&gt; str:
-        rel_name_arg: Optional[str] = None
-        if len(relationship_name) != 0:
-            rel_name_arg = relationship_name
+    def removeRelationship(self, relationship_id: str) -&gt; str:
+
+        relationship_id_tuple: Optional[
+            Tuple[str, str, Optional[str]]
+        ] = self.__parse_relationship_identifier(relationship_id)
+
+        if not relationship_id_tuple:
+            raise Exception(
+                &#34;Invalid relationship identifier provided: &#34; + relationship_id
+            )
+
+        class_name_a: str = relationship_id_tuple[0]
+        class_name_b: str = relationship_id_tuple[1]
+        relationship_name: Optional[str] = relationship_id_tuple[2]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_a + &#34; not found in the diagram.&#34;
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_b + &#34; not found in the diagram.&#34;
+
         if not self.__diagram.remove_relationship(
-            class_name_a, class_name_b, rel_name_arg
+            class_name_a, class_name_b, relationship_name
         ):
             return (
                 &#34;Relationship not found in diagram: [ &#34;
                 + class_name_a
-                + &#34;, &#34;
+                + &#34;,&#34;
                 + class_name_b
-                + &#34;, &#34;
-                + relationship_name
+                + ((&#34;,&#34; + relationship_name) if relationship_name else &#34;&#34;)
                 + &#34;]&#34;
             )
+
         return &#34;&#34;
 
     # ----------
@@ -287,21 +424,22 @@ Valid class identifiers contain no whitespace and are not surrounded by brackets
 # ----------
 # activate
 
-def activate() -&gt; None:
-    &#34;&#34;&#34;Activates the GUI context.&#34;&#34;&#34;
+
+def activate(enable_debug: bool = False) -&gt; None:
+    &#34;&#34;&#34;Activates the GUI context.
+If &#39;enable_debug&#39; is set to &#39;True&#39;, enables the web console.&#34;&#34;&#34;
 
     api = __API()
     html_file = pkg_resources.resource_filename(&#34;scruml&#34;, &#34;assets/scruml.html&#34;)
 
-    webview.create_window(
-        &#34;ScrUML&#34;,
-        html_file,
-        min_size=(640, 480),
-        js_api=api,
-        confirm_close=True)
+    if enable_debug:
+        print(&#34;Developer console enabled!&#34;)
 
-    webview.start(debug=True,
-                  gui=&#34;cef&#34;)</code></pre>
+    webview.create_window(
+        &#34;ScrUML&#34;, html_file, min_size=(640, 480), js_api=api, confirm_close=True
+    )
+
+    webview.start(debug=enable_debug, gui=&#34;cef&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -312,29 +450,30 @@ def activate() -&gt; None:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="scruml.uml_context_gui.activate"><code class="name flex">
-<span>def <span class="ident">activate</span></span>(<span>) -> NoneType</span>
+<span>def <span class="ident">activate</span></span>(<span>enable_debug: bool = False) -> NoneType</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Activates the GUI context.</p></section>
+<section class="desc"><p>Activates the GUI context.
+If 'enable_debug' is set to 'True', enables the web console.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def activate() -&gt; None:
-    &#34;&#34;&#34;Activates the GUI context.&#34;&#34;&#34;
+<pre><code class="python">def activate(enable_debug: bool = False) -&gt; None:
+    &#34;&#34;&#34;Activates the GUI context.
+If &#39;enable_debug&#39; is set to &#39;True&#39;, enables the web console.&#34;&#34;&#34;
 
     api = __API()
     html_file = pkg_resources.resource_filename(&#34;scruml&#34;, &#34;assets/scruml.html&#34;)
 
-    webview.create_window(
-        &#34;ScrUML&#34;,
-        html_file,
-        min_size=(640, 480),
-        js_api=api,
-        confirm_close=True)
+    if enable_debug:
+        print(&#34;Developer console enabled!&#34;)
 
-    webview.start(debug=True,
-                  gui=&#34;cef&#34;)</code></pre>
+    webview.create_window(
+        &#34;ScrUML&#34;, html_file, min_size=(640, 480), js_api=api, confirm_close=True
+    )
+
+    webview.start(debug=enable_debug, gui=&#34;cef&#34;)</code></pre>
 </details>
 </dd>
 </dl>
