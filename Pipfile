@@ -10,9 +10,12 @@ mypy = "==0.720"
 pytest = "*"
 pytest-cov = "*"
 python-coveralls = "*"
+pdoc3 = "*"
 
 [packages]
 scruml = {editable = true,path = "."}
+pywebview = {extras = ["qt"],version = "*"}
+cefpython3 = "*"
 
 [requires]
 python_version = "3.6"

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<!-- ScrUML -->
+<!-- scruml.html -->
+<!-- Team JJARS -->
+
+<html lang="en" data-framework="javascript">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>ScrUML</title>
+    <link rel="stylesheet" href="scruml.css">
+  </head>
+
+  <body>
+
+    <!-- Behavior -->
+    <script src="lib/svg.min.js"></script>
+    <script src="lib/svg.draggy.min.js"></script>
+    <script src="lib/svg.connectable.min.js"></script>
+    <script src="diagram.js"></script>
+    <script src="scruml.js"></script>
+
+    <!-- Menubar -->
+    <header id="menubar">
+      <ul>
+        <li><a title="Create new blank diagram (Ctrl+N)" onclick="menubarNewButtonClicked()">★ New</a></li>
+        <li><a title="Load an existing diagram file (Ctrl+L)" onclick="menubarLoadButtonClicked()">🖿 Load</a></li>
+        <li><a title="Save the current diagram to a file (Ctrl+S)" onclick="menubarSaveButtonClicked()">🖪 Save</a></li>
+      </ul>
+    </header>
+
+    <main>
+
+      <!-- Diagram Canvas -->
+      <section id="diagram-canvas">
+      </section>
+
+      <!-- Info Panel -->
+      <aside id="info-panel">
+        <strong id="info-panel-header"></strong>
+        <hr>
+        <div id="info-panel-content"></div>
+      </aside>
+
+    </main>
+
+    <!-- Toolbar -->
+    <footer id="toolbar">
+      <ul>
+        <li><a id="toolbar-select" title="Select, move, and modify diagram elements (Alt+S)" onclick="toolbarButtonClicked(this)">⬉ Select</a></li>
+        <li><a id="toolbar-add" title="Add new classes to the diagram (Alt+A)" onclick="toolbarButtonClicked(this)">⊞ Add</a></li>
+        <li><a id="toolbar-connect" title="Create relationships between classes (Alt+C)" onclick="toolbarButtonClicked(this)">⇄ Connect</a></li>
+        <li><a id="toolbar-remove" title="Remove elements from the diagram (Alt+R)" onclick="toolbarButtonClicked(this)">🗙 Remove</a><li>
+      </ul>
+    </footer>
+
+    <!-- Welcome Audio -->
+    <!-- <iframe src="mp3/welcome.mp3" allow="autoplay" style="display:none;"></iframe> -->
+
+    <!-- Ambient Audio -->
+    <!-- <iframe src="mp3/ambient.mp3" allow="autoplay" style="display:none;"></iframe> -->
+
+  </body>
+
+</html>

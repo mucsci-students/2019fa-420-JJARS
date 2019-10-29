@@ -1,0 +1,236 @@
+/* ScrUML */
+/* scruml.css */
+/* Team JJARS */
+
+/*
+   Colors:
+   Light -     #FFFFFF | #E5E5E5
+   Off-Light - #F2E9E1 | #D9D1CA
+   Mid-Tone -  #EFEFEF | #DDDDDD
+   Dark -      #1C140D | #090703
+   Accent -    #DBF87B | #A6C050
+*/
+
+
+/* Global App Settings */
+
+*
+{
+    box-sizing: border-box;
+}
+html
+{
+    font-family: sans-serif;
+}
+html, body
+{
+    margin: 0;
+    padding: 0;
+}
+body
+{
+    display: flex;
+    min-height: 100vh;
+    max-height: 100vh;
+    flex-direction: column;
+}
+main
+{
+    display: flex;
+    flex: 1;
+}
+
+
+/* Menubar */
+
+#menubar ul
+{
+    list-style-type: none;
+    margin: 0px;
+    padding: 8px;
+    overflow: hidden;
+    color: #FFF;
+    background-color: #1C140D;
+    border-bottom: 5px solid #090703;
+}
+#menubar li
+{
+    display: inline;
+}
+#menubar a
+{
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+}
+#menubar a:hover
+{
+    cursor: pointer;
+    color: #1C140D;
+    background-color: #FFF;
+}
+#menubar a:active
+{
+    background-color: #D9D1CA;
+}
+
+
+/* Diagram Canvas */
+
+#diagram-canvas
+{
+    cursor: default;
+    flex: 1;
+    overflow: scroll;
+    max-height: 90%;
+    background-image: url("img/background.png");
+}
+
+#diagram-canvas svg
+{
+    background: #F2E9E1;
+    border: #D9D1CA dashed 2px;
+}
+
+
+/* SVG UML Elements */
+
+#diagram-canvas .uml-class,
+#diagram-canvas .uml-relationship
+{
+    stroke-width: 2;
+    stroke: #1C140D;
+    fill: #FFF;
+    fill-opacity: 0;
+}
+
+#diagram-canvas .uml-class
+{
+    fill-opacity: 1;
+}
+
+#diagram-canvas .selected
+{
+    stroke: #A6C050;
+}
+
+#diagram-canvas text
+{
+    stroke: none;
+    fill: #1C140D;
+}
+
+
+/* SVG Diagram/Element Mode Modifiers */
+
+#diagram-canvas svg.select
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.add
+{
+    cursor: copy;
+}
+
+#diagram-canvas svg.connect
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.remove
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.select svg.uml-class
+{
+    cursor: grab;
+}
+#diagram-canvas svg.select path.uml-relationship
+{
+    cursor: pointer;
+}
+
+#diagram-canvas svg.add svg.uml-class,
+#diagram-canvas svg.add path.uml-relationship
+{
+    cursor: copy;
+}
+
+#diagram-canvas svg.connect svg.uml-class
+{
+    cursor: cell;
+}
+
+#diagram-canvas svg.remove svg.uml-class,
+#diagram-canvas svg.remove path.uml-relationship
+{
+    cursor: no-drop;
+}
+
+
+/* Info Panel */
+
+#info-panel
+{
+    flex: 0 0 320px;
+    padding: 20px;
+    border-left: solid 5px #E5E5E5;
+}
+#info-panel #info-panel-header
+{
+    color: #1C140D;
+}
+#info-panel hr
+{
+    border: none;
+    border-bottom: solid 2px #A6C050;
+}
+#info-panel .
+{
+    font-style: italic;
+}
+
+
+/* Toolbar */
+
+#toolbar ul
+{
+    list-style-type: none;
+    margin: 0px;
+    padding: 8px;
+    overflow: hidden;
+    color: #FFF;
+    background-color: #1C140D;
+    border-top: 5px solid #090703;
+}
+#toolbar li
+{
+    display: inline;
+}
+#toolbar a
+{
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+}
+#toolbar a:hover
+{
+    cursor: pointer;
+    color: #1C140D;
+    background-color: #FFF;
+}
+#toolbar a.selected
+{
+    color: #1C140D;
+    background-color: #B6D060;
+}
+#toolbar a.selected:hover
+{
+    background-color: #DBF87B;
+}
+#toolbar a:active
+{
+    background-color: #D9D1CA;
+}

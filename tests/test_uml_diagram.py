@@ -142,39 +142,18 @@ def test_add_relationship() -> None:
     umld.add_class("Beta")
     umld.add_class("Gamma")
 
-    assert umld.add_relationship("Alpha", "Beta") == (
-        frozenset(("Alpha", "Beta")),
-        None,
-    )
+    assert umld.add_relationship("Alpha", "Beta")
     assert not umld.add_relationship("Alpha", "Beta")
     assert not umld.add_relationship("Beta", "Alpha")
-    assert umld.add_relationship("Alpha", "Beta", "inherits") == (
-        frozenset(("Alpha", "Beta")),
-        "inherits",
-    )
+    assert umld.add_relationship("Alpha", "Beta", "inherits")
     assert not umld.add_relationship("Alpha", "Beta", "inherits")
     assert not umld.add_relationship("Beta", "Alpha", "inherits")
-    assert umld.add_relationship("Alpha", "Beta", "produces") == (
-        frozenset(("Alpha", "Beta")),
-        "produces",
-    )
-    assert umld.add_relationship("Alpha", "Gamma") == (
-        frozenset(("Alpha", "Gamma")),
-        None,
-    )
-    assert umld.add_relationship("Beta", "Gamma", "inherits") == (
-        frozenset(("Beta", "Gamma")),
-        "inherits",
-    )
-    assert umld.add_relationship("Gamma", "Gamma") == (
-        frozenset(("Gamma", "Gamma")),
-        None,
-    )
+    assert umld.add_relationship("Alpha", "Beta", "produces")
+    assert umld.add_relationship("Alpha", "Gamma")
+    assert umld.add_relationship("Beta", "Gamma", "inherits")
+    assert umld.add_relationship("Gamma", "Gamma")
     assert not umld.add_relationship("Gamma", "Gamma")
-    assert umld.add_relationship("Gamma", "Gamma", "observes") == (
-        frozenset(("Gamma", "Gamma")),
-        "observes",
-    )
+    assert umld.add_relationship("Gamma", "Gamma", "observes")
     assert not umld.add_relationship("Gamma", "Gamma", "observes")
 
     assert not umld.add_relationship("FakeClass", "Alpha")
@@ -195,36 +174,18 @@ def test_remove_relationship() -> None:
     umld.add_relationship("Gamma", "Gamma", "observes")
 
     assert not umld.remove_relationship("Alpha", "Beta", "fake_relation")
-    assert umld.remove_relationship("Alpha", "Beta") == (
-        frozenset(("Alpha", "Beta")),
-        None,
-    )
+    assert umld.remove_relationship("Alpha", "Beta")
     assert not umld.remove_relationship("Alpha", "Beta")
     assert not umld.remove_relationship("Beta", "Alpha")
-    assert umld.remove_relationship("Alpha", "Beta", "inherits") == (
-        frozenset(("Alpha", "Beta")),
-        "inherits",
-    )
+    assert umld.remove_relationship("Alpha", "Beta", "inherits")
     assert not umld.remove_relationship("Alpha", "Beta", "inherits")
-    assert umld.remove_relationship("Alpha", "Beta", "produces") == (
-        frozenset(("Alpha", "Beta")),
-        "produces",
-    )
+    assert umld.remove_relationship("Alpha", "Beta", "produces")
     assert not umld.remove_relationship("Alpha", "Beta", "produces")
-    assert umld.remove_relationship("Alpha", "Gamma") == (
-        frozenset(("Alpha", "Gamma")),
-        None,
-    )
+    assert umld.remove_relationship("Alpha", "Gamma")
     assert not umld.remove_relationship("Alpha", "Gamma")
-    assert umld.remove_relationship("Gamma", "Gamma") == (
-        frozenset(("Gamma", "Gamma")),
-        None,
-    )
+    assert umld.remove_relationship("Gamma", "Gamma")
     assert not umld.remove_relationship("Gamma", "Gamma")
-    assert umld.remove_relationship("Gamma", "Gamma", "observes") == (
-        frozenset(("Gamma", "Gamma")),
-        "observes",
-    )
+    assert umld.remove_relationship("Gamma", "Gamma", "observes")
     assert not umld.remove_relationship("Gamma", "Gamma", "observes")
 
     assert not umld.remove_relationship("FakeClass", "Alpha")
