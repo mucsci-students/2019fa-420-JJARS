@@ -20,6 +20,8 @@ def test_add_and_remove_classes() -> None:
     shell.onecmd("add classB")
     shell.onecmd("add [invalidclass]")
     shell.onecmd("add invalid class")
+    shell.onecmd("add 'invalidclass'")
+    shell.onecmd('add "invalidclass"')
     shell.onecmd("add [classA,classB]")
     shell.onecmd("add [classA,classB,myname]")
     shell.onecmd("add [[invalidrelationship],invalid class]")
@@ -90,9 +92,23 @@ def test_add_and_remove_relationships() -> None:
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 
+    shell.onecmd("add [classC,classB]")
+    shell.onecmd("add [classA,classC]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
+
+    shell.onecmd("add [classA,classB]")
     shell.onecmd("add [classA,classB]")
     shell.onecmd("add [classA,classB,inherits]")
     shell.onecmd("add [classB,classA,extends]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
+        ("classA", "classB")
+    ]
+
+    shell.onecmd("remove [classC,classB]")
+    shell.onecmd("remove [classA,classC]")
+    shell.onecmd("remove [classA,classB,doesntexist]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
         ("classA", "classB")
@@ -123,6 +139,10 @@ def test_set_and_strip_class_attributes() -> None:
 
     shell.onecmd("set classA length size_t")
     shell.onecmd("set classA isValid bool")
+    shell.onecmd("set classA")
+    shell.onecmd("set classA a")
+    shell.onecmd("set classA a b c d")
+    shell.onecmd("set classA 'badname' value")
 
     assert shell._UMLShell__diagram.get_class_attributes("classA") == {
         "length": "size_t",
@@ -131,6 +151,10 @@ def test_set_and_strip_class_attributes() -> None:
 
     shell.onecmd("strip classA length")
     shell.onecmd("strip classA isValid")
+    shell.onecmd("strip classA")
+    shell.onecmd("strip classA a")
+    shell.onecmd("strip classA a b c d")
+    shell.onecmd("strip classA 'badname'")
 
     assert shell._UMLShell__diagram.get_class_attributes("classA") == {}
 
@@ -269,5 +293,6 @@ def test_help() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
 
+    shell.onecmd("")
     shell.onecmd("help")
     shell.onecmd("help identifiers")
