@@ -45,3 +45,18 @@ def test_add_and_remove_class() -> None:
 
 
 # assert api.__diagram.get_all_class_names() == []
+
+
+def test_set_class_attribute() -> str:
+    api: __API = __API()
+
+    # result = api.setClassAttribute({"class_name": "classA", "attribute_name": "Foo Bar", "attribute_value": 20})
+    # return result == "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+
+    result2 = api.setClassAttribute(
+        {"class_name": "classA", "attribute_name": "Foo Bar", "attribute_value": 20}
+    )
+    att_name = result2.get("attribute_name", null)
+    return result2 == "Class" + {
+        "class_name"
+    } + "does not exist in the diagram. Unable to add attribute:" + {"attribute_name"}
