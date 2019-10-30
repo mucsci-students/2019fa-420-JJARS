@@ -20,11 +20,28 @@ def test_activate() -> None:
 
 def test_add_and_remove_class() -> None:
     api: __API = __API()
-    api.__diagram = UMLDiagram()
+    # api.__diagram = UMLDiagram()
 
-    assert api.__diagram.add_class("classA")
-    assert api.__diagram.add_class("classB")
-    assert sorted(api.__diagram.get_all_class_names()) == ["classA", "classB"]
+    result = api.addClass({"x": 0, "y": 20, "class_name": "classA"})
+    return result == ""
+
+    result2 = api.addClass({"x": 0, "y": 20, "class_name": "classA"})
+    return result2 == "Class classA already exist"
+
+    result3 = api.addClass({"x": 0, "y": 20, "class_name": "class A"})
+    return (
+        result3
+        == "Class name is invalid, contains whitespace or is surrounded by brackets"
+    )
+
+    result4 = api.addClass({"x": 20, "y": 20, "class_name": "classB"})
+    return result4 == ""
+
+    # assert api.__diagram.add_class("classA")
+    # assert api.__diagram.add_class("classB")
+
+    # result5 = api.removeClass({'class_name': "classA"})
+    # return result5 == ""
 
 
 # assert api.__diagram.get_all_class_names() == []
