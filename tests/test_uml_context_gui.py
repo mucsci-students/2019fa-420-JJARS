@@ -1,6 +1,10 @@
 # ScrUML
 # test_uml_context_gui.py
 # Team JJARS
+# type: ignore
+from pathlib import Path
+from typing import List
+
 import pytest
 
 import scruml.uml_context_gui
