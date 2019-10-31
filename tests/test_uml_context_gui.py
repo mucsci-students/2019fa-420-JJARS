@@ -50,9 +50,19 @@ def test_add_and_remove_class() -> None:
 def test_set_class_attribute() -> str:
     api: __API = __API()
     api._API__diagram = UMLDiagram()
-
-    # result = api.setClassAttribute({"class_name": "classA", "attribute_name": "Foo Bar", "attribute_value": 20})
-    # return result == "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+    """
+    test_data = {
+        "class_name": "classA",
+        "attribute_name": "Foo Bar",
+        "attribute_value": "20",
+        "ignore_naming_rules": "t",
+    }
+    result = api.setClassAttribute(test_data)
+    assert (
+     	result
+     	== "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+    )
+    """
 
     data = {
         "class_name": "classA",
@@ -60,8 +70,8 @@ def test_set_class_attribute() -> str:
         "attribute_value": "20",
         "ignore_naming_rules": "t",
     }
-    result = api.setClassAttribute(data)
+    result2 = api.setClassAttribute(data)
     assert (
-        result
+        result2
         == f"Class {data['class_name']} does not exist in the diagram. Unable to add attribute: {data['attribute_name']}"
     )
