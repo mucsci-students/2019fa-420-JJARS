@@ -23,19 +23,19 @@ def test_add_and_remove_class() -> None:
     # api.__diagram = UMLDiagram()
 
     result = api.addClass({"x": 0, "y": 20, "class_name": "classA"})
-    return result == ""
+    assert result == ""
 
     result2 = api.addClass({"x": 0, "y": 20, "class_name": "classA"})
-    return result2 == "Class classA already exist"
+    assert result2 == "Class classA already exists in the diagram."
 
     result3 = api.addClass({"x": 0, "y": 20, "class_name": "class A"})
-    return (
+    assert (
         result3
-        == "Class name is invalid, contains whitespace or is surrounded by brackets"
+        == "Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
     )
 
     result4 = api.addClass({"x": 20, "y": 20, "class_name": "classB"})
-    return result4 == ""
+    assert result4 == ""
 
     # assert api.__diagram.add_class("classA")
     # assert api.__diagram.add_class("classB")
@@ -54,9 +54,13 @@ def test_set_class_attribute() -> str:
     # return result == "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
 
     result2 = api.setClassAttribute(
-        {"class_name": "classA", "attribute_name": "Foo Bar", "attribute_value": 20}
+        {"class_name": "classA", "attribute_name": "Foo Bar", "attribute_value": "20"}
     )
-    att_name = result2.get("attribute_name", null)
-    return result2 == "Class" + {
-        "class_name"
-    } + "does not exist in the diagram. Unable to add attribute:" + {"attribute_name"}
+    att_name = result2.get("attribute_name", "Foo Bar")
+    assert (
+        result2
+        == "Class"
+        + {"class_name"}
+        + "does not exist in the diagram. Unable to add attribute:"
+        + att_name
+    )
