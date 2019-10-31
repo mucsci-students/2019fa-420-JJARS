@@ -37,6 +37,14 @@ def test_add_and_remove_class() -> None:
     result4 = api.addClass({"x": 20, "y": 20, "class_name": "classB"})
     assert result4 == ""
 
+    resultA = api.removeClass("class_name": "class1")
+    assert resultA == "Selected class not found in diagram: class1"
+
+    resultB = api.addClass({"x": 0, "y": 20, "class_name": "class1"})
+    assert resultB == ""
+    
+    resultC = api.removeClass("class_name": "class1")
+    assert resultC == ""
     # assert api.__diagram.add_class("classA")
     # assert api.__diagram.add_class("classB")
 
@@ -64,3 +72,17 @@ def test_set_class_attribute() -> str:
         + "does not exist in the diagram. Unable to add attribute:"
         + att_name
     )
+def test_remove_class_attribute() -> str:
+    api: __API = __API()
+
+    result1 = api.addClass({"x": 0, "y":20, "class_name": "class1"})
+    assert result1 == ""
+
+    result2 = api.setClassAttribute({"class_name": "class1", "attribute_name": "foo", "attribute_value": "20"})
+    assert result2 == ""
+
+    result3 = api.removeClassAttribute("class_name": "class1", "attribute_name": "bar")
+    assert result3 == "Attribute " + attribute_name + " not found in Class: " + class_name
+
+    result4 = api.removeClassAttribute("class_name": "class1", "attribute_name": "foo")
+    assert result4 == ""
