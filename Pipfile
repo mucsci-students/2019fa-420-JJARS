@@ -16,6 +16,3 @@ pdoc3 = "*"
 scruml = {editable = true,path = "."}
 pywebview = {extras = ["qt"],version = "*"}
 cefpython3 = "*"
-
-[requires]
-python_version = "3.6"
