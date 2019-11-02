@@ -1,10 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
-# Set language version:
-default_language_version:
-    python: python3.6
-
 # Default hooks:
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
