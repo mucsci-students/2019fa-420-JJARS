@@ -191,3 +191,35 @@ def test_remove_relationship() -> None:
     assert not umld.remove_relationship("FakeClass", "Alpha")
     assert not umld.remove_relationship("Alpha", "FakeClass")
     assert not umld.remove_relationship("FakeClass", "FakeClass")
+
+
+def test_set_relationship_attribute() -> None:
+    umld: UMLDiagram = UMLDiagram()
+    umld.add_class("Alpha")
+    umld.add_class("Beta")
+    umld.add_relationship("Alpha", "Beta")
+    umld.add_relationship("Alpha", "Beta", "inherits")
+
+    # TODO: Add asserts
+
+
+def test_remove_relationship_attribute() -> None:
+    umld: UMLDiagram = UMLDiagram()
+    umld.add_class("Alpha")
+    umld.add_class("Beta")
+    umld.add_relationship("Alpha", "Beta")
+    umld.add_relationship("Alpha", "Beta", "inherits")
+
+    # TODO: Add asserts
+
+
+def test_get_relationship_attributes() -> None:
+    umld: UMLDiagram = UMLDiagram()
+    umld.add_class("Alpha")
+    umld.add_class("Beta")
+    umld.add_class("Gamma")
+
+    umld.add_relationship("Alpha", "Beta")
+    umld.add_relationship("Alpha", "Beta", "inherits")
+
+    # TODO: Add asserts
