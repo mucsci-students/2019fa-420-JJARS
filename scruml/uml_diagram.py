@@ -198,10 +198,6 @@ Returns 'True' on success, or 'False' on failure."""
 
         class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
-        # If the reverse of the current pair exists already, just use that
-        if (class_name_b, class_name_a) in self.__relationships:
-            class_pair = (class_name_b, class_name_a)
-
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
