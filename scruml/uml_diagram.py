@@ -328,8 +328,21 @@ with the optional name 'relationship_name'.
 Fails if an attribute with 'attribute_name' is not found in the relationship.
 Fails if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram.
 Returns 'attribute_name' on success, or 'None' on failure."""
-        # TODO: Implement this
-        return None
+
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or class_pair not in self.__relationships
+            or relationship_name not in self.__relationships[class_pair]
+            or attribute_name not in self.__relationships[class_pair][relationship_name]
+        ):
+            return None
+
+        del self.__relationships[class_pair][relationship_name][attribute_name]
+
+        return attribute_name
 
     # ----------
     # get_relationship_attributes
