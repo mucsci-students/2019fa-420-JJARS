@@ -322,7 +322,7 @@ Returns 'attribute_name' on success, or 'None' on failure."""
         return None
 
     # ----------
-    # get_class_attributes
+    # get_relationship_attributes
 
     def get_relationship_attributes(
         self, class_name_a: str, class_name_b: str, relationship_name: Optional[str]
