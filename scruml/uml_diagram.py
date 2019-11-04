@@ -281,7 +281,6 @@ Returns 'None' on failure."""
     # ----------
     # set_relationship_attribute
 
-    # TODO: Design consideration - Should there be an optional parameter in middle of the parameter list?
     def set_relationship_attribute(
         self,
         class_name_a: str,
@@ -315,7 +314,6 @@ Returns 'attribute_value' on success, or 'None' on failure."""
     # ----------
     # remove_relationship_attribute
 
-    # TODO: Design consideration - Should there be an optional parameter in middle of the parameter list?
     def remove_relationship_attribute(
         self,
         class_name_a: str,
@@ -348,7 +346,10 @@ Returns 'attribute_name' on success, or 'None' on failure."""
     # get_relationship_attributes
 
     def get_relationship_attributes(
-        self, class_name_a: str, class_name_b: str, relationship_name: Optional[str]
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: Optional[str] = None,
     ) -> Optional[AttributeDict]:
         """Returns a Dict[str, str] containing the attribute names and values for the relationship between 'class_name_a' and 'class_name_b'
 with the optional name 'relationship_name'.
