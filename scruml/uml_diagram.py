@@ -353,5 +353,15 @@ Returns 'attribute_name' on success, or 'None' on failure."""
         """Returns a Dict[str, str] containing the attribute names and values for the relationship between 'class_name_a' and 'class_name_b'
 with the optional name 'relationship_name'.
 Fails and returns 'None' if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram."""
-        # TODO: Implement this
-        return None
+
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or class_pair not in self.__relationships
+            or relationship_name not in self.__relationships[class_pair]
+        ):
+            return None
+
+        return self.__relationships[class_pair][relationship_name]
