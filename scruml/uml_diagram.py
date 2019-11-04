@@ -282,4 +282,53 @@ Returns 'None' on failure."""
     # ----------
     # Relationship attribute functions
 
-    # TODO: Sprint 3
+    # ----------
+    # set_relationship_attribute
+
+    # TODO: Design consideration - Should there be an optional parameter in middle of the parameter list?
+    def set_relationship_attribute(
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: Optional[str],
+        attribute_name: str,
+        attribute_value: str,
+    ) -> Optional[str]:
+        """Sets the value of 'attribute_name' to 'attribute_value' for the relationship between 'class_name_a' and 'class_name_b'
+with the optional name 'relationship_name'.
+If the relationship does not yet have an attribute with the name 'attribute_name', one will be created.
+Fails if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram.
+Returns 'attribute_value' on success, or 'None' on failure."""
+        # TODO: Implement this
+        return None
+
+    # ----------
+    # remove_relationship_attribute
+
+    # TODO: Design consideration - Should there be an optional parameter in middle of the parameter list?
+    def remove_relationship_attribute(
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: Optional[str],
+        attribute_name: str,
+    ) -> Optional[str]:
+        """Removes the attribute with name 'attribute_name' from the relationship between 'class_name_a' and 'class_name_b'
+with the optional name 'relationship_name'.
+Fails if an attribute with 'attribute_name' is not found in the relationship.
+Fails if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram.
+Returns 'attribute_name' on success, or 'None' on failure."""
+        # TODO: Implement this
+        return None
+
+    # ----------
+    # get_class_attributes
+
+    def get_relationship_attributes(
+        self, class_name_a: str, class_name_b: str, relationship_name: Optional[str]
+    ) -> Optional[AttributeDict]:
+        """Returns a Dict[str, str] containing the attribute names and values for the relationship between 'class_name_a' and 'class_name_b'
+with the optional name 'relationship_name'.
+Fails and returns 'None' if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram."""
+        # TODO: Implement this
+        return None
