@@ -2,8 +2,8 @@
 // diagram.js
 // Team JJARS
 
-const CLASS_WIDTH = 150;
-const CLASS_HEIGHT = 50;
+//const CLASS_WIDTH = 150;
+//const CLASS_HEIGHT = 50;
 
 class Diagram {
 
@@ -34,8 +34,19 @@ class Diagram {
         var element = this.canvas.nested().id(className).addClass("uml-class");
 
         // Add body and text
-        element.rect(CLASS_WIDTH, CLASS_HEIGHT);
-        element.text(className).move(10, 10);
+        var rect = element.rect(1, 1);
+        var text_OfClassNames = element.text(className).move(10, 10);
+        var text_OfClassAttr = element.text(classAttr).move(5, 5);
+
+        //for each element go through and adjust the width and height
+        for each (el in text_OfClassNames)
+        {
+            var width = text.width()
+            var height = text.height()
+            rect.width(width)
+            rect.height(height)
+        }
+
 
         // Place element at the appropriate coordinates, if in the attributes
         if (classAttr["[x]"] && classAttr["[y]"])
