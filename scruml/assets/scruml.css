@@ -187,10 +187,51 @@ main
     border: none;
     border-bottom: solid 2px #A6C050;
 }
-#info-panel .
+
+#info-panel-content
 {
-    font-style: italic;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
 }
+#info-panel-content input
+{
+    background: #DDDDDD;
+    border: none;
+    height: 30px;
+    width: 120px;
+    margin-left: 15px;
+    margin-bottom: 10px;
+    transition: background-color 0.2s;
+}
+#info-panel-content input:hover
+{
+    background: #F2E9E1;
+}
+#info-panel-content input[type="text"]
+{
+    padding: 0px 10px;
+}
+#info-panel-content .delete-property-button
+{
+    width: 30px;
+    height: 30px;
+    margin-left: 0px;
+}
+#info-panel-content .delete-property-button:hover
+{
+    background: #F44336;
+}
+#info-panel-content #add-property-button
+{
+    width: 300px;
+    margin-left: 0px;
+}
+#info-panel-content #add-property-button:hover
+{
+    background: #DBF87B;
+}
+
 
 
 /* Toolbar */

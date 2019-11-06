@@ -281,31 +281,35 @@ function toolbarButtonClicked(element)
     {
         case "toolbar-select":
         diagram.canvas.addClass("select");
+        document.querySelector("#info-panel").style.display = "block"
         document.querySelector("#info-panel-header").innerHTML = "Select"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Select an element to view its properties.</i>"
+//        document.querySelector("#info-panel-content").innerHTML = "<i>Select an element to view its properties.</i>"
         diagram.setDragging(true);
         currentUIState = UI_STATES.SELECT;
         break;
 
         case "toolbar-add":
         diagram.canvas.addClass("add");
+        document.querySelector("#info-panel").style.display = "none"
         document.querySelector("#info-panel-header").innerHTML = "Add"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Click anywhere on the canvas to add a new class.</i>"
+//        document.querySelector("#info-panel-content").innerHTML = "<i>Click anywhere on the canvas to add a new class.</i>"
         currentUIState = UI_STATES.ADD;
         break;
 
         case "toolbar-connect":
         clearSelection();
         diagram.canvas.addClass("connect");
+        document.querySelector("#info-panel").style.display = "none"
         document.querySelector("#info-panel-header").innerHTML = "Connect"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Select a class to begin creating a relationship.</i>"
+//        document.querySelector("#info-panel-content").innerHTML = "<i>Select a class to begin creating a relationship.</i>"
         currentUIState = UI_STATES.CONNECT;
         break;
 
         case "toolbar-remove":
         diagram.canvas.addClass("remove");
+        document.querySelector("#info-panel").style.display = "none"
         document.querySelector("#info-panel-header").innerHTML = "Remove"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Select a class or relationship to remove it.</i>"
+//        document.querySelector("#info-panel-content").innerHTML = "<i>Select a class or relationship to remove it.</i>"
         currentUIState = UI_STATES.REMOVE;
         break;
     }
