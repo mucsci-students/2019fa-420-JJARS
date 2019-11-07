@@ -181,10 +181,13 @@ Adds or modifies the attribute for the specified class"""
         self, relationship_ID: str, attribute_name: str, attribute_value: str
     ) -> None:
         """Adds or modifies the attribute with attribute_name for the specified relationship."""
-        # TODO: Relationship attributes, Sprint 3
-        print(
-            "Sorry! Relationship attributes are coming in a future version of ScrUML."
-        )
+    
+        if not self.__diagram.__set_relationship_attribute(relationship_ID, attribute_name, attribute_value):
+            print("Relationship '{}' does not exist in the diagram".format(relationship_ID[2]))
+        else:
+            print("Relationship '{}' now contains attribute '{}' with value '{}'".format(
+                relationship_ID[2], attribute_name, attribute_value))
+
 
     # ----------
     # "Strip" command
@@ -234,11 +237,18 @@ Removes the attribute for the specified class"""
         self, relationship_ID: str, attribute_name: str
     ) -> None:
         """Removes the attribute with attribute_name for the specified relationship."""
-
-        # TODO: Relationship attributes, Sprint 3
-        print(
-            "Sorry! Relationship attributes are coming in a future version of ScrUML."
-        )
+        if relationship_ID[2] not in self.__diagram.get_relationship_attributes(relationship_ID[0],relationship_ID[1],
+            relationship_ID[2]):
+            print("Relationship '{}' does not exist in the diagram: '{}'".format(
+                relationship_ID[2]))
+            return
+        if not self.__diagram.remove_relationship_attribute(relationship_ID[0], relationship_ID[1],
+            relationship_ID[2], attribute_name):
+            print("Relationship '{}' does not have an attribute with name: '{}'".format(relationship_ID[2], attribute_name))
+        else:
+            print(
+                "Removed Attribute '{}' from relationship '{}'".format(attribute_name, relationship_ID[2]))
+            
 
     # ----------
     # "Remove" command
