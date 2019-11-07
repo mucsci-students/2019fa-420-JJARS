@@ -249,8 +249,7 @@ function tryAddClass(event)
     }
 
     var rect = event.target.getBoundingClientRect();
-    var x = event.clientX - rect.left - (CLASS_WIDTH/2);
-    var y = event.clientY - rect.top - (CLASS_HEIGHT/2);
+    //TODO: Add Mathematical logic for resizing of classbox width and height
 
     var newClassName = prompt("Enter the name of the new class:");
 
