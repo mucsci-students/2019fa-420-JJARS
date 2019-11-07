@@ -35,18 +35,14 @@ class Diagram {
 
         // Add body and text
         var rect = element.rect(1, 1);
-        var text_OfClassNames = element.text(className).move(10, 10);
-        var text_OfClassAttr = element.text(classAttr).move(5, 5);
+        var text_OfClassName = element.text(className).move(10, 10);
 
-        //for each element go through and adjust the width and height
-        for each (el in text_OfClassNames)
-        {
-            var width = text.width()
-            var height = text.height()
-            rect.width(width)
-            rect.height(height)
-        }
+        var width = text_OfClassName.width()
+        var height = text_OfClassName.height()
+        rect.width(width)
+        rect.height(height)
 
+        //then go to tryAddClass scruml.js
 
         // Place element at the appropriate coordinates, if in the attributes
         if (classAttr["[x]"] && classAttr["[y]"])
