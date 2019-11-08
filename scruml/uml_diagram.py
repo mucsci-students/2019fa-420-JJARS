@@ -198,10 +198,6 @@ Returns 'True' on success, or 'False' on failure."""
 
         class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
-        # If the reverse of the current pair exists already, just use that
-        if (class_name_b, class_name_a) in self.__relationships:
-            class_pair = (class_name_b, class_name_a)
-
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
@@ -282,4 +278,91 @@ Returns 'None' on failure."""
     # ----------
     # Relationship attribute functions
 
-    # TODO: Sprint 3
+    # ----------
+    # set_relationship_attribute
+
+    def set_relationship_attribute(
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: Optional[str],
+        attribute_name: str,
+        attribute_value: str,
+    ) -> Optional[str]:
+        """Sets the value of 'attribute_name' to 'attribute_value' for the relationship between 'class_name_a' and 'class_name_b'
+with the optional name 'relationship_name'.
+If the relationship does not yet have an attribute with the name 'attribute_name', one will be created.
+Fails if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram.
+Returns 'attribute_value' on success, or 'None' on failure."""
+
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or class_pair not in self.__relationships
+            or relationship_name not in self.__relationships[class_pair]
+        ):
+            return None
+
+        self.__relationships[class_pair][relationship_name][
+            attribute_name
+        ] = attribute_value
+
+        return attribute_value
+
+    # ----------
+    # remove_relationship_attribute
+
+    def remove_relationship_attribute(
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: Optional[str],
+        attribute_name: str,
+    ) -> Optional[str]:
+        """Removes the attribute with name 'attribute_name' from the relationship between 'class_name_a' and 'class_name_b'
+with the optional name 'relationship_name'.
+Fails if an attribute with 'attribute_name' is not found in the relationship.
+Fails if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram.
+Returns 'attribute_name' on success, or 'None' on failure."""
+
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or class_pair not in self.__relationships
+            or relationship_name not in self.__relationships[class_pair]
+            or attribute_name not in self.__relationships[class_pair][relationship_name]
+        ):
+            return None
+
+        del self.__relationships[class_pair][relationship_name][attribute_name]
+
+        return attribute_name
+
+    # ----------
+    # get_relationship_attributes
+
+    def get_relationship_attributes(
+        self,
+        class_name_a: str,
+        class_name_b: str,
+        relationship_name: Optional[str] = None,
+    ) -> Optional[AttributeDict]:
+        """Returns a Dict[str, str] containing the attribute names and values for the relationship between 'class_name_a' and 'class_name_b'
+with the optional name 'relationship_name'.
+Fails and returns 'None' if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram."""
+
+        class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
+
+        if (
+            class_name_a not in self.__classes
+            or class_name_b not in self.__classes
+            or class_pair not in self.__relationships
+            or relationship_name not in self.__relationships[class_pair]
+        ):
+            return None
+
+        return self.__relationships[class_pair][relationship_name]
