@@ -22,32 +22,42 @@ def test_add_and_remove_class() -> None:
     api: __API = __API()
     api._API__diagram = UMLDiagram()
 
-    result = api.addClass({"x": 0, "y": 20, "class_name": "classA"})
+    add_class_data = {"class_name": "classA", "x": 0, "y": 20}
+
+    result = api.addClass(add_class_data)
     assert result == ""
 
-    result2 = api.addClass({"x": 0, "y": 20, "class_name": "classA"})
+    result2 = api.addClass(add_class_data)
     assert result2 == "Class classA already exists in the diagram."
 
-    result3 = api.addClass({"x": 0, "y": 20, "class_name": "class A"})
+    add_class_data_case_2 = {"class_name": "class A", "x": 0, "y": 20}
+
+    result3 = api.addClass(add_class_data_case_2)
     assert (
         result3
         == "Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
     )
 
-    result4 = api.addClass({"x": 20, "y": 20, "class_name": "classB"})
-    assert result4 == ""
+    """
+    result4 = api.removeClass(add_class_data['class_name'])
+    assert (
+        result4
+        == f"Selected class not found in diagram: {add_class_data['class_name']}"
+        )
+    """
 
-    # assert api.__diagram.add_class("classA")
-    # assert api.__diagram.add_class("classB")
 
-    # result5 = api.removeClass({'class_name': "classA"})
-    # return result5 == ""
+# assert api.__diagram.add_class("classA")
+# assert api.__diagram.add_class("classB")
+
+# result5 = api.removeClass({'class_name': "classA"})
+# return result5 == ""
 
 
 # assert api.__diagram.get_all_class_names() == []
 
 
-def test_set_class_attribute() -> str:
+def test_set_and_remove_class_attribute() -> str:
     api: __API = __API()
     api._API__diagram = UMLDiagram()
     """
@@ -64,16 +74,24 @@ def test_set_class_attribute() -> str:
     )
     """
 
-    data = {
+    set_att_data = {
         "class_name": "classA",
-        "attribute_name": "Foo Bar",
+        "attribute_name": "Foo_Bar",
         "attribute_value": "20",
         "ignore_naming_rules": "t",
     }
-    result2 = api.setClassAttribute(data)
+    result2 = api.setClassAttribute(set_att_data)
     assert (
         result2
-        == f"Class {data['class_name']} does not exist in the diagram. Unable to add attribute: {data['attribute_name']}"
+        == f"Class {set_att_data['class_name']} does not exist in the diagram. Unable to add attribute: {set_att_data['attribute_name']}"
+    )
+
+    result3 = api.removeClassAttribute(
+        set_att_data["class_name"], set_att_data["attribute_name"]
+    )
+    assert (
+        result3
+        == f"Attribute {set_att_data['attribute_name']} not found in Class: {set_att_data['class_name']}"
     )
 
 
