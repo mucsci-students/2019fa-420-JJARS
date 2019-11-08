@@ -75,3 +75,31 @@ def test_set_class_attribute() -> str:
         result2
         == f"Class {data['class_name']} does not exist in the diagram. Unable to add attribute: {data['attribute_name']}"
     )
+
+
+def test_add_and_remove_relationship() -> None:
+    api: __API = __API()
+
+    api.addClass({"x": 0, "y": 20, "class_name": "classA"})
+    api.addClass({"x": 20, "y": 20, "class_name": "classB"})
+    result = api.addRelationship(
+        {"class_name_a": "classA", "class_name_b": "classB", "relationship_name": ""}
+    )
+    assert result == ""
+    result = api.addRelationship(
+        {"class_name_a": "classA", "class_name_b": "classB", "relationship_name": ""}
+    )
+    assert result == "Relationship already exists: [classA,classB]"
+    result = api.addRelationship(
+        {"class_name_a": "classC", "class_name_b": "classB", "relationship_name": ""}
+    )
+    assert result == "Class classC not found in the diagram."
+
+    result = api.removeRelationship("[classA,classB]")
+    assert result == ""
+    result = api.removeRelationship("[classA,classB]")
+    assert result == "Relationship not found in diagram: [ classA,classB]"
+    result = api.removeRelationship("[classC,classB]")
+    assert result == "Class classC not found in the diagram."
+    result = api.removeRelationship("[classA,classC]")
+    assert result == "Class classC not found in the diagram."
