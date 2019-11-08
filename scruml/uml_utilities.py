@@ -91,7 +91,7 @@ Possible values: "class", "relationship", None"""
 
 
 def stringify_relationship_identifier(
-    class_name_a: str, class_name_b: str, relationship_name: Optional[str]
+    class_name_a: str, class_name_b: str, relationship_name: Optional[str] = None
 ) -> str:
     """Returns a stringified relationship identifier from the provided class names and (optional) relationship name."""
 
