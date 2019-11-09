@@ -37,7 +37,7 @@ function handleKeys(keyEvent)
             menubarNewButtonClicked();
             break;
 
-            case "l":
+            case "o":
             menubarLoadButtonClicked();
             break;
 
