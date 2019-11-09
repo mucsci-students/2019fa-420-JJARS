@@ -8,6 +8,103 @@ from typing import Tuple
 
 
 # ----------
+# serialize_variable
+
+
+def serialize_variable(
+    var_visibility: str, var_type: str, var_name: str
+) -> Tuple[str, str]:
+    """Returns a tuple of strings (class_attr_key, class_attr_value) where
+class_attr_key is in the form: "[V:var_name]" and
+class_attr_value is in the form "[var_visibility][var_type]".
+If no visibility was specified (var_visibility==""), then class_attr_value is "[][var_type]"."""
+
+    var_visibility = var_visibility.strip()
+    var_type = var_type.strip()
+    var_name = var_name.strip()
+
+    return (f"[V:{var_name}]", f"[{var_visibility}][{var_type}]")
+
+
+# ----------
+# serialize_function
+
+
+def serialize_function(
+    func_visibility: str,
+    func_return_type: str,
+    func_name: str,
+    func_parameters: List[str],
+) -> Tuple[str, str]:
+    """Returns a tuple of strings (class_attr_key, class_attr_value) where
+class_attr_key is in the form: "[F:func_name]" and
+class_attr_value is in the form "[func_visibility][func_return_type][param1type][param1name][param2type][param2name]...".
+If no visibility was specified (func_visibility==""), then class_attr_value is "[][func_return_type][param1type][param1name][param2type][param2name]...".
+If no parameters were specified (func_parameters==""), then class_attr_value is "[func_visibility][func_return_type]"."""
+
+    func_visibility = func_visibility.strip()
+    func_return_type = func_return_type.strip()
+    func_name = func_name.strip()
+
+    params: str = ""
+
+    if func_parameters:
+        for param in func_parameters:
+            param_type: str = param.split(" ")[0].strip()
+            param_name: str = param.split(" ")[1].strip()
+            params += f"[{param_type}][{param_name}]"
+
+    return (f"[F:{func_name}]", f"[{func_visibility}][{func_return_type}]{params}")
+
+
+# ----------
+# deserialize_variable
+
+
+def deserialize_variable(
+    class_attr_key: str, class_attr_value: str
+) -> Tuple[str, str, str]:
+    """Returns a tuple of strings containing the following variable information: (visibility, type, name).
+If there is no visibility, the following is returned: ("", type, name)."""
+
+    split_list: List[str] = class_attr_value.split("][")
+
+    var_visibility: str = split_list[0][1:]
+    var_type: str = split_list[1][:-1]
+
+    var_name: str = class_attr_key[3:-1]
+
+    return (var_visibility, var_type, var_name)
+
+
+# ----------
+# deserialize_function
+
+
+def deserialize_function(
+    class_attr_key: str, class_attr_value: str
+) -> Tuple[str, str, str, List[str]]:
+    """Returns a tuple of strings and a list of strings containing the
+following function information: (visibility, return type, name, list of parameters).
+If there is no visibility, the following is returned: ("", return type, name, list of parameters).
+If there are no parameters, the following is returned: (visibility, return type, name, [])."""
+
+    split_list: List[str] = class_attr_value[1:-1].split("][")
+
+    func_visibility: str = split_list[0]
+    func_return_type: str = split_list[1]
+
+    func_name: str = class_attr_key[3:-1]
+
+    param_list: List[str] = []
+
+    for i in range(2, len(split_list), 2):
+        param_list.append(f"{split_list[i]} {split_list[i+1]}")
+
+    return (func_visibility, func_return_type, func_name, param_list)
+
+
+# ----------
 # parse_class_identifier
 
 

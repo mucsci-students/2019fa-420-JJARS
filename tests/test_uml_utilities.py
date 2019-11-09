@@ -4,6 +4,74 @@
 from scruml import uml_utilities
 
 
+def test_serialize_variable() -> None:
+    assert uml_utilities.serialize_variable("private", "int", "xPos") == (
+        "[V:xPos]",
+        "[private][int]",
+    )
+    assert uml_utilities.serialize_variable("", "float", "m_volume") == (
+        "[V:m_volume]",
+        "[][float]",
+    )
+
+
+def test_serialize_function() -> None:
+    assert uml_utilities.serialize_function(
+        "public", "string", "getLabel", ["int offset", "char delimiter"]
+    ) == ("[F:getLabel]", "[public][string][int][offset][char][delimiter]")
+    assert uml_utilities.serialize_function(
+        "", "string", "getLabel", ["int offset", "char delimiter"]
+    ) == ("[F:getLabel]", "[][string][int][offset][char][delimiter]")
+    assert uml_utilities.serialize_function(
+        "public", "string", "getLabel", ["int offset"]
+    ) == ("[F:getLabel]", "[public][string][int][offset]")
+    assert uml_utilities.serialize_function("public", "string", "getLabel", []) == (
+        "[F:getLabel]",
+        "[public][string]",
+    )
+    assert uml_utilities.serialize_function("", "string", "getLabel", []) == (
+        "[F:getLabel]",
+        "[][string]",
+    )
+
+
+def test_deserialize_variable() -> None:
+    assert uml_utilities.deserialize_variable("[V:xPos]", "[private][int]") == (
+        "private",
+        "int",
+        "xPos",
+    )
+    assert uml_utilities.deserialize_variable("[V:m_volume]", "[][float]") == (
+        "",
+        "float",
+        "m_volume",
+    )
+
+
+def test_deserialize_function() -> None:
+    assert uml_utilities.deserialize_function(
+        "[F:getLabel]", "[public][string][int][offset][char][delimiter]"
+    ) == ("public", "string", "getLabel", ["int offset", "char delimiter"])
+    assert uml_utilities.deserialize_function(
+        "[F:getLabel]", "[][string][int][offset][char][delimiter]"
+    ) == ("", "string", "getLabel", ["int offset", "char delimiter"])
+    assert uml_utilities.deserialize_function(
+        "[F:getLabel]", "[public][string][int][offset]"
+    ) == ("public", "string", "getLabel", ["int offset"])
+    assert uml_utilities.deserialize_function("[F:getLabel]", "[public][string]") == (
+        "public",
+        "string",
+        "getLabel",
+        [],
+    )
+    assert uml_utilities.deserialize_function("[F:getLabel]", "[][string]") == (
+        "",
+        "string",
+        "getLabel",
+        [],
+    )
+
+
 def test_parse_class_identifier() -> None:
     assert uml_utilities.parse_class_identifier("Alpha") == "Alpha"
 
