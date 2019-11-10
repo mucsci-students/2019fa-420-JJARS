@@ -265,15 +265,17 @@ Adds or modifies the attribute for the specified class"""
             )
 
     def __set_relationship_attribute(
-        self, relationship_ID: str, attribute_name: str, attribute_value: str
+        self, rel_id: Optional[
+            Tuple[str, str, Optional[str]]],
+            attribute_name: str, attribute_value: str
     ) -> None:
         """Adds or modifies the attribute with attribute_name for the specified relationship."""
     
-        if not self.__diagram.__set_relationship_attribute(relationship_ID, attribute_name, attribute_value):
-            print("Relationship '{}' does not exist in the diagram".format(relationship_ID[2]))
+        if not self.__diagram.set_relationship_attribute(rel_id[0],rel_id[1],rel_id[2], attribute_name, attribute_value):
+            print("Relationship '{}' does not exist in the diagram".format(rel_id[2]))
         else:
             print("Relationship '{}' now contains attribute '{}' with value '{}'".format(
-                relationship_ID[2], attribute_name, attribute_value))
+                rel_id[2], attribute_name, attribute_value))
 
 
     # ----------
@@ -335,7 +337,7 @@ Removes the attribute for the specified class"""
         else:
             print(
                 "Removed Attribute '{}' from relationship '{}'".format(attribute_name, relationship_ID[2]))
-            
+
 
     # ----------
     # "Remove" command
