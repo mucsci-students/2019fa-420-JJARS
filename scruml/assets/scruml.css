@@ -11,6 +11,14 @@
    Accent -    #DBF87B | #A6C050
 */
 
+/* Font */
+
+
+@font-face {
+    font-family: "Noto Sans";
+    src: url("font/Noto Sans.ttf");
+}
+
 
 /* Global App Settings */
 
@@ -20,7 +28,7 @@
 }
 html
 {
-    font-family: sans-serif;
+    font-family: "Noto Sans", sans-serif;
 }
 html, body
 {
@@ -51,6 +59,7 @@ main
     overflow: hidden;
     color: #FFF;
     background-color: #1C140D;
+    border-top: 5px solid #1C140D;
     border-bottom: 5px solid #090703;
 }
 #menubar li
@@ -84,6 +93,7 @@ main
     overflow: scroll;
     max-height: 90%;
     background-image: url("img/background.png");
+    padding: 10px;
 }
 
 #diagram-canvas svg
@@ -174,64 +184,137 @@ main
 
 #info-panel
 {
+    display: none;
     flex: 0 0 320px;
+    max-height: 90%;
+    overflow-y: scroll;
     padding: 20px;
     border-left: solid 5px #E5E5E5;
 }
-#info-panel #info-panel-header
+#info-panel .info-panel-content .header
 {
+    display: inline-block;
+    width: 100%;
     color: #1C140D;
+    margin-top: 15px;
+    margin-bottom: 10px;
 }
-#info-panel hr
+
+#info-panel .info-panel-content
+{
+    display: none;
+    width: 100%;
+}
+
+#info-panel .info-panel-content .identifier
+{
+    font-size: 1.25em;
+    margin-bottom: 5px;
+}
+#info-panel .info-panel-content .edit-identifier
+{
+    cursor: pointer;
+    color: #795548;
+    transition: color 0.2s;
+    padding: 0px;
+    margin: 0px;
+}
+#info-panel .info-panel-content .edit-identifier:hover
+{
+    color: #A1887F;
+}
+#info-panel .info-panel-content .edit-identifier:active
+{
+    color: #3E2723;
+}
+#info-panel .info-panel-content hr
 {
     border: none;
     border-bottom: solid 2px #A6C050;
+    margin-top: 0px;
+    margin-bottom: 10px;
 }
 
-#info-panel-content
+#info-panel .info-panel-content input,
+#info-panel .info-panel-content label,
+#info-panel .info-panel-content select
 {
-    display: flex;
-    flex-wrap: wrap;
+    height: 30px;
     width: 100%;
 }
-#info-panel-content input
+#info-panel .info-panel-content input,
+#info-panel .info-panel-content select
 {
     background: #DDDDDD;
     border: none;
-    height: 30px;
-    width: 120px;
-    margin-left: 15px;
-    margin-bottom: 10px;
     transition: background-color 0.2s;
+    padding: 0px 10px;
+    margin-bottom: 10px;
 }
-#info-panel-content input:hover
+#info-panel .info-panel-content label
+{
+    display: inline-block;
+    margin-bottom: 0px;
+}
+
+#info-panel .info-panel-content input:hover
 {
     background: #F2E9E1;
 }
-#info-panel-content input[type="text"]
+#info-panel .info-panel-content input:active
 {
-    padding: 0px 10px;
-}
-#info-panel-content .delete-property-button
-{
-    width: 30px;
-    height: 30px;
-    margin-left: 0px;
-}
-#info-panel-content .delete-property-button:hover
-{
-    background: #F44336;
-}
-#info-panel-content #add-property-button
-{
-    width: 300px;
-    margin-left: 0px;
-}
-#info-panel-content #add-property-button:hover
-{
-    background: #DBF87B;
+    background: #D9D1CA;
 }
 
+#info-panel #class-info.info-panel-content input[type="text"]
+{
+    width: 80%;
+    float: right;
+}
+
+#info-panel .info-panel-content input[type="button"]
+{
+    width: 15%;
+    float: left;
+    padding: 0px;
+    height: 30px;
+    border-radius: 5px;
+}
+#info-panel .info-panel-content .delete-button,
+#info-panel .info-panel-content .add-button
+{
+    font-weight: bold;
+}
+
+#info-panel .info-panel-content .delete-button:hover
+{
+    color: #fff;
+    background: #F44336;
+}
+#info-panel .info-panel-content .delete-button:active
+{
+    color: #fff;
+    background: #C62828;
+}
+#info-panel .info-panel-content .add-button:hover
+{
+    color: #fff;
+    background: #A6C050;
+}
+#info-panel .info-panel-content .add-button:active
+{
+    color: #fff;
+    background: #689F38;
+}
+
+#info-panel .info-panel-content select:hover
+{
+    background: #F2E9E1;
+}
+#info-panel .info-panel-content select:active
+{
+    background: #D9D1CA;
+}
 
 
 /* Toolbar */
@@ -245,6 +328,7 @@ main
     color: #FFF;
     background-color: #1C140D;
     border-top: 5px solid #090703;
+    border-bottom: 5px solid #1C140D;
 }
 #toolbar li
 {

@@ -250,12 +250,12 @@ separated by a comma, and an optional relationship name (also comma separated)""
         class_name: str = class_properties["class_name"]
         x: str = class_properties["x"]
         y: str = class_properties["y"]
-        if not self.__parse_class_identifier(class_properties["class_name"]):
+        if not self.__parse_class_identifier(class_name):
             return "Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
-        if not self.__diagram.add_class(class_properties["class_name"]):
+        if not self.__diagram.add_class(class_name):
             return (
                 "Class "
-                + class_properties["class_name"]
+                + class_Name
                 + " already exists in the diagram."
             )
         self.__diagram.set_class_attribute(class_name, "[x]", x)
@@ -268,6 +268,20 @@ separated by a comma, and an optional relationship name (also comma separated)""
     def removeClass(self, class_name: str) -> None:
         if not self.__diagram.remove_class(class_name):
             raise Exception("Selected class not found in diagram: " + class_name)
+
+    # ----------
+    # renameClass
+
+    def renameClass(self, class_properties: Dict[str, str]) -> str:
+        old_class_name: str = class_properties["old_class_name"]
+        new_class_name: str = class_properties["new_class_name"]
+        if not self.__parse_class_identifier(old_class_name):
+            return "Old class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+        if not self.__parse_class_identifier(new_class_name):
+            return "New class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+        if not self.__diagram.rename_class(old_class_name, new_class_name):
+            return "Class " + new_class_name + " already exists in the diagram."
+        return ""
 
     # ----------
     # Class attribute functions
