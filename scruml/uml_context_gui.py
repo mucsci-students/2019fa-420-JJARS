@@ -12,6 +12,7 @@ import pkg_resources
 import webview
 
 from scruml import uml_filesystem_io
+from scruml import uml_utilities
 from scruml.uml_diagram import UMLDiagram
 
 
@@ -96,63 +97,6 @@ Structure: dictionary[classPair][relationshipName][attributeName] == attributeVa
                 )
 
         return response
-
-    # ----------
-    # __parse_class_identifier
-
-    def __parse_class_identifier(self, ident: str) -> Optional[str]:
-        """Returns valid class identifier on success, or None on failure
-Valid class identifiers contain no whitespace and are not surrounded by brackets"""
-        ident = ident.strip()
-        if " " in ident:
-            return None
-        if '"' in ident:
-            return None
-        if "'" in ident:
-            return None
-        if ident.startswith("[") and ident.endswith("]"):
-            return None
-        return ident
-
-    # ----------
-    # __parse_relationship_identifier
-
-    def __parse_relationship_identifier(
-        self, ident: str
-    ) -> Optional[Tuple[str, str, Optional[str]]]:
-        """Returns valid relationship identifier on success, or None on failure
-Valid relationship identifiers are surrounded by brackets, contain two valid class names
-separated by a comma, and an optional relationship name (also comma separated)"""
-        ident = ident.strip()
-
-        # Check for start and end brackets and then shear them away
-        if ident.startswith("[") and ident.endswith("]"):
-            ident = ident[1:-1]
-        else:
-            return None
-
-        # Split up the string into a list
-        ident_list: List[str] = ident.split(",")
-
-        # Make sure that there were enough values provided in the identifier
-        if len(ident_list) <= 1 or len(ident_list) >= 4:
-            return None
-
-        # Pull out and validate the two class names that should be in the identifier
-        class_A_name: Optional[str] = self.__parse_class_identifier(ident_list[0])
-        class_B_name: Optional[str] = self.__parse_class_identifier(ident_list[1])
-        if not class_A_name or not class_B_name:
-            return None
-
-        # If a relationship name was provided, pull it out and validate it too
-        # (Relationship names follow the same rules as class names for simplicity)
-        relationship_name: Optional[str] = None
-        if len(ident_list) == 3:
-            relationship_name = self.__parse_class_identifier(ident_list[2])
-            if not relationship_name:
-                return None
-
-        return (str(class_A_name), str(class_B_name), relationship_name)
 
     # ----------
     # Diagram file functions
@@ -250,7 +194,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
         class_name: str = class_properties["class_name"]
         x: str = class_properties["x"]
         y: str = class_properties["y"]
-        if not self.__parse_class_identifier(class_name):
+        if not uml_utilities.parse_class_identifier(class_properties["class_name"]):
             return "Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
         if not self.__diagram.add_class(class_name):
             return "Class " + class_name + " already exists in the diagram."
@@ -293,7 +237,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         if not class_attribute_properties[
             "ignore_naming_rules"
-        ] and not self.__parse_class_identifier(attribute_name):
+        ] and not uml_utilities.parse_class_identifier(attribute_name):
             return "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
 
         if not self.__diagram.set_class_attribute(
@@ -369,7 +313,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
 
         relationship_id_tuple: Optional[
             Tuple[str, str, Optional[str]]
-        ] = self.__parse_relationship_identifier(relationship_id)
+        ] = uml_utilities.parse_relationship_identifier(relationship_id)
 
         if not relationship_id_tuple:
             raise Exception(
