@@ -253,11 +253,7 @@ separated by a comma, and an optional relationship name (also comma separated)""
         if not self.__parse_class_identifier(class_name):
             return "Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
         if not self.__diagram.add_class(class_name):
-            return (
-                "Class "
-                + class_Name
-                + " already exists in the diagram."
-            )
+            return "Class " + class_name + " already exists in the diagram."
         self.__diagram.set_class_attribute(class_name, "[x]", x)
         self.__diagram.set_class_attribute(class_name, "[y]", y)
         return ""
