@@ -364,7 +364,7 @@ If 'enable_debug' is set to 'True', enables the web console."""
         print("Developer console enabled!")
 
     webview.create_window(
-        "ScrUML", html_file, min_size=(640, 480), js_api=api, confirm_close=True
+        "ScrUML", html_file, min_size=(1024, 720), js_api=api, confirm_close=True
     )
 
     webview.start(debug=enable_debug, gui="cef")
