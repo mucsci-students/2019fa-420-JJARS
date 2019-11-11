@@ -265,17 +265,27 @@ Adds or modifies the attribute for the specified class"""
             )
 
     def __set_relationship_attribute(
-        self, rel_id: Optional[
-            Tuple[str, str, Optional[str]]],
+        self, rel_id: str,
             attribute_name: str, attribute_value: str
     ) -> None:
         """Adds or modifies the attribute with attribute_name for the specified relationship."""
-    
-        if not self.__diagram.set_relationship_attribute(rel_id[0],rel_id[1],rel_id[2], attribute_name, attribute_value):
-            print("Relationship '{}' does not exist in the diagram".format(rel_id[2]))
+        rel_id = rel_id.strip("[]")
+        relationship_id: List[str] = rel_id.split(',')
+        if len(relationship_id) == 2:
+            relationship_name = "["+relationship_id[0]+","+relationship_id[1]+"]"
+            if not self.__diagram.set_relationship_attribute(relationship_id[0],relationship_id[1],None,attribute_name, attribute_value):
+                print("Relationship '{}'does not exist in the diagram".format(relationship_name))
+            else:
+                print("Relationship '{}' now contains attribute '{}' with value '{}'".format(
+                relationship_name, attribute_name, attribute_value))
+
         else:
-            print("Relationship '{}' now contains attribute '{}' with value '{}'".format(
-                rel_id[2], attribute_name, attribute_value))
+            relationship_name = relationship_id[2]
+            if not self.__diagram.set_relationship_attribute(relationship_id[0],relationship_id[1],relationship_name, attribute_name, attribute_value):
+                print("Relationship '{}' does not exist in the diagram".format(relationship_name))
+            else:
+                print("Relationship '{}' now contains attribute '{}' with value '{}'".format(
+                    relationship_name, attribute_name, attribute_value))
 
 
     # ----------
@@ -538,8 +548,14 @@ Prints all elements present in the current diagram"""
                     )
                 )
 
-                # TODO: Relationship attributes, Sprint 3
-                print("   No attributes")
+                relationship_attributes: Dict[str, str] = self.__diagram.get_relationship_attributes(
+                    relationship_pair[0],relationship_pair[1], relationship_name)
+                if relationship_attributes == {}:
+                   print("No attributes")
+                else:
+
+                    for rel_attribute_name, rel_attribute_value in relationship_attributes.items():
+                        print(" {} = {}".format(rel_attribute_name, rel_attribute_value))
 
     # ----------
     # do_save
