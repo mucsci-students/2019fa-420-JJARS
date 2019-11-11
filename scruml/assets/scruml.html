@@ -42,11 +42,17 @@
           <strong class="identifier header"><span id="class-id"></span><a class="edit-identifier" onclick="renameClass();"> 🖉</a></strong>
           <hr>
           <strong class="header">Functions</strong>
-          <input type="button" class="delete-button" value="x"><input type="text" placeholder="func myFunc()">
-          <input type="button" class="add-button" value="+">
+          <div id="function-list">
+            <div class="member-function" id="func1">
+                <input type="button" class="delete-button" value="x"><select class="func-visibility"><option>private</option><option>protected</option><option>public</option></select><input type="text" class="func-ret-type" placeholder="int"><input type="text" class="func-name" value="func1"><input type="text" class="func-params" placeholder="int x, float y">
+            </div>
+          </div>
+          <input type="button" class="add-button" value="+" onclick="addMemberFunction();">
           <strong class="header">Variables</strong>
-          <input type="button" class="delete-button" value="x"><input type="text" placeholder="var myVar">
-          <input type="button" class="add-button" value="+">
+          <div id="variable-list">
+            <input type="button" class="delete-button" value="x"><input type="text" placeholder="var myVar">
+          </div>
+          <input type="button" class="add-button" value="+" onclick="addMemberVariable();">
         </div>
         <div id="relationship-info" class="info-panel-content">
           <strong class="identifier header"><span id="relationship-id"></span></strong>

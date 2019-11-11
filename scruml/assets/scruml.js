@@ -251,6 +251,70 @@ function renameClass()
 
 
 // ----------
+// Add input elements for a member function in the properties panel
+
+function addMemberFunction()
+{
+    // TODO: var i will be used to make a unique function name
+    var i = 2;
+
+    var funcDiv = document.createElement("div");
+    funcDiv.setAttribute('class', 'member-function');
+    funcDiv.setAttribute('id', 'func' + i);
+
+    var deleteButton = document.createElement("input");
+    deleteButton.setAttribute('type', 'button');
+    deleteButton.setAttribute('class', 'delete-button');
+    deleteButton.setAttribute('value', 'x');
+
+    var visibilityDropdown = document.createElement("select");
+    visibilityDropdown.setAttribute('class', 'func-visibility');
+    var privateOption = document.createElement("option");
+    privateOption.textContent = "private";
+    var protectedOption = document.createElement("option");
+    protectedOption.textContent = "protected";
+    var publicOption = document.createElement("option");
+    publicOption.textContent = "public";
+    visibilityDropdown.appendChild(privateOption);
+    visibilityDropdown.appendChild(protectedOption);
+    visibilityDropdown.appendChild(publicOption);
+
+    var retTypeField = document.createElement("input");
+    retTypeField.setAttribute('type', 'text');
+    retTypeField.setAttribute('class', 'func-ret-type');
+    retTypeField.setAttribute('placeholder', 'int');
+
+    var nameField = document.createElement("input");
+    nameField.setAttribute('type', 'text');
+    nameField.setAttribute('class', 'func-name');
+    nameField.setAttribute('value', 'func' + i);
+
+    var paramsField = document.createElement("input");
+    paramsField.setAttribute('type', 'text');
+    paramsField.setAttribute('class', 'func-params');
+    paramsField.setAttribute('placeholder', 'int x, float y');
+
+    funcDiv.appendChild(deleteButton);
+    funcDiv.appendChild(visibilityDropdown);
+    funcDiv.appendChild(retTypeField);
+    funcDiv.appendChild(nameField);
+    funcDiv.appendChild(paramsField);
+
+    var funcList = document.getElementById("function-list");
+    funcList.appendChild(funcDiv);
+}
+
+
+// ----------
+// Add input elements for a member variable in the properties panel
+
+function addMemberVariable()
+{
+    // TODO: Implement this function
+}
+
+
+// ----------
 // Diagram canvas class add event function
 
 function tryAddClass(event)

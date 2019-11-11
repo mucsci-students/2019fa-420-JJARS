@@ -266,23 +266,38 @@ main
     background: #D9D1CA;
 }
 
-#info-panel #class-info.info-panel-content input[type="text"]
+#info-panel .info-panel-content #function-list .member-function
 {
-    width: 80%;
-    float: right;
+    clear: left;
 }
 
-#info-panel .info-panel-content input[type="button"]
+#info-panel .info-panel-content #function-list .delete-button
 {
     width: 15%;
     float: left;
     padding: 0px;
     height: 30px;
     border-radius: 5px;
+    font-weight: bold;
 }
-#info-panel .info-panel-content .delete-button,
+
+#info-panel .info-panel-content #function-list .func-visibility,
+#info-panel .info-panel-content #function-list .func-ret-type,
+#info-panel .info-panel-content #function-list .func-name,
+#info-panel .info-panel-content #function-list .func-params
+{
+    width: 20%;
+    margin: 1px;
+}
+
 #info-panel .info-panel-content .add-button
 {
+    width: 15%;
+    float: left;
+    clear: left;
+    padding: 0px;
+    height: 30px;
+    border-radius: 5px;
     font-weight: bold;
 }
 
