@@ -112,6 +112,10 @@ class Diagram {
             classElementClicked(this);
         });
 
+        element.on("dragmove", function(event){
+            console.log(event);
+        })
+
         // Hook drag end event to handler
         element.on("dragend", function classDragEnd(event) {
             classElementDragged(this);
@@ -168,8 +172,8 @@ class Diagram {
                     this.draggy({
                         minX: 0,
                         minY: 0,
-                        maxX: me.canvas.width(),
-                        maxY: me.canvas.height()
+                        maxX: me.canvas.width() - this.bbox().width,
+                        maxY: me.canvas.height() - this.bbox().height
                     });
                 }
                 else if (!enable && typeof this.fixed === "function")
@@ -216,7 +220,6 @@ class Diagram {
                     if (!SVG.get(key))
                     {
                         me.buildClassElement(key, value);
-
                     }
                 }
 
