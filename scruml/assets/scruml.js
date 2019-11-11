@@ -18,7 +18,6 @@ const UI_STATES = {
 // Global variables
 
 var currentUIState = UI_STATES.SELECT;
-var selectedElement = null;
 var diagram = null;
 
 
@@ -37,7 +36,7 @@ function handleKeys(keyEvent)
             menubarNewButtonClicked();
             break;
 
-            case "l":
+            case "o":
             menubarLoadButtonClicked();
             break;
 
@@ -123,26 +122,22 @@ function classElementClicked(element)
 
 function classElementSelect(element)
 {
-
-    changeSelection(element);
-
-    // TODO: Loop through dictionary. For each key-value pair, append 2 input elements to propertiesList
-
+    diagram.changeSelection(element);
 }
 
 function classElementConnect(element)
 {
 
-    if (selectedElement == null)
+    if (diagram.selectedElement == null)
     {
-        changeSelection(element);
+        diagram.changeSelection(element);
         document.querySelector("#info-panel-content").innerHTML = "<i>Select another class to create a relationship.</i>"
         return;
     }
 
-    var classAName = selectedElement.id();
+    var classAName = diagram.selectedElement.id();
     var classBName = element.id();
-    clearSelection();
+    diagram.clearSelection();
 
     var relationshipName = prompt("Enter the relationship name (leave blank for no name):");
 
@@ -164,9 +159,9 @@ function classElementConnect(element)
 
 function classElementRemove(element)
 {
-    if (element == selectedElement)
+    if (element == diagram.selectedElement)
     {
-        clearSelection();
+        diagram.clearSelection();
     }
     pywebview.api.removeClass(element.id()).then(function removeClassUpdate() { diagram.update(); });
 }
@@ -220,20 +215,38 @@ function relationshipElementClicked(element)
 
 function relationshipElementSelect(element)
 {
-
-    changeSelection(element);
-
-    // TODO: Loop through dictionary. For each key-value pair, append 2 input elements to propertiesList
-
+    diagram.changeSelection(element);
 }
 
 function relationshipElementRemove(element)
 {
-    if (element == selectedElement)
+    if (element == diagram.selectedElement)
     {
-        clearSelection();
+        diagram.clearSelection();
     }
     pywebview.api.removeRelationship(element.id()).then(function removeRelationshipUpdate() { diagram.update(); });
+}
+
+
+// ----------
+// Rename UML class function
+
+function renameClass()
+{
+
+    var newClassName = prompt("Enter a new class name:");
+
+    // If the user hit "cancel", return
+    if (newClassName == null) return;
+
+    pywebview.api.renameClass({"old_class_name": diagram.selectedElement.id(),
+                               "new_class_name": newClassName}).then(function renameClassUpdate(response) {
+                                   if (response !== "")
+                                   {
+                                       alert(response);
+                                   }
+                                   diagram.update(newClassName);
+                               });
 }
 
 
@@ -249,8 +262,8 @@ function tryAddClass(event)
     }
 
     var rect = event.target.getBoundingClientRect();
-    var x = event.clientX - rect.left - (CLASS_WIDTH/2);
-    var y = event.clientY - rect.top - (CLASS_HEIGHT/2);
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
 
     var newClassName = prompt("Enter the name of the new class:");
 
@@ -281,55 +294,31 @@ function toolbarButtonClicked(element)
     {
         case "toolbar-select":
         diagram.canvas.addClass("select");
-        document.querySelector("#info-panel-header").innerHTML = "Select"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Select an element to view its properties.</i>"
         diagram.setDragging(true);
         currentUIState = UI_STATES.SELECT;
         break;
 
         case "toolbar-add":
+        diagram.clearSelection();
         diagram.canvas.addClass("add");
-        document.querySelector("#info-panel-header").innerHTML = "Add"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Click anywhere on the canvas to add a new class.</i>"
         currentUIState = UI_STATES.ADD;
         break;
 
         case "toolbar-connect":
-        clearSelection();
+        diagram.clearSelection();
         diagram.canvas.addClass("connect");
-        document.querySelector("#info-panel-header").innerHTML = "Connect"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Select a class to begin creating a relationship.</i>"
         currentUIState = UI_STATES.CONNECT;
         break;
 
         case "toolbar-remove":
+        diagram.clearSelection();
         diagram.canvas.addClass("remove");
-        document.querySelector("#info-panel-header").innerHTML = "Remove"
-        document.querySelector("#info-panel-content").innerHTML = "<i>Select a class or relationship to remove it.</i>"
         currentUIState = UI_STATES.REMOVE;
         break;
     }
     if (document.querySelector("#toolbar a.selected"))
         document.querySelector("#toolbar a.selected").classList.remove("selected");
     element.classList.add("selected");
-}
-
-
-// ----------
-// Selection functions
-
-function clearSelection()
-{
-    if (selectedElement != null && document.querySelector("#diagram-canvas .selected"))
-        document.querySelector("#diagram-canvas .selected").classList.remove("selected");
-    selectedElement = null;
-}
-
-function changeSelection(element)
-{
-    clearSelection();
-    element.addClass("selected");
-    selectedElement = element;
 }
 
 
@@ -344,5 +333,5 @@ document.addEventListener("DOMContentLoaded", function contentLoadedInit() {
 
         document.getElementById("toolbar-select").click();
 
-    }, 50);
+    }, 200);
 });

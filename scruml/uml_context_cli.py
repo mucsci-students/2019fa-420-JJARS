@@ -7,6 +7,7 @@ from typing import Optional
 from typing import Tuple
 
 from scruml import uml_filesystem_io
+from scruml import uml_utilities
 from scruml.uml_diagram import UMLDiagram
 
 
@@ -27,94 +28,6 @@ class __UMLShell(cmd.Cmd):
     __diagram: UMLDiagram = UMLDiagram()
 
     # TODO: Standardize print strings, refactor dispatch functions
-
-    # ----------
-    # Helper functions
-
-    # ----------
-    # __parse_class_identifier
-
-    def __parse_class_identifier(self, ident: str) -> Optional[str]:
-        """Returns valid class identifier on success, or None on failure.
-Valid class identifiers contain no whitespace, no quotes, and are not surrounded by brackets"""
-        ident = ident.strip()
-        if " " in ident:
-            return None
-        if '"' in ident:
-            return None
-        if "'" in ident:
-            return None
-        if ident.startswith("[") and ident.endswith("]"):
-            return None
-        return ident
-
-    # ----------
-    # __parse_relationship_identifier
-
-    def __parse_relationship_identifier(
-        self, ident: str
-    ) -> Optional[Tuple[str, str, Optional[str]]]:
-        """Returns valid relationship identifier on success, or None on failure.
-Valid relationship identifiers are surrounded by brackets, contain two valid class names
-separated by a comma, and an optional relationship name (also comma separated)."""
-
-        ident = ident.strip()
-
-        # Check for start and end brackets and then shear them away
-        if ident.startswith("[") and ident.endswith("]"):
-            ident = ident[1:-1]
-        else:
-            return None
-
-        # Split up the string into a list
-        ident_list: List[str] = ident.split(",")
-
-        # Make sure that there were enough values provided in the identifier
-        if len(ident_list) <= 1 or len(ident_list) >= 4:
-            return None
-
-        # Pull out and validate the two class names that should be in the identifier
-        class_A_name: Optional[str] = self.__parse_class_identifier(ident_list[0])
-        class_B_name: Optional[str] = self.__parse_class_identifier(ident_list[1])
-        if not class_A_name or not class_B_name:
-            return None
-
-        # If a relationship name was provided, pull it out and validate it too
-        # (Relationship names follow the same rules as class names for simplicity)
-        relationship_name: Optional[str] = None
-        if len(ident_list) == 3:
-            relationship_name = self.__parse_class_identifier(ident_list[2])
-            if not relationship_name:
-                return None
-
-        return (str(class_A_name), str(class_B_name), relationship_name)
-
-    # ----------
-    # __stringify_relationship_identifier
-
-    def __stringify_relationship_identifier(
-        self, class_name_a: str, class_name_b: str, relationship_name: Optional[str]
-    ) -> str:
-        """Returns a stringified relationship identifier from the provided class names and (optional) relationship name."""
-
-        return "[{},{}{}]".format(
-            class_name_a,
-            class_name_b,
-            "" if not relationship_name else "," + relationship_name,
-        )
-
-    # ----------
-    # __classify_identifier
-
-    def __classify_identifier(self, ident: str) -> Optional[str]:
-        """Returns a string identifying the kind of identifier that "ident" represents.
-Possible values: "class", "relationship", None"""
-        if self.__parse_class_identifier(ident):
-            return "class"
-        elif self.__parse_relationship_identifier(ident):
-            return "relationship"
-        else:
-            return None
 
     def __yes_or_no_prompt(self, question: str) -> bool:
         """Prompts the user with "question" and waits for a "y/n" answer."""
@@ -169,7 +82,7 @@ Possible values: "class", "relationship", None"""
         """Usage: add <identifier>
 Adds new class or relationship if one with that identifier does not already exist
 For help with identifiers, type in 'help identifiers'"""
-        identifier_class: Optional[str] = self.__classify_identifier(arg)
+        identifier_class: Optional[str] = uml_utilities.classify_identifier(arg)
         if identifier_class == "class":
             self.__add_class(arg)
         elif identifier_class == "relationship":
@@ -191,7 +104,7 @@ For help with identifiers, type in 'help identifiers'"""
 
         rel_id: Optional[
             Tuple[str, str, Optional[str]]
-        ] = self.__parse_relationship_identifier(arg)
+        ] = uml_utilities.parse_relationship_identifier(arg)
 
         # TODO: Refactor
         if rel_id is None:
@@ -209,7 +122,7 @@ For help with identifiers, type in 'help identifiers'"""
         if not self.__diagram.add_relationship(rel_id[0], rel_id[1], rel_id[2]):
             print(
                 "Relationship {} already exists in the diagram".format(
-                    self.__stringify_relationship_identifier(
+                    uml_utilities.stringify_relationship_identifier(
                         rel_id[0], rel_id[1], rel_id[2]
                     )
                 )
@@ -217,7 +130,7 @@ For help with identifiers, type in 'help identifiers'"""
         else:
             print(
                 "Added relationship {}".format(
-                    self.__stringify_relationship_identifier(
+                    uml_utilities.stringify_relationship_identifier(
                         rel_id[0], rel_id[1], rel_id[2]
                     )
                 )
@@ -235,12 +148,12 @@ Adds or modifies the attribute for the specified class"""
             print(self.do_set.__doc__)
             return
         # Ensure attribute name is valid
-        if not self.__parse_class_identifier(args[1]):
+        if not uml_utilities.parse_class_identifier(args[1]):
             print(
                 "Please provide a valid attribute name (no whitespace, quotes, or surrounding brackets)."
             )
             return
-        identifier_class = self.__classify_identifier(args[0])
+        identifier_class = uml_utilities.classify_identifier(args[0])
         if identifier_class == "class":
             self.__set_class_attribute(args[0], args[1], args[2])
         elif identifier_class == "relationship":
@@ -285,12 +198,12 @@ Removes the attribute for the specified class"""
             print(self.do_strip.__doc__)
             return
         # Ensure attribute name is valid
-        if not self.__parse_class_identifier(args[1]):
+        if not uml_utilities.parse_class_identifier(args[1]):
             print(
                 "Please provide a valid attribute name (no whitespace, quotes, or surrounding brackets)."
             )
             return
-        identifier_class = self.__classify_identifier(args[0])
+        identifier_class = uml_utilities.classify_identifier(args[0])
         if identifier_class == "class":
             self.__strip_class_attribute(args[0], args[1])
         elif identifier_class == "relationship":
@@ -334,7 +247,7 @@ Removes the attribute for the specified class"""
         """Usage: remove <identifier>
 Removes a class or relationship if one with that identifier exists in the diagram
 For help with identifiers, type in 'help identifiers'"""
-        identifier_class = self.__classify_identifier(arg)
+        identifier_class = uml_utilities.classify_identifier(arg)
         if identifier_class == "class":
             self.__remove_class(arg)
         elif identifier_class == "relationship":
@@ -356,7 +269,7 @@ For help with identifiers, type in 'help identifiers'"""
 
     def __remove_class(self, arg: str) -> None:
         """Removes class if it exists"""
-        arg = str(self.__parse_class_identifier(arg))
+        arg = str(uml_utilities.parse_class_identifier(arg))
         if not self.__diagram.remove_class(arg):
             print("Class '{}' does not exist in the diagram".format(arg))
         else:
@@ -367,7 +280,7 @@ For help with identifiers, type in 'help identifiers'"""
 
         rel_id: Optional[
             Tuple[str, str, Optional[str]]
-        ] = self.__parse_relationship_identifier(arg)
+        ] = uml_utilities.parse_relationship_identifier(arg)
 
         # TODO: Refactor
         if rel_id is None:
@@ -385,7 +298,7 @@ For help with identifiers, type in 'help identifiers'"""
         if not self.__diagram.remove_relationship(rel_id[0], rel_id[1], rel_id[2]):
             print(
                 "Relationship {} does not exist in the diagram".format(
-                    self.__stringify_relationship_identifier(
+                    uml_utilities.stringify_relationship_identifier(
                         rel_id[0], rel_id[1], rel_id[2]
                     )
                 )
@@ -393,7 +306,7 @@ For help with identifiers, type in 'help identifiers'"""
         else:
             print(
                 "Relationship {} has been removed from the diagram".format(
-                    self.__stringify_relationship_identifier(
+                    uml_utilities.stringify_relationship_identifier(
                         rel_id[0], rel_id[1], rel_id[2]
                     )
                 )
@@ -412,8 +325,8 @@ For help with identifiers, type in 'help identifiers"""
             print(self.do_rename.__doc__)
             return
         identifiers: List[Optional[str]] = [
-            self.__parse_class_identifier(names[0]),
-            self.__parse_class_identifier(names[1]),
+            uml_utilities.parse_class_identifier(names[0]),
+            uml_utilities.parse_class_identifier(names[1]),
         ]
         if not identifiers[0] or not identifiers[1]:
             print("Please provide two valid class identifiers as arguments.\n")
