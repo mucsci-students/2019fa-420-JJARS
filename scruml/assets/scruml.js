@@ -310,7 +310,47 @@ function addMemberFunction()
 
 function addMemberVariable()
 {
-    // TODO: Implement this function
+    // TODO: var i will be used to make a unique variable name
+    var i = 2;
+
+    var varDiv = document.createElement("div");
+    varDiv.setAttribute('class', 'member-variable');
+    varDiv.setAttribute('id', 'var' + i);
+
+    var deleteButton = document.createElement("input");
+    deleteButton.setAttribute('type', 'button');
+    deleteButton.setAttribute('class', 'delete-button');
+    deleteButton.setAttribute('value', 'x');
+
+    var visibilityDropdown = document.createElement("select");
+    visibilityDropdown.setAttribute('class', 'var-visibility');
+    var privateOption = document.createElement("option");
+    privateOption.textContent = "private";
+    var protectedOption = document.createElement("option");
+    protectedOption.textContent = "protected";
+    var publicOption = document.createElement("option");
+    publicOption.textContent = "public";
+    visibilityDropdown.appendChild(privateOption);
+    visibilityDropdown.appendChild(protectedOption);
+    visibilityDropdown.appendChild(publicOption);
+
+    var typeField = document.createElement("input");
+    typeField.setAttribute('type', 'text');
+    typeField.setAttribute('class', 'var-type');
+    typeField.setAttribute('placeholder', 'int');
+
+    var nameField = document.createElement("input");
+    nameField.setAttribute('type', 'text');
+    nameField.setAttribute('class', 'var-name');
+    nameField.setAttribute('value', 'var' + i);
+
+    varDiv.appendChild(deleteButton);
+    varDiv.appendChild(visibilityDropdown);
+    varDiv.appendChild(typeField);
+    varDiv.appendChild(nameField);
+
+    var varList = document.getElementById("variable-list");
+    varList.appendChild(varDiv);
 }
 
 

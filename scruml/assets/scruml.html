@@ -50,7 +50,9 @@
           <input type="button" class="add-button" value="+" onclick="addMemberFunction();">
           <strong class="header">Variables</strong>
           <div id="variable-list">
-            <input type="button" class="delete-button" value="x"><input type="text" placeholder="var myVar">
+            <div class="member-variable" id="var1">
+                <input type="button" class="delete-button" value="x"><select class="var-visibility"><option>private</option><option>protected</option><option>public</option></select><input type="text" class="var-type" placeholder="int"><input type="text" class="var-name" value="var1">
+            </div>
           </div>
           <input type="button" class="add-button" value="+" onclick="addMemberVariable();">
         </div>
