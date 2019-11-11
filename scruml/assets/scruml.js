@@ -267,22 +267,15 @@ function addMemberFunction()
     deleteButton.setAttribute('class', 'delete-button');
     deleteButton.setAttribute('value', 'x');
 
-    var visibilityDropdown = document.createElement("select");
-    visibilityDropdown.setAttribute('class', 'func-visibility');
-    var privateOption = document.createElement("option");
-    privateOption.textContent = "private";
-    var protectedOption = document.createElement("option");
-    protectedOption.textContent = "protected";
-    var publicOption = document.createElement("option");
-    publicOption.textContent = "public";
-    visibilityDropdown.appendChild(privateOption);
-    visibilityDropdown.appendChild(protectedOption);
-    visibilityDropdown.appendChild(publicOption);
+    var visibilityField = document.createElement("input");
+    visibilityField.setAttribute('type', 'text');
+    visibilityField.setAttribute('class', 'func-visibility');
+    visibilityField.setAttribute('placeholder', 'visibility');
 
     var retTypeField = document.createElement("input");
     retTypeField.setAttribute('type', 'text');
     retTypeField.setAttribute('class', 'func-ret-type');
-    retTypeField.setAttribute('placeholder', 'int');
+    retTypeField.setAttribute('placeholder', 'type');
 
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
@@ -295,7 +288,7 @@ function addMemberFunction()
     paramsField.setAttribute('placeholder', 'int x, float y');
 
     funcDiv.appendChild(deleteButton);
-    funcDiv.appendChild(visibilityDropdown);
+    funcDiv.appendChild(visibilityField);
     funcDiv.appendChild(retTypeField);
     funcDiv.appendChild(nameField);
     funcDiv.appendChild(paramsField);
@@ -322,22 +315,14 @@ function addMemberVariable()
     deleteButton.setAttribute('class', 'delete-button');
     deleteButton.setAttribute('value', 'x');
 
-    var visibilityDropdown = document.createElement("select");
-    visibilityDropdown.setAttribute('class', 'var-visibility');
-    var privateOption = document.createElement("option");
-    privateOption.textContent = "private";
-    var protectedOption = document.createElement("option");
-    protectedOption.textContent = "protected";
-    var publicOption = document.createElement("option");
-    publicOption.textContent = "public";
-    visibilityDropdown.appendChild(privateOption);
-    visibilityDropdown.appendChild(protectedOption);
-    visibilityDropdown.appendChild(publicOption);
+    var visibilityField = document.createElement("input");
+    visibilityField.setAttribute('type', 'text');
+    visibilityField.setAttribute('class', 'var-visibility');
+    visibilityField.setAttribute('placeholder', 'visibility');
 
     var typeField = document.createElement("input");
-    typeField.setAttribute('type', 'text');
     typeField.setAttribute('class', 'var-type');
-    typeField.setAttribute('placeholder', 'int');
+    typeField.setAttribute('placeholder', 'type');
 
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
@@ -345,7 +330,7 @@ function addMemberVariable()
     nameField.setAttribute('value', 'var' + i);
 
     varDiv.appendChild(deleteButton);
-    varDiv.appendChild(visibilityDropdown);
+    varDiv.appendChild(visibilityField);
     varDiv.appendChild(typeField);
     varDiv.appendChild(nameField);
 
