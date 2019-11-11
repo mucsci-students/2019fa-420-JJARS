@@ -215,9 +215,9 @@ Structure: dictionary[classPair][relationshipName][attributeName] == attributeVa
     def renameClass(self, class_properties: Dict[str, str]) -> str:
         old_class_name: str = class_properties["old_class_name"]
         new_class_name: str = class_properties["new_class_name"]
-        if not self.__parse_class_identifier(old_class_name):
+        if not uml_utilities.__parse_class_identifier(old_class_name):
             return "Old class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
-        if not self.__parse_class_identifier(new_class_name):
+        if not uml_utilities.__parse_class_identifier(new_class_name):
             return "New class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
         if not self.__diagram.rename_class(old_class_name, new_class_name):
             return "Class " + new_class_name + " already exists in the diagram."
