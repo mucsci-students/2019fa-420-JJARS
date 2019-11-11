@@ -18,7 +18,7 @@ from scruml.uml_diagram import UMLDiagram
 class __UMLShell(cmd.Cmd):
     """Simple CLI context for interacting with ScrUML."""
 
-    # ----------
+    # --------------------
     # Static variables
 
     intro: str = "Welcome to ScrUML.\nType in 'help' to receive a list of possible commands."
@@ -41,14 +41,21 @@ class __UMLShell(cmd.Cmd):
             False
         ), "This is unreachable code. If you are reading this, you're in trouble, buddy."
 
-    # ----------
+
+    # --------------------
     # "Help" commands
+
+    # ----------
+    # emptyline
 
     def emptyline(self) -> bool:
         """Outputs a help line when the user does not enter a command."""
         print("Please enter a command.")
         print("Type in 'help' to receive a list of possible commands.")
         return False
+
+    # ----------
+    # help_identifiers
 
     def help_identifiers(self) -> None:
         """Prints helpful information about identifier formatting."""
@@ -75,8 +82,12 @@ class __UMLShell(cmd.Cmd):
         print('  Valid: "[ myclassA, myclassB ]", "[--object1,--object1,copy]"')
         print('  Invalid: "[class, my class]", "[[someclass], ]"')
 
+
     # ----------
     # "Add" command
+
+    # ----------
+    # do_add
 
     def do_add(self, arg: str) -> None:
         """Usage: add <identifier>
@@ -91,6 +102,9 @@ For help with identifiers, type in 'help identifiers'"""
             print("Invalid argument provided.\n")
             print(self.do_add.__doc__)
 
+    # ----------
+    # __add_class
+
     def __add_class(self, arg: str) -> None:
         """Adds new class if one with that name does not already exist"""
         arg = arg.strip()
@@ -98,6 +112,9 @@ For help with identifiers, type in 'help identifiers'"""
             print("Class '{}' already exists in the diagram".format(arg))
         else:
             print("Added class '{}'".format(arg))
+
+    # ----------
+    # __add_relationship
 
     def __add_relationship(self, arg: str) -> None:
         """Adds new relationship if one with that identifier does not already exist"""
@@ -136,8 +153,12 @@ For help with identifiers, type in 'help identifiers'"""
                 )
             )
 
+
     # ----------
     # "Set" command
+
+    # ----------
+    # do_set
 
     def do_set(self, arg: str) -> None:
         """Usage: set <identifier> <attribute_name> <attribute_value>
@@ -147,12 +168,14 @@ Adds or modifies the attribute for the specified class"""
             print("Please provide the proper arguments.\n")
             print(self.do_set.__doc__)
             return
+
         # Ensure attribute name is valid
         if not uml_utilities.parse_class_identifier(args[1]):
             print(
                 "Please provide a valid attribute name (no whitespace, quotes, or surrounding brackets)."
             )
             return
+
         identifier_class = uml_utilities.classify_identifier(args[0])
         if identifier_class == "class":
             self.__set_class_attribute(args[0], args[1], args[2])
@@ -161,6 +184,9 @@ Adds or modifies the attribute for the specified class"""
         else:
             print("Invalid argument provided.\n")
             print(self.do_set.__doc__)
+
+    # ----------
+    # __set_class_attribute
 
     def __set_class_attribute(
         self, class_name: str, attribute_name: str, attribute_value: str
@@ -176,6 +202,9 @@ Adds or modifies the attribute for the specified class"""
                     class_name, attribute_name, attribute_value
                 )
             )
+
+    # ----------
+    # __set_relationshiop_attribute
 
     def __set_relationship_attribute(
         self, rel_id: str,
@@ -201,8 +230,11 @@ Adds or modifies the attribute for the specified class"""
                     relationship_name, attribute_name, attribute_value))
 
 
-    # ----------
+    # --------------------
     # "Strip" command
+
+    # ----------
+    # do_strip
 
     def do_strip(self, arg: str) -> None:
         """Usage strip <identifier> <attribute_name>
@@ -227,6 +259,9 @@ Removes the attribute for the specified class"""
             print("Invalid argument provided.\n")
             print(self.do_strip.__doc__)
 
+    # ----------
+    # __strip_class_attribute
+
     def __strip_class_attribute(self, class_name: str, attribute_name: str) -> None:
         """Removes the attribute for the specified class"""
         if class_name not in self.__diagram.get_all_class_names():
@@ -245,6 +280,9 @@ Removes the attribute for the specified class"""
                 )
             )
 
+    # --------------------
+    # __strip_relationship_attribute
+
     def __strip_relationship_attribute(
         self, relationship_ID: str, attribute_name: str
     ) -> None:
@@ -262,8 +300,11 @@ Removes the attribute for the specified class"""
                 "Removed Attribute '{}' from relationship '{}'".format(attribute_name, relationship_ID[2]))
 
 
-    # ----------
+    # --------------------
     # "Remove" command
+
+    # ----------
+    # do_remove
 
     def do_remove(self, arg: str) -> None:
         """Usage: remove <identifier>
@@ -278,6 +319,9 @@ For help with identifiers, type in 'help identifiers'"""
             print("Invalid argument provided.\n")
             print(self.do_remove.__doc__)
 
+    # ----------
+    # complete_remove
+
     def complete_remove(
         self, text: str, line: str, begidx: str, endidx: str
     ) -> List[str]:
@@ -289,6 +333,9 @@ For help with identifiers, type in 'help identifiers'"""
             if name.startswith(text)
         ]
 
+    # ----------
+    # __remove_class
+
     def __remove_class(self, arg: str) -> None:
         """Removes class if it exists"""
         arg = str(uml_utilities.parse_class_identifier(arg))
@@ -296,6 +343,9 @@ For help with identifiers, type in 'help identifiers'"""
             print("Class '{}' does not exist in the diagram".format(arg))
         else:
             print("Removed class '{}'".format(arg))
+
+    # ----------
+    # __remove_relationship
 
     def __remove_relationship(self, arg: str) -> None:
         """Removes relationship if one with that identifier exists"""
@@ -334,8 +384,12 @@ For help with identifiers, type in 'help identifiers'"""
                 )
             )
 
-    # ----------
+
+    # --------------------
     # "Rename" command
+
+    # ----------
+    # do_rename
 
     def do_rename(self, arg: str) -> None:
         """Usage: rename <class name> <new class name>
@@ -367,6 +421,9 @@ For help with identifiers, type in 'help identifiers"""
         self.__diagram.rename_class(str(identifiers[0]), str(identifiers[1]))
         print("Renamed class '{}' to '{}'".format(identifiers[0], identifiers[1]))
 
+    # ----------
+    # complete_rename
+
     def complete_rename(
         self, text: str, line: str, begidx: str, endidx: str
     ) -> List[str]:
@@ -386,7 +443,8 @@ For help with identifiers, type in 'help identifiers"""
         """TODO: Write me!"""
         pass
 
-    # ----------
+
+    # --------------------
     # Other functions
 
     # ----------
@@ -519,7 +577,6 @@ Exits ScrUML"""
 
 # ----------
 # activate
-
 
 def activate() -> None:
     """Activates the CLI context."""
