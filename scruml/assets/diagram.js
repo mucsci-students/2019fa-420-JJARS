@@ -63,6 +63,39 @@ class Diagram {
                 document.querySelector("#class-info").style.display = "block"
                 document.querySelector("#class-id").innerHTML = element.id()
                 document.querySelector("#relationship-info").style.display = "none"
+
+                var attrDict= JSON.parse(element.attr("data-attributes"));
+
+                for (let [key, value] of Object.entries(attrDict))
+                {
+                    if ( key != "[x]" && key != "[y]")
+                    {
+                        // This attribute is a function if the second char of the key is an 'F'
+                        if (key.substring(1,2) == "F")
+                        {
+                            var deserialDict = this.deserializeFunction(key, value);
+
+                            var funcVisibility = deserialDict["visibility"];
+                            var funcType = deserialDict["return-type"];
+                            var funcName = deserialDict["name"];
+                            var funcParamStr = deserialDict["param-str"];
+
+                            addMemberFunction(funcVisibility, funcType, funcName, funcParamStr);
+                        }
+                        // This attribute is a variable if the second char of the key is an 'V'
+                        else if (key.substring(1,2) == "V")
+                        {
+                            var deserialDict = this.deserializeVariable(key, value);
+
+                            var varVisibility = deserialDict["visibility"];
+                            var varType = deserialDict["type"];
+                            var varName = deserialDict["name"];
+
+                            addMemberVariable(varVisibility, varType, varName);
+                        }
+                    }
+                }
+
             }
             else
             {
@@ -80,6 +113,49 @@ class Diagram {
         this.selectedElement = element;
     }
 
+    // ----------
+    // deserializeFunction
+
+    deserializeFunction(attrKey, attrValue) {
+        var resultDict = {};
+
+        resultDict["name"] = attrKey.substring(3, attrKey.length - 1);
+
+        attrValue = attrValue.substring(1, attrValue.length -1);
+        var splitArray = attrValue.split("][");
+
+        resultDict["visibility"] = splitArray[0];
+        resultDict["return-type"] = splitArray[1];
+
+        var paramsString = "";
+        for (var i = 2; i < splitArray.length; i += 2){
+            paramsString += splitArray[i] + " " + splitArray[i + 1] + ", ";
+        }
+        // Fixes fencepost issue: extra ", " at the end
+        paramsString = paramsString.trimRight(", ");
+
+        resultDict["param-str"] = paramsString;
+
+        return resultDict;
+    }
+
+    // ----------
+    // deserializeVariable
+
+    deserializeVariable(attrKey, attrValue) {
+        var resultDict = {};
+
+        resultDict["name"] = attrKey.substring(3, attrKey.length - 1);
+
+        attrValue = attrValue.substring(1, attrValue.length -1);
+        var splitArray = attrValue.split("][");
+
+        resultDict["visibility"] = splitArray[0];
+        resultDict["type"] = splitArray[1];
+
+        return resultDict;
+    }
+
 
     // ----------
     // Element builder functions
@@ -91,6 +167,17 @@ class Diagram {
 
         // Build element on the canvas with appropriate ID and classification
         var element = this.canvas.nested().id(className).addClass("uml-class");
+        // Hardcoded class members (comment out body of updateClassAttr() when you uncomment this)
+        /*
+        var tempClassAttr = { "[F:getID]": "[public][string][int][offset][double][modifier]",
+                                           "[F:getVal]": "[private][double][string][prefix]",
+                                           "[F:calculateDist]": "[protected][int]",
+                                           "[V:myVar]": "[public][string]",
+                                           "[V:m_volume]": "[protected][float]",
+                                           "[V:m_distance]": "[private][int]" };
+        element.attr('data-attributes', JSON.stringify(tempClassAttr));
+        */
+        element.attr('data-attributes', JSON.stringify(classAttr))
 
         // Add body and text
         var rect = element.rect(1, 1);
@@ -112,12 +199,29 @@ class Diagram {
             classElementClicked(this);
         });
 
+        element.on("dragmove", function(event){
+            console.log(event);
+        })
+
         // Hook drag end event to handler
         element.on("dragend", function classDragEnd(event) {
             classElementDragged(this);
         });
 
     }
+
+    // ----------
+    // updateClassAttr
+
+    updateClassAttr(className, classAttr) {
+        var element = SVG.get(className);
+
+        if (element.attr('data-attributes') != JSON.stringify(classAttr))
+        {
+            element.attr('data-attributes', JSON.stringify(classAttr));
+        }
+    }
+
 
     // ----------
     // buildRelationshipElement
@@ -168,8 +272,8 @@ class Diagram {
                     this.draggy({
                         minX: 0,
                         minY: 0,
-                        maxX: me.canvas.width(),
-                        maxY: me.canvas.height()
+                        maxX: me.canvas.width() - this.bbox().width,
+                        maxY: me.canvas.height() - this.bbox().height
                     });
                 }
                 else if (!enable && typeof this.fixed === "function")
@@ -216,8 +320,8 @@ class Diagram {
                     if (!SVG.get(key))
                     {
                         me.buildClassElement(key, value);
-
                     }
+                    me.updateClassAttr(key, value);
                 }
 
                 // Add any new relationships to the diagram
