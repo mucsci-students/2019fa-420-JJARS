@@ -91,6 +91,7 @@ class Diagram {
 
         // Build element on the canvas with appropriate ID and classification
         var element = this.canvas.nested().id(className).addClass("uml-class");
+        element.attr('data-attributes', JSON.stringify(classAttr));
 
         // Add body and text
         var rect = element.rect(1, 1);
@@ -122,6 +123,21 @@ class Diagram {
         });
 
     }
+
+    // ----------
+    // updateClassAttr
+
+    updateClassAttr(className, classAttr) {
+
+        var element = SVG.get(className);
+
+        if (element.attr('data-attributes') != JSON.stringify(classAttr))
+        {
+            element.attr('data-attributes', JSON.stringify(classAttr));
+        }
+
+    }
+
 
     // ----------
     // buildRelationshipElement
@@ -221,6 +237,7 @@ class Diagram {
                     {
                         me.buildClassElement(key, value);
                     }
+                    me.updateClassAttr(key, value);
                 }
 
                 // Add any new relationships to the diagram
