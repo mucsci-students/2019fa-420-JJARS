@@ -1,0 +1,369 @@
+/* ScrUML */
+/* scruml.css */
+/* Team JJARS */
+
+/*
+   Colors:
+   Light -     #FFFFFF | #E5E5E5
+   Off-Light - #F2E9E1 | #D9D1CA
+   Mid-Tone -  #EFEFEF | #DDDDDD
+   Dark -      #1C140D | #090703
+   Accent -    #DBF87B | #A6C050
+*/
+
+/* Font */
+
+
+@font-face {
+    font-family: "Noto Sans";
+    src: url("font/Noto Sans.ttf");
+}
+
+
+/* Global App Settings */
+
+*
+{
+    box-sizing: border-box;
+}
+html
+{
+    font-family: "Noto Sans", sans-serif;
+}
+html, body
+{
+    margin: 0;
+    padding: 0;
+}
+body
+{
+    display: flex;
+    min-height: 100vh;
+    max-height: 100vh;
+    flex-direction: column;
+}
+main
+{
+    display: flex;
+    flex: 1;
+}
+
+
+/* Menubar */
+
+#menubar ul
+{
+    list-style-type: none;
+    margin: 0px;
+    padding: 8px;
+    overflow: hidden;
+    color: #FFF;
+    background-color: #1C140D;
+    border-top: 5px solid #1C140D;
+    border-bottom: 5px solid #090703;
+}
+#menubar li
+{
+    display: inline;
+}
+#menubar a
+{
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+}
+#menubar a:hover
+{
+    cursor: pointer;
+    color: #1C140D;
+    background-color: #FFF;
+}
+#menubar a:active
+{
+    background-color: #D9D1CA;
+}
+
+
+/* Diagram Canvas */
+
+#diagram-canvas
+{
+    cursor: default;
+    flex: 1;
+    overflow: scroll;
+    max-height: 90%;
+    background-image: url("img/background.png");
+    padding: 10px;
+}
+
+#diagram-canvas svg
+{
+    background: #F2E9E1;
+    border: #D9D1CA dashed 2px;
+}
+
+
+/* SVG UML Elements */
+
+#diagram-canvas .uml-class,
+#diagram-canvas .uml-relationship
+{
+    stroke-width: 2;
+    stroke: #1C140D;
+    fill: #FFF;
+    fill-opacity: 0;
+}
+
+#diagram-canvas .uml-class
+{
+    fill-opacity: 1;
+}
+
+#diagram-canvas .selected
+{
+    stroke: #A6C050;
+}
+
+#diagram-canvas text
+{
+    stroke: none;
+    fill: #1C140D;
+}
+
+
+/* SVG Diagram/Element Mode Modifiers */
+
+#diagram-canvas svg.select
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.add
+{
+    cursor: copy;
+}
+
+#diagram-canvas svg.connect
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.remove
+{
+    cursor: default;
+}
+
+#diagram-canvas svg.select svg.uml-class
+{
+    cursor: grab;
+}
+#diagram-canvas svg.select path.uml-relationship
+{
+    cursor: pointer;
+}
+
+#diagram-canvas svg.add svg.uml-class,
+#diagram-canvas svg.add path.uml-relationship
+{
+    cursor: copy;
+}
+
+#diagram-canvas svg.connect svg.uml-class
+{
+    cursor: cell;
+}
+
+#diagram-canvas svg.remove svg.uml-class,
+#diagram-canvas svg.remove path.uml-relationship
+{
+    cursor: no-drop;
+}
+
+
+/* Info Panel */
+
+#info-panel
+{
+    display: none;
+    flex: 0 0 400px;
+    max-height: 90%;
+    overflow-y: scroll;
+    padding: 10px;
+    border-left: solid 5px #E5E5E5;
+}
+#info-panel .info-panel-content
+{
+    display: none;
+    width: 100%;
+}
+
+#info-panel .info-panel-content .header
+{
+    display: inline-block;
+    width: 100%;
+    color: #1C140D;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+#info-panel .info-panel-content .identifier
+{
+    font-size: 1.25em;
+    margin-bottom: 5px;
+}
+#info-panel .info-panel-content .edit-identifier
+{
+    cursor: pointer;
+    color: #795548;
+    transition: color 0.2s;
+    padding: 0px;
+    margin: 0px;
+}
+#info-panel .info-panel-content .edit-identifier:hover
+{
+    color: #A1887F;
+}
+#info-panel .info-panel-content .edit-identifier:active
+{
+    color: #3E2723;
+}
+
+#info-panel .info-panel-content hr
+{
+    border: none;
+    border-bottom: solid 2px #A6C050;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+#info-panel .info-panel-content input,
+#info-panel .info-panel-content label,
+#info-panel .info-panel-content select
+{
+    font-size: 11px;
+}
+#info-panel .info-panel-content input,
+#info-panel .info-panel-content select
+{
+    height: 30px;
+    background: #FFF;
+    border: 1px solid #1C140D;
+    transition: background-color 0.2s;
+    padding: 0px 10px;
+    margin-bottom: 10px;
+}
+#info-panel .info-panel-content select
+{
+    border-radius: 5px;
+}
+#info-panel .info-panel-content label
+{
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+#info-panel .info-panel-content input:hover,
+#info-panel .info-panel-content select:hover
+{
+    background: #F2E9E1;
+}
+#info-panel .info-panel-content input:active,
+#info-panel .info-panel-content select:active
+{
+    background: #D9D1CA;
+}
+
+#info-panel .info-panel-content .member-function,
+#info-panel .info-panel-content .member-variable
+{
+    display: flex;
+    justify-content: space-between;
+}
+#info-panel .info-panel-content .member-function .func-visibility,
+#info-panel .info-panel-content .member-function .func-ret-type,
+#info-panel .info-panel-content .member-function .func-name,
+#info-panel .info-panel-content .member-function .func-params
+{
+    width: 22%;
+}
+
+#info-panel .info-panel-content .member-variable .var-visibility,
+#info-panel .info-panel-content .member-variable .var-type,
+#info-panel .info-panel-content .member-variable .var-name
+{
+    width: 29.5%;
+}
+
+
+#info-panel .info-panel-content .delete-button,
+#info-panel .info-panel-content .add-button
+{
+    width: 10%;
+    padding: 0px;
+    height: 30px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+#info-panel .info-panel-content .delete-button:hover
+{
+    color: #fff;
+    background: #F44336;
+}
+#info-panel .info-panel-content .delete-button:active
+{
+    color: #fff;
+    background: #C62828;
+}
+#info-panel .info-panel-content .add-button:hover
+{
+    color: #fff;
+    background: #A6C050;
+}
+#info-panel .info-panel-content .add-button:active
+{
+    color: #fff;
+    background: #689F38;
+}
+
+/* Toolbar */
+
+#toolbar ul
+{
+    list-style-type: none;
+    margin: 0px;
+    padding: 8px;
+    overflow: hidden;
+    color: #FFF;
+    background-color: #1C140D;
+    border-top: 5px solid #090703;
+    border-bottom: 5px solid #1C140D;
+}
+#toolbar li
+{
+    display: inline;
+}
+#toolbar a
+{
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+}
+#toolbar a:hover
+{
+    cursor: pointer;
+    color: #1C140D;
+    background-color: #FFF;
+}
+#toolbar a.selected
+{
+    color: #1C140D;
+    background-color: #B6D060;
+}
+#toolbar a.selected:hover
+{
+    background-color: #DBF87B;
+}
+#toolbar a:active
+{
+    background-color: #D9D1CA;
+}

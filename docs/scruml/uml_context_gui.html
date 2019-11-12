@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.1" />
+<title>scruml.uml_context_gui API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>scruml.uml_context_gui</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ScrUML
+# uml_context_gui.py
+# Team JJARS
+from os import path
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
+
+import pkg_resources
+import webview
+
+from scruml import uml_filesystem_io
+from scruml.uml_diagram import UMLDiagram
+
+
+# ----------
+# __API
+
+
+class __API:
+    &#34;&#34;&#34;Provides an API to the JavaScript running in the GUI window.
+Can be called from the JavaScript as such: pywebview.api.FUNCTIONNAME( ... )&#34;&#34;&#34;
+
+    # ----------
+    # Static variables
+
+    __diagram: UMLDiagram = UMLDiagram()
+
+    # ----------
+    # Diagram information functions
+
+    # ----------
+    # getAllClassses
+
+    def getAllClasses(self, params: str) -&gt; Dict[str, Dict[str, str]]:
+        &#34;&#34;&#34;Returns a dictionary containing all class information in the diagram.
+Structure: dictionary[className][attributeName] == attributeValue&#34;&#34;&#34;
+
+        response: Dict[str, Dict[str, str]] = {}
+
+        # Populate response dictionary with classes
+        for class_name in self.__diagram.get_all_class_names():
+
+            class_attributes: Optional[
+                Dict[str, str]
+            ] = self.__diagram.get_class_attributes(class_name)
+
+            if class_attributes is not None:
+                response[class_name] = class_attributes
+            else:
+                raise Exception(&#34;Class not found in diagram: &#34; + class_name)
+
+        return response
+
+    # ----------
+    # getAllRelationships
+
+    def getAllRelationships(self, params: str) -&gt; Dict[str, Dict[str, str]]:
+        &#34;&#34;&#34;Returns a dictionary containing all relationship infromation in the diagram.
+Structure: dictionary[classPair][relationshipName][attributeName] == attributeValue&#34;&#34;&#34;
+
+        response: Dict[str, Dict[str, str]] = {}
+
+        # Populate response dictionary with relationships
+        for class_pair in self.__diagram.get_all_relationship_pairs():
+
+            relationships: Optional[
+                Dict[Optional[str], Dict[str, str]]
+            ] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
+
+            if relationships is not None:
+                for relationship_name in relationships:
+
+                    relationship_id: str = (
+                        &#34;[&#34;
+                        + class_pair[0]
+                        + &#34;,&#34;
+                        + class_pair[1]
+                        + ((&#34;,&#34; + relationship_name) if relationship_name else &#34;&#34;)
+                        + &#34;]&#34;
+                    )
+
+                    response[relationship_id] = {}
+
+                    # TODO: Relationship Attributes, Sprint 3
+
+            else:
+                raise Exception(
+                    &#34;Class pair not found in diagram: [&#34;
+                    + class_pair[0]
+                    + &#34;,&#34;
+                    + class_pair[1]
+                    + &#34;]&#34;
+                )
+
+        return response
+
+    # ----------
+    # __parse_class_identifier
+
+    def __parse_class_identifier(self, ident: str) -&gt; Optional[str]:
+        &#34;&#34;&#34;Returns valid class identifier on success, or None on failure
+Valid class identifiers contain no whitespace and are not surrounded by brackets&#34;&#34;&#34;
+        ident = ident.strip()
+        if &#34; &#34; in ident:
+            return None
+        if &#39;&#34;&#39; in ident:
+            return None
+        if &#34;&#39;&#34; in ident:
+            return None
+        if ident.startswith(&#34;[&#34;) and ident.endswith(&#34;]&#34;):
+            return None
+        return ident
+
+    # ----------
+    # __parse_relationship_identifier
+
+    def __parse_relationship_identifier(
+        self, ident: str
+    ) -&gt; Optional[Tuple[str, str, Optional[str]]]:
+        &#34;&#34;&#34;Returns valid relationship identifier on success, or None on failure
+Valid relationship identifiers are surrounded by brackets, contain two valid class names
+separated by a comma, and an optional relationship name (also comma separated)&#34;&#34;&#34;
+        ident = ident.strip()
+
+        # Check for start and end brackets and then shear them away
+        if ident.startswith(&#34;[&#34;) and ident.endswith(&#34;]&#34;):
+            ident = ident[1:-1]
+        else:
+            return None
+
+        # Split up the string into a list
+        ident_list: List[str] = ident.split(&#34;,&#34;)
+
+        # Make sure that there were enough values provided in the identifier
+        if len(ident_list) &lt;= 1 or len(ident_list) &gt;= 4:
+            return None
+
+        # Pull out and validate the two class names that should be in the identifier
+        class_A_name: Optional[str] = self.__parse_class_identifier(ident_list[0])
+        class_B_name: Optional[str] = self.__parse_class_identifier(ident_list[1])
+        if not class_A_name or not class_B_name:
+            return None
+
+        # If a relationship name was provided, pull it out and validate it too
+        # (Relationship names follow the same rules as class names for simplicity)
+        relationship_name: Optional[str] = None
+        if len(ident_list) == 3:
+            relationship_name = self.__parse_class_identifier(ident_list[2])
+            if not relationship_name:
+                return None
+
+        return (str(class_A_name), str(class_B_name), relationship_name)
+
+    # ----------
+    # Diagram file functions
+
+    # ----------
+    # newDiagramFile
+
+    def newDiagramFile(self, params: str) -&gt; None:
+        &#34;&#34;&#34;Creates a new, blank diagram.&#34;&#34;&#34;
+        self.__diagram = UMLDiagram()
+
+    # ----------
+    # loadDiagramFile
+
+    def loadDiagramFile(self, params: str) -&gt; None:
+        &#34;&#34;&#34;Opens a file selector dialog and loads the selected diagram file.&#34;&#34;&#34;
+
+        # Define supported file types
+        file_types: Tuple[str, str] = (
+            &#34;ScrUML Files (*.scruml;*.yaml)&#34;,
+            &#34;All Filles (*.*)&#34;,
+        )
+
+        # Open load file dialog
+        dialog_result: Union[Tuple[str], str, None] = webview.windows[
+            0
+        ].create_file_dialog(webview.OPEN_DIALOG, file_types=file_types)
+        file_path: str = &#34;&#34;
+
+        # Different platforms do different things here, why????
+        if not dialog_result:
+            return
+        elif isinstance(dialog_result, tuple):
+            file_path = dialog_result[0]
+        elif isinstance(dialog_result, str):
+            file_path = dialog_result
+
+        # Make sure the user selected a file
+        if len(file_path) == 0:
+            return
+
+        # Load the new diagram file
+        self.__diagram = uml_filesystem_io.load_diagram(file_path)
+
+    # ----------
+    # saveDiagramFile
+
+    def saveDiagramFile(self, params: str) -&gt; str:
+        &#34;&#34;&#34;Opens a file save dialog and saves to the specified diagram file.&#34;&#34;&#34;
+
+        file_types: Tuple[str, str] = (
+            &#34;ScrUML Files (*.scruml;*.yaml)&#34;,
+            &#34;All Filles (*.*)&#34;,
+        )
+
+        # Get OS-specific home path
+        home_path: str = path.abspath(&#34;~/&#34;)
+
+        # Open save file dialog
+        dialog_result: Union[Tuple[str], str, None] = webview.windows[
+            0
+        ].create_file_dialog(
+            webview.SAVE_DIALOG,
+            file_types=file_types,
+            save_filename=&#34;diagram.scruml&#34;,
+            directory=home_path,
+        )
+        file_path: str = &#34;&#34;
+
+        # Different platforms do different things here, why????
+        if not dialog_result:
+            return &#34;&#34;
+        elif isinstance(dialog_result, tuple):
+            file_path = dialog_result[0]
+        elif isinstance(dialog_result, str):
+            file_path = dialog_result
+
+        # Make sure the user selected a file
+        if len(file_path) == 0:
+            return &#34;&#34;
+
+        # Save file and return status message
+        if uml_filesystem_io.save_diagram(self.__diagram, file_path):
+            return &#34;Diagram successfully saved to: {}&#34;.format(file_path)
+        else:
+            return &#34;Failed to save diagram to: {}&#34;.format(file_path)
+
+    # ----------
+    # Class functions
+
+    # ----------
+    # addClass
+
+    def addClass(self, class_properties: Dict[str, str]) -&gt; str:
+        class_name: str = class_properties[&#34;class_name&#34;]
+        x: str = class_properties[&#34;x&#34;]
+        y: str = class_properties[&#34;y&#34;]
+        if not self.__parse_class_identifier(class_properties[&#34;class_name&#34;]):
+            return &#34;Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)&#34;
+        if not self.__diagram.add_class(class_properties[&#34;class_name&#34;]):
+            return (
+                &#34;Class &#34;
+                + class_properties[&#34;class_name&#34;]
+                + &#34; already exists in the diagram.&#34;
+            )
+        self.__diagram.set_class_attribute(class_name, &#34;[x]&#34;, x)
+        self.__diagram.set_class_attribute(class_name, &#34;[y]&#34;, y)
+        return &#34;&#34;
+
+    # ----------
+    # removeClass
+
+    def removeClass(self, class_name: str) -&gt; None:
+        if not self.__diagram.remove_class(class_name):
+            raise Exception(&#34;Selected class not found in diagram: &#34; + class_name)
+
+    # ----------
+    # Class attribute functions
+
+    # ----------
+    # setClassAttribute
+
+    def setClassAttribute(self, class_attribute_properties: Dict[str, str]) -&gt; str:
+
+        class_name: str = class_attribute_properties[&#34;class_name&#34;]
+        attribute_name: str = class_attribute_properties[&#34;attribute_name&#34;]
+        attribute_value: str = class_attribute_properties[&#34;attribute_value&#34;]
+
+        if not class_attribute_properties[
+            &#34;ignore_naming_rules&#34;
+        ] and not self.__parse_class_identifier(attribute_name):
+            return &#34;Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)&#34;
+
+        if not self.__diagram.set_class_attribute(
+            class_name, attribute_name, attribute_value
+        ):
+            return (
+                &#34;Class &#34;
+                + class_name
+                + &#34; does not exist in the diagram. Unable to add attribute: &#34;
+                + attribute_name
+            )
+
+        return &#34;&#34;
+
+    # ----------
+    # removeClassAttribute
+
+    def removeClassAttribute(self, class_name: str, attribute_name: str) -&gt; str:
+
+        if not self.__diagram.remove_class_attribute(class_name, attribute_name):
+            return &#34;Attribute &#34; + attribute_name + &#34; not found in Class: &#34; + class_name
+
+        return &#34;&#34;
+
+    # ----------
+    # getClassAttributes
+
+    def getClassAttributes(self, class_name: str) -&gt; Dict[str, str]:
+        attr_dict: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
+            class_name
+        )
+        if not attr_dict:
+            raise Exception(&#34;Selected class not found in diagram: &#34; + class_name)
+        return attr_dict
+
+    # ----------
+    # Relationship functions
+
+    # ----------
+    # addRelationship
+
+    def addRelationship(self, relationship_properties: Dict[str, str]) -&gt; str:
+
+        class_name_a: str = relationship_properties[&#34;class_name_a&#34;]
+        class_name_b: str = relationship_properties[&#34;class_name_b&#34;]
+        relationship_name: str = relationship_properties[&#34;relationship_name&#34;]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_a + &#34; not found in the diagram.&#34;
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_b + &#34; not found in the diagram.&#34;
+
+        if not self.__diagram.add_relationship(
+            class_name_a,
+            class_name_b,
+            relationship_name if len(relationship_name) &gt; 0 else None,
+        ):
+            return (
+                &#34;Relationship already exists: [&#34;
+                + class_name_a
+                + &#34;,&#34;
+                + class_name_b
+                + ((&#34;,&#34; + relationship_name) if relationship_name else &#34;&#34;)
+                + &#34;]&#34;
+            )
+
+        return &#34;&#34;
+
+    # ----------
+    # removeRelationship
+
+    def removeRelationship(self, relationship_id: str) -&gt; str:
+
+        relationship_id_tuple: Optional[
+            Tuple[str, str, Optional[str]]
+        ] = self.__parse_relationship_identifier(relationship_id)
+
+        if not relationship_id_tuple:
+            raise Exception(
+                &#34;Invalid relationship identifier provided: &#34; + relationship_id
+            )
+
+        class_name_a: str = relationship_id_tuple[0]
+        class_name_b: str = relationship_id_tuple[1]
+        relationship_name: Optional[str] = relationship_id_tuple[2]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_a + &#34; not found in the diagram.&#34;
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return &#34;Class &#34; + class_name_b + &#34; not found in the diagram.&#34;
+
+        if not self.__diagram.remove_relationship(
+            class_name_a, class_name_b, relationship_name
+        ):
+            return (
+                &#34;Relationship not found in diagram: [ &#34;
+                + class_name_a
+                + &#34;,&#34;
+                + class_name_b
+                + ((&#34;,&#34; + relationship_name) if relationship_name else &#34;&#34;)
+                + &#34;]&#34;
+            )
+
+        return &#34;&#34;
+
+    # ----------
+    # Relationship attribute functions
+
+    # TODO: Sprint 3
+
+
+# ----------
+# activate
+
+
+def activate(enable_debug: bool = False) -&gt; None:
+    &#34;&#34;&#34;Activates the GUI context.
+If &#39;enable_debug&#39; is set to &#39;True&#39;, enables the web console.&#34;&#34;&#34;
+
+    api = __API()
+    html_file = pkg_resources.resource_filename(&#34;scruml&#34;, &#34;assets/scruml.html&#34;)
+
+    if enable_debug:
+        print(&#34;Developer console enabled!&#34;)
+
+    webview.create_window(
+        &#34;ScrUML&#34;, html_file, min_size=(640, 480), js_api=api, confirm_close=True
+    )
+
+    webview.start(debug=enable_debug, gui=&#34;cef&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="scruml.uml_context_gui.activate"><code class="name flex">
+<span>def <span class="ident">activate</span></span>(<span>enable_debug: bool = False) -> NoneType</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Activates the GUI context.
+If 'enable_debug' is set to 'True', enables the web console.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def activate(enable_debug: bool = False) -&gt; None:
+    &#34;&#34;&#34;Activates the GUI context.
+If &#39;enable_debug&#39; is set to &#39;True&#39;, enables the web console.&#34;&#34;&#34;
+
+    api = __API()
+    html_file = pkg_resources.resource_filename(&#34;scruml&#34;, &#34;assets/scruml.html&#34;)
+
+    if enable_debug:
+        print(&#34;Developer console enabled!&#34;)
+
+    webview.create_window(
+        &#34;ScrUML&#34;, html_file, min_size=(640, 480), js_api=api, confirm_close=True
+    )
+
+    webview.start(debug=enable_debug, gui=&#34;cef&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="scruml" href="index.html">scruml</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="scruml.uml_context_gui.activate" href="#scruml.uml_context_gui.activate">activate</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 # Team JJARS
 # type: ignore
 from pathlib import Path
+from typing import List
 
 import pytest
 
@@ -10,10 +11,8 @@ import scruml.uml_context_cli
 from scruml.uml_context_cli import __UMLShell
 from scruml.uml_diagram import UMLDiagram
 
-from typing import List
 
-
-def test_add_and_remove() -> None:
+def test_add_and_remove_classes() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
 
@@ -21,6 +20,8 @@ def test_add_and_remove() -> None:
     shell.onecmd("add classB")
     shell.onecmd("add [invalidclass]")
     shell.onecmd("add invalid class")
+    shell.onecmd("add 'invalidclass'")
+    shell.onecmd('add "invalidclass"')
     shell.onecmd("add [classA,classB]")
     shell.onecmd("add [classA,classB,myname]")
     shell.onecmd("add [[invalidrelationship],invalid class]")
@@ -80,6 +81,152 @@ def test_rename() -> None:
     # TODO: Update this when renaming is fully implemented, should probably be removed
     shell._UMLShell__rename_class("Not implemented")
     shell._UMLShell__rename_relationship("Not implemented")
+
+
+def test_add_and_remove_relationships() -> None:
+    shell: __UMLShell = __UMLShell()
+    shell._UMLShell__diagram = UMLDiagram()
+
+    shell.onecmd("add classA")
+    shell.onecmd("add classB")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
+
+    shell.onecmd("add [classC,classB]")
+    shell.onecmd("add [classA,classC]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
+
+    shell.onecmd("add [classA,classB]")
+    shell.onecmd("add [classA,classB]")
+    shell.onecmd("add [classA,classB,inherits]")
+    shell.onecmd("add [classB,classA,extends]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
+        ("classA", "classB")
+    ]
+
+    shell.onecmd("remove [classC,classB]")
+    shell.onecmd("remove [classA,classC]")
+    shell.onecmd("remove [classA,classB,doesntexist]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
+        ("classA", "classB")
+    ]
+
+    shell.onecmd("remove [classA,classB]")
+    shell.onecmd("remove [classA,classB,inherits]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
+        ("classA", "classB")
+    ]
+
+    shell.onecmd("remove [classA,classB,extends]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
+
+    shell.onecmd("add [classA,fakeClass]")
+    shell.onecmd("remove [fakeClass,classB]")
+
+    assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
+
+
+def test_set_and_strip_class_attributes() -> None:
+    shell: __UMLShell = __UMLShell()
+    shell._UMLShell__diagram = UMLDiagram()
+
+    shell.onecmd("add classA")
+
+    shell.onecmd("set classA length size_t")
+    shell.onecmd("set classA isValid bool")
+    shell.onecmd("set classA")
+    shell.onecmd("set classA a")
+    shell.onecmd("set classA a b c d")
+    shell.onecmd("set classA 'badname' value")
+
+    assert shell._UMLShell__diagram.get_class_attributes("classA") == {
+        "length": "size_t",
+        "isValid": "bool",
+    }
+
+    shell.onecmd("strip classA length")
+    shell.onecmd("strip classA isValid")
+    shell.onecmd("strip classA")
+    shell.onecmd("strip classA a")
+    shell.onecmd("strip classA a b c d")
+    shell.onecmd("strip classA 'badname'")
+
+    assert shell._UMLShell__diagram.get_class_attributes("classA") == {}
+
+    shell.onecmd("strip classA fakeAttr")
+    shell.onecmd("set fakeClass length size_t")
+    shell.onecmd("strip fakeClass fakeAttr")
+
+
+def test_set_and_strip_relationship_attribute() -> None:
+    shell: __UMLShell = __UMLShell()
+    shell._UMLShell__diagram = UMLDiagram()
+
+    shell.onecmd("add class1")
+    shell.onecmd("add class2")
+    shell.onecmd("add class3")
+    shell.onecmd("add [class1,class2,fakeName]")
+    shell.onecmd("add [class2,class3]")
+    shell.onecmd("set [class1,class2,fakeName] category aggregate")
+    shell.onecmd("set [class2,class3] category aggregate")
+
+    assert shell._UMLShell__diagram.get_relationship_attributes(
+        "class1", "class2", "fakeName"
+    ) == {"category": "aggregate"}
+    assert shell._UMLShell__diagram.get_relationship_attributes(
+        "class2", "class3", None
+    ) == {"category": "aggregate"}
+
+    shell.onecmd("strip [class2,class3] category")
+    shell.onecmd("strip [class1,class2,fakeName] category")
+
+    assert (
+        shell._UMLShell__diagram.get_relationship_attributes("class2", "class3", None)
+        == {}
+    )
+    assert (
+        shell._UMLShell__diagram.get_relationship_attributes(
+            "class1", "class2", "fakeName"
+        )
+        == {}
+    )
+
+
+def test_rename() -> None:
+    shell: __UMLShell = __UMLShell()
+    shell._UMLShell__diagram = UMLDiagram()
+
+    shell.onecmd("add classA")
+    shell.onecmd("add classA")
+    shell.onecmd("add classB")
+    shell.onecmd("rename classA classC")
+
+    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == [
+        "classB",
+        "classC",
+    ]
+
+    shell.onecmd("rename classB")
+
+    assert sorted(shell._UMLShell__diagram.get_all_class_names()) == [
+        "classB",
+        "classC",
+    ]
+
+    shell.onecmd("remove classB")
+    shell.onecmd("remove classC")
+    shell.onecmd("remove classC")
+    shell.onecmd("add classA")
+    shell.onecmd("rename classA [classB]")
+    shell.onecmd("rename classZOINKS classB")
+    shell.onecmd("rename classA classA")
+
+    assert shell._UMLShell__diagram.get_all_class_names() == ["classA"]
 
 
 def test_complete() -> None:
@@ -176,5 +323,6 @@ def test_help() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
 
+    shell.onecmd("")
     shell.onecmd("help")
     shell.onecmd("help identifiers")
