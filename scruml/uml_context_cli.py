@@ -415,6 +415,110 @@ For help with formatting parameter lists, type in 'help parameters'"""
         self.__strip_class_attribute(class_name, f"[F:{func_name}]")
 
     # --------------------
+    # "Variable" command
+
+    # ----------
+    # do_variable
+
+    def do_variable(self, arg: str) -> None:
+        """Usage: variable [set|remove] <class name> <variable name> [-v VISIBILITY] [-t TYPE]
+Adds, modifies, or removes a member variable for the specified class"""
+
+        # Check the number of arguments
+        args: List[str] = arg.split()
+        if len(args) < 3:
+            print("Please provide a valid number of arguments.")
+            print(self.do_variable.__doc__)
+            return
+
+        # Grab arguments
+        subcommand: str = args[0]
+        class_name: str = args[1]
+        var_name: str = args[2]
+
+        # Parse the class ID and variable name
+        class_id: Optional[str] = uml_utilities.parse_class_identifier(class_name)
+        var_id: Optional[str] = uml_utilities.parse_class_identifier(var_name)
+
+        # Make sure that the class ID is valid
+        if class_id is None:
+            print(
+                "Please provide a valid class name (no whitespace, quotes, or surrounding brackets)."
+            )
+            return
+
+        # Make sure that the variable ID is valid
+        if var_id is None:
+            print(
+                "Please provide a valid variable name (no whitespace, quotes, or surrounding brackets)."
+            )
+            return
+
+        # Make sure that the class name is in the diagram
+        if class_id not in self.__diagram.get_all_class_names():
+            print("Class '{}' does not exist in the diagram".format(class_id))
+            return
+
+        # Handle set subcommand
+        if subcommand == "set":
+
+            # Set up argument parser for optional flags
+            arg_parser: ArgumentParser = ArgumentParser(add_help=False, usage="")
+            arg_parser.add_argument("-v", "--visibility")
+            arg_parser.add_argument("-t", "--type")
+            try:
+                extra_args: Namespace = arg_parser.parse_args(args[3 : len(args)])
+            except:
+                print("Invalid argument provided.")
+                print(self.do_function.__doc__)
+                return
+
+            # Grab and verify any optional flag values
+            var_visibility: Optional[str] = ""
+            var_type: Optional[str] = ""
+            if extra_args.visibility:
+                var_visibility = uml_utilities.parse_class_identifier(
+                    extra_args.visibility
+                )
+            if extra_args.type:
+                var_type = uml_utilities.parse_class_identifier(extra_args.type)
+            if var_visibility is None or var_type is None:
+                print(
+                    "Please ensure all values provided are valid (no whitespace, quotes, or surrounding brackets)."
+                )
+                return
+
+            # Dispatch
+            self.__variable_set(class_id, var_id, var_visibility, var_type)
+            return
+
+        # Handle remove subcommand
+        if subcommand == "remove":
+            self.__variable_remove(class_id, var_id)
+            return
+
+        # If we don't return before we get here, the user provided a bad argument
+        print("Invalid argument provided.")
+        print(self.do_variable.__doc__)
+
+    # ----------
+    # __variable_set
+
+    def __variable_set(
+        self, class_name: str, var_name: str, var_visibility: str, var_type: str
+    ) -> None:
+        serialized_var: Tuple[str, str] = uml_utilities.serialize_variable(
+            var_visibility, var_type, var_name
+        )
+        self.__set_class_attribute(class_name, serialized_var[0], serialized_var[1])
+
+    # ----------
+    # __variable_remove
+
+    def __variable_remove(self, class_name: str, var_name: str) -> None:
+        self.__strip_class_attribute(class_name, f"[V:{var_name}]")
+
+    # --------------------
     # "Set" command
 
     # ----------
