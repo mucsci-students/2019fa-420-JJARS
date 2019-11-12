@@ -163,6 +163,40 @@ def test_set_and_strip_class_attributes() -> None:
     shell.onecmd("strip fakeClass fakeAttr")
 
 
+def test_set_and_strip_relationship_attribute() -> None:
+    shell: __UMLShell = __UMLShell()
+    shell._UMLShell__diagram = UMLDiagram()
+
+    shell.onecmd("add class1")
+    shell.onecmd("add class2")
+    shell.onecmd("add class3")
+    shell.onecmd("add [class1,class2,fakeName]")
+    shell.onecmd("add [class2,class3]")
+    shell.onecmd("set [class1,class2,fakeName] category aggregate")
+    shell.onecmd("set [class2,class3] category aggregate")
+
+    assert shell._UMLShell__diagram.get_relationship_attributes(
+        "class1", "class2", "fakeName"
+    ) == {"category": "aggregate"}
+    assert shell._UMLShell__diagram.get_relationship_attributes(
+        "class2", "class3", None
+    ) == {"category": "aggregate"}
+
+    shell.onecmd("strip [class2,class3] category")
+    shell.onecmd("strip [class1,class2,fakeName] category")
+
+    assert (
+        shell._UMLShell__diagram.get_relationship_attributes("class2", "class3", None)
+        == {}
+    )
+    assert (
+        shell._UMLShell__diagram.get_relationship_attributes(
+            "class1", "class2", "fakeName"
+        )
+        == {}
+    )
+
+
 def test_rename() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
@@ -193,10 +227,6 @@ def test_rename() -> None:
     shell.onecmd("rename classA classA")
 
     assert shell._UMLShell__diagram.get_all_class_names() == ["classA"]
-
-    # TODO: Update this when renaming is fully implemented, should probably be removed
-    shell._UMLShell__rename_class("Not implemented")
-    shell._UMLShell__rename_relationship("Not implemented")
 
 
 def test_complete() -> None:
