@@ -253,14 +253,13 @@ function renameClass()
 // ----------
 // Add input elements for a member function in the properties panel
 
-function addMemberFunction()
+function addMemberFunction(visibility = "private", type = "int", name = "func", params = "int x, float y")
 {
-    // TODO: var i will be used to make a unique function name
-    var i = 2;
+    // TODO: name will need to be a unique function name
 
     var funcDiv = document.createElement("div");
     funcDiv.setAttribute('class', 'member-function');
-    funcDiv.setAttribute('id', 'func' + i);
+    funcDiv.setAttribute('id', name);
 
     var deleteButton = document.createElement("input");
     deleteButton.setAttribute('type', 'button');
@@ -271,21 +270,25 @@ function addMemberFunction()
     visibilityField.setAttribute('type', 'text');
     visibilityField.setAttribute('class', 'func-visibility');
     visibilityField.setAttribute('placeholder', 'visibility');
+    visibilityField.setAttribute('value', visibility);
 
     var retTypeField = document.createElement("input");
     retTypeField.setAttribute('type', 'text');
     retTypeField.setAttribute('class', 'func-ret-type');
     retTypeField.setAttribute('placeholder', 'type');
+    retTypeField.setAttribute('value', type);
 
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
     nameField.setAttribute('class', 'func-name');
-    nameField.setAttribute('value', 'func' + i);
+    nameField.setAttribute('placeholder', 'funcName');
+    nameField.setAttribute('value', name);
 
     var paramsField = document.createElement("input");
     paramsField.setAttribute('type', 'text');
     paramsField.setAttribute('class', 'func-params');
     paramsField.setAttribute('placeholder', 'int x, float y');
+    paramsField.setAttribute('value', params);
 
     funcDiv.appendChild(deleteButton);
     funcDiv.appendChild(visibilityField);
@@ -301,14 +304,13 @@ function addMemberFunction()
 // ----------
 // Add input elements for a member variable in the properties panel
 
-function addMemberVariable()
+function addMemberVariable(visibility = "private", type = "int", name = "var")
 {
-    // TODO: var i will be used to make a unique variable name
-    var i = 2;
+    // TODO: name will need to be unique variable name
 
     var varDiv = document.createElement("div");
     varDiv.setAttribute('class', 'member-variable');
-    varDiv.setAttribute('id', 'var' + i);
+    varDiv.setAttribute('id', name);
 
     var deleteButton = document.createElement("input");
     deleteButton.setAttribute('type', 'button');
@@ -319,15 +321,18 @@ function addMemberVariable()
     visibilityField.setAttribute('type', 'text');
     visibilityField.setAttribute('class', 'var-visibility');
     visibilityField.setAttribute('placeholder', 'visibility');
+    visibilityField.setAttribute('value', visibility);
 
     var typeField = document.createElement("input");
     typeField.setAttribute('class', 'var-type');
     typeField.setAttribute('placeholder', 'type');
+    typeField.setAttribute('value', type);
 
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
     nameField.setAttribute('class', 'var-name');
-    nameField.setAttribute('value', 'var' + i);
+    nameField.setAttribute('placeholder', 'varName');
+    nameField.setAttribute('value', name);
 
     varDiv.appendChild(deleteButton);
     varDiv.appendChild(visibilityField);
