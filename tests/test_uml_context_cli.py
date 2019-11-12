@@ -214,10 +214,6 @@ def test_rename() -> None:
 
     assert shell._UMLShell__diagram.get_all_class_names() == ["classA"]
 
-    # TODO: Update this when renaming is fully implemented, should probably be removed
-    shell._UMLShell__rename_class("Not implemented")
-    shell._UMLShell__rename_relationship("Not implemented")
-
 
 def test_complete() -> None:
     shell: __UMLShell = __UMLShell()
