@@ -44,6 +44,8 @@ class Diagram {
         document.querySelector("#info-panel").style.display = "none"
         document.querySelector("#class-info").style.display = "none"
         document.querySelector("#relationship-info").style.display = "none"
+        document.getElementById("function-list").innerHTML = '';
+        document.getElementById("variable-list").innerHTML = '';
         this.selectedElement = null;
     }
 
