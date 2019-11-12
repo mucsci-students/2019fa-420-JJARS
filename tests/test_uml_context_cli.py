@@ -162,6 +162,7 @@ def test_set_and_strip_class_attributes() -> None:
     shell.onecmd("set fakeClass length size_t")
     shell.onecmd("strip fakeClass fakeAttr")
 
+
 def test_set_and_strip_relationship_attribute() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
@@ -174,14 +175,27 @@ def test_set_and_strip_relationship_attribute() -> None:
     shell.onecmd("set [class1,class2,fakeName] category aggregate")
     shell.onecmd("set [class2,class3] category aggregate")
 
-    assert shell._UMLShell__diagram.get_relationship_attributes("class1", "class2", "fakeName") == {"category": "aggregate"}
-    assert shell._UMLShell__diagram.get_relationship_attributes("class2","class3",None) == {"category": "aggregate"}
+    assert shell._UMLShell__diagram.get_relationship_attributes(
+        "class1", "class2", "fakeName"
+    ) == {"category": "aggregate"}
+    assert shell._UMLShell__diagram.get_relationship_attributes(
+        "class2", "class3", None
+    ) == {"category": "aggregate"}
 
     shell.onecmd("strip [class2,class3] category")
     shell.onecmd("strip [class1,class2,fakeName] category")
 
-    assert shell._UMLShell__diagram.get_relationship_attributes("class2","class3",None) == {}
-    assert shell._UMLShell__diagram.get_relationship_attributes("class1", "class2", "fakeName") == {}
+    assert (
+        shell._UMLShell__diagram.get_relationship_attributes("class2", "class3", None)
+        == {}
+    )
+    assert (
+        shell._UMLShell__diagram.get_relationship_attributes(
+            "class1", "class2", "fakeName"
+        )
+        == {}
+    )
+
 
 def test_rename() -> None:
     shell: __UMLShell = __UMLShell()
