@@ -1,6 +1,8 @@
 # ScruML uml_context_cli.py Team JJARS
 import cmd
 import os
+from argparse import ArgumentParser
+from argparse import Namespace
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -82,6 +84,29 @@ class __UMLShell(cmd.Cmd):
         print('  Invalid: "[class, my class]", "[[someclass], ]"')
 
     # ----------
+    # help_parameters
+
+    def help_parameters(self) -> None:
+        """Prints helpful information about parameter list formatting."""
+        print(
+            "Parameter lists can be used to specify what arguments can be provided to a member function.\n"
+        )
+        print("Parameter lists:")
+        print(
+            "  Parameter lists consist of a bracketed list of one or more valid parameters."
+        )
+        print(
+            "  Each parameter consists of a valid type name followed by a valid parameter name,"
+        )
+        print(
+            "  separated by a single quote. Type names and parameter names cannot start and end with an"
+        )
+        print("  opening and closing bracket, and contain no whitespace or quotes.")
+        print("Examples:")
+        print("  Valid: \"[float'a,int'b,MyType'cx-var]\", \"[var'myStr,var'someVar]\"")
+        print('  Invalid: "[ float;myvarone int myvartwo]", "[myVar, myVarB,]"')
+
+    # ----------
     # "Add" command
 
     # ----------
@@ -96,7 +121,7 @@ For help with identifiers, type in 'help identifiers'"""
         args: List[str] = arg.split()
         if len(args) != 1:
             print(
-                "Please provide a valid class or relationship identifier as an argument.\n"
+                "Please provide a valid class or relationship identifier as an argument."
             )
             print(self.do_add.__doc__)
             return
@@ -124,7 +149,7 @@ For help with identifiers, type in 'help identifiers'"""
                 return
 
         # If we don't return before we get here, the user provided a bad argument
-        print("Invalid argument provided.\n")
+        print("Invalid argument provided.")
         print(self.do_add.__doc__)
 
     # ----------
@@ -185,7 +210,7 @@ For help with identifiers, type in 'help identifiers'"""
         args: List[str] = arg.split()
         if len(args) != 1:
             print(
-                "Please provide a valid class or relationship identifier as an argument.\n"
+                "Please provide a valid class or relationship identifier as an argument."
             )
             print(self.do_remove.__doc__)
             return
@@ -213,7 +238,7 @@ For help with identifiers, type in 'help identifiers'"""
                 return
 
         # If we don't return before we get here, the user provided a bad argument
-        print("Invalid argument provided.\n")
+        print("Invalid argument provided.")
         print(self.do_remove.__doc__)
 
     # ----------
@@ -273,7 +298,123 @@ For help with identifiers, type in 'help identifiers'"""
                 )
             )
 
+    # --------------------
+    # "Function" command
+
     # ----------
+    # do_function
+
+    def do_function(self, arg: str) -> None:
+        """Usage: function [set|remove] <class name> <function name> [-v VISIBILITY] [-t TYPE] [-p PARAMETERS]
+Adds, modifies, or removes a member function for the specified class
+For help with formatting parameter lists, type in 'help parameters'"""
+
+        # Check the number of arguments
+        args: List[str] = arg.split()
+        if len(args) < 3:
+            print("Please provide a valid number of arguments.")
+            print(self.do_function.__doc__)
+            return
+
+        # Grab arguments
+        subcommand: str = args[0]
+        class_name: str = args[1]
+        func_name: str = args[2]
+
+        # Parse the class ID and function name
+        class_id: Optional[str] = uml_utilities.parse_class_identifier(class_name)
+        func_id: Optional[str] = uml_utilities.parse_class_identifier(func_name)
+
+        # Make sure that the class ID is valid
+        if class_id is None:
+            print(
+                "Please provide a valid class name (no whitespace, quotes, or surrounding brackets)."
+            )
+            return
+
+        # Make sure that the function ID is valid
+        if func_id is None:
+            print(
+                "Please provide a valid function name (no whitespace, quotes, or surrounding brackets)."
+            )
+            return
+
+        # Make sure that the class name is in the diagram
+        if class_id not in self.__diagram.get_all_class_names():
+            print("Class '{}' does not exist in the diagram".format(class_id))
+            return
+
+        # Handle set subcommand
+        if subcommand == "set":
+
+            # Set up argument parser for optional flags
+            arg_parser: ArgumentParser = ArgumentParser(add_help=False, usage="")
+            arg_parser.add_argument("-v", "--visibility")
+            arg_parser.add_argument("-t", "--type")
+            arg_parser.add_argument("-p", "--parameters")
+            try:
+                extra_args: Namespace = arg_parser.parse_args(args[3 : len(args)])
+            except:
+                print("Invalid argument provided.")
+                print(self.do_function.__doc__)
+                return
+
+            # Grab and verify any optional flag values
+            func_visibility: Optional[str] = ""
+            func_type: Optional[str] = ""
+            param_list: Optional[List[str]] = []
+            if extra_args.visibility:
+                func_visibility = uml_utilities.parse_class_identifier(
+                    extra_args.visibility
+                )
+            if extra_args.type:
+                func_type = uml_utilities.parse_class_identifier(extra_args.type)
+            if extra_args.parameters:
+                param_list = uml_utilities.parse_param_list(extra_args.parameters)
+            if func_visibility is None or func_type is None or param_list is None:
+                print(
+                    "Please ensure all values provided are valid (no whitespace, quotes, or surrounding brackets)."
+                )
+                return
+
+            # Dispatch
+            self.__function_set(
+                class_id, func_id, func_visibility, func_type, param_list
+            )
+            return
+
+        # Handle remove subcommand
+        if subcommand == "remove":
+            self.__function_remove(class_id, func_id)
+            return
+
+        # If we don't return before we get here, the user provided a bad argument
+        print("Invalid argument provided.")
+        print(self.do_function.__doc__)
+
+    # ----------
+    # __function_set
+
+    def __function_set(
+        self,
+        class_name: str,
+        func_name: str,
+        func_visibility: str,
+        func_type: str,
+        param_list: List[str],
+    ) -> None:
+        serialized_func: Tuple[str, str] = uml_utilities.serialize_function(
+            func_visibility, func_type, func_name, param_list
+        )
+        self.__set_class_attribute(class_name, serialized_func[0], serialized_func[1])
+
+    # ----------
+    # __function_remove
+
+    def __function_remove(self, class_name: str, func_name: str) -> None:
+        self.__strip_class_attribute(class_name, f"[F:{func_name}]")
+
+    # --------------------
     # "Set" command
 
     # ----------
@@ -287,7 +428,7 @@ For help with identifiers, type in 'help identifiers'"""
         # Check the number of arguments
         args: List[str] = arg.split()
         if len(args) != 3:
-            print("Please provide a valid number of arguments.\n")
+            print("Please provide a valid number of arguments.")
             print(self.do_set.__doc__)
             return
 
@@ -323,7 +464,7 @@ For help with identifiers, type in 'help identifiers'"""
                 return
 
         # If we don't return before we get here, the user provided a bad argument
-        print("Invalid argument provided.\n")
+        print("Invalid argument provided.")
         print(self.do_set.__doc__)
 
     # ----------
@@ -343,7 +484,7 @@ For help with identifiers, type in 'help identifiers'"""
             )
 
     # ----------
-    # __set_relationshiop_attribute
+    # __set_relationship_attribute
 
     def __set_relationship_attribute(
         self, rel_id: Tuple[str, str, Optional[str]], attr_name: str, attr_value: str
@@ -394,7 +535,7 @@ Removes the attribute for the specified class"""
         # Check the number of arguments
         args: List[str] = arg.split()
         if len(args) != 2:
-            print("Please provide a valid number of arguments.\n")
+            print("Please provide a valid number of arguments.")
             print(self.do_strip.__doc__)
             return
 
@@ -429,7 +570,7 @@ Removes the attribute for the specified class"""
                 return
 
         # If we don't return before we get here, the user provided a bad argument
-        print("Invalid argument provided.\n")
+        print("Invalid argument provided.")
         print(self.do_strip.__doc__)
 
     # ----------
@@ -449,7 +590,7 @@ Removes the attribute for the specified class"""
         else:
             print("Removed attribute '{}' from class '{}'".format(attr_name, class_id))
 
-    # --------------------
+    # ----------
     # __strip_relationship_attribute
 
     def __strip_relationship_attribute(
@@ -502,7 +643,7 @@ For help with identifiers, type in 'help identifiers"""
         # Check the number of arguments
         args: List[str] = arg.split()
         if len(args) != 2:
-            print("Please provide a valid number of arguments.\n")
+            print("Please provide a valid number of arguments.")
             print(self.do_rename.__doc__)
             return
 
@@ -510,7 +651,7 @@ For help with identifiers, type in 'help identifiers"""
         old_class_name: str = args[0]
         new_class_name: str = args[1]
 
-        # Parse the class ids
+        # Parse the class IDs
         class_ids: List[Optional[str]] = [
             uml_utilities.parse_class_identifier(old_class_name),
             uml_utilities.parse_class_identifier(new_class_name),
@@ -518,7 +659,7 @@ For help with identifiers, type in 'help identifiers"""
 
         # Make sure that the class ids are valid
         if not class_ids[0] or not class_ids[1]:
-            print("Please provide two valid class class_ids as arguments.\n")
+            print("Please provide two valid class class_ids as arguments.")
             print(self.do_rename.__doc__)
             return
 
@@ -539,7 +680,7 @@ For help with identifiers, type in 'help identifiers"""
             print("Renamed class '{}' to '{}'".format(class_ids[0], class_ids[1]))
 
         # If we don't return before we get here, the user provided a bad argument
-        print("Invalid argument provided.\n")
+        print("Invalid argument provided.")
         print(self.do_rename.__doc__)
 
     # ----------
@@ -655,7 +796,7 @@ Prints all elements present in the current diagram"""
         """Usage: save <file name>
 Saves the current UML diagram to a file"""
         if arg.isspace() or not arg:
-            print("Please provide a file name.\n")
+            print("Please provide a file name.")
             print(self.do_save.__doc__)
             return
         if uml_filesystem_io.save_diagram(self.__diagram, arg):
@@ -670,7 +811,7 @@ Saves the current UML diagram to a file"""
         """Usage: load <file name>
 Loads an existing UML diagram from a file"""
         if arg.isspace() or not arg:
-            print("Please provide a file name.\n")
+            print("Please provide a file name.")
             print(self.do_load.__doc__)
             return
         if not os.path.isfile(arg):

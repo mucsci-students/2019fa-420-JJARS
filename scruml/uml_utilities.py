@@ -110,8 +110,9 @@ If there are no parameters, the following is returned: (visibility, return type,
 
 def parse_param_list(param_list_str: str) -> Optional[List[str]]:
     """Returns a valid parameter list (List[str] of format "['float x', 'int y', etc.]") on success, or None on failure.
-Valid parameter lists are surrounded by brackets, contain no quotes, and no whitespace except between parameter types and names.
-Variable names any types in the parameter list must contain no whitespace, no quotes, and not be surrounded by brackets.
+Valid parameter lists are surrounded by brackets, contain no quotes, and no whitespace.
+Parameter names any types in the parameter list must contain no whitespace, no quotes, and not be surrounded by brackets.
+Parameter types and names should be separated by a single quote.
 Every variable in a valid parameter list must have a type and a name."""
 
     param_list_str = param_list_str.strip()
@@ -126,8 +127,9 @@ Every variable in a valid parameter list must have a type and a name."""
     param_list: List[str] = param_list_str.split(",")
 
     # Check that every parameter has a type and a name
+    final_list: List[str] = []
     for param in param_list:
-        split_param: List[str] = param.split(" ")
+        split_param: List[str] = param.split("'")
         if len(split_param) != 2:
             return None
         if (
@@ -135,8 +137,9 @@ Every variable in a valid parameter list must have a type and a name."""
             or parse_class_identifier(split_param[1]) is None
         ):
             return None
+        final_list.append(f"{split_param[0]} {split_param[1]}")
 
-    return param_list
+    return final_list
 
 
 # ----------
