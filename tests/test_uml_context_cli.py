@@ -167,14 +167,6 @@ def test_set_and_strip_relationship_attribute() -> None:
     shell: __UMLShell = __UMLShell()
     shell._UMLShell__diagram = UMLDiagram()
 
-    shell.onecmd("add class1")
-    shell.onecmd("add class2")
-    shell.onecmd("add class3")
-    shell.onecmd("add [class1,class2,fakeName]")
-    shell.onecmd("add [class2,class3]")
-    shell.onecmd("set [class1,class2,fakeName] category aggregate")
-    shell.onecmd("set [class2,class3] category aggregate")
-
     assert shell._UMLShell__diagram.get_relationship_attributes(
         "class1", "class2", "fakeName"
     ) == {"category": "aggregate"}
