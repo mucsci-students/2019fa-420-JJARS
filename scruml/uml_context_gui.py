@@ -60,40 +60,29 @@ Structure: dictionary[className][attributeName] == attributeValue"""
 
     def getAllRelationships(self, params: str) -> Dict[str, Dict[str, str]]:
         """Returns a dictionary containing all relationship infromation in the diagram.
-Structure: dictionary[classPair][relationshipName][attributeName] == attributeValue"""
+Structure: dictionary[classPair][attributeName] == attributeValue"""
 
         response: Dict[str, Dict[str, str]] = {}
 
         # Populate response dictionary with relationships
         for class_pair in self.__diagram.get_all_relationship_pairs():
 
-            relationships: Optional[
-                Dict[Optional[str], Dict[str, str]]
-            ] = self.__diagram.get_relationships_between(class_pair[0], class_pair[1])
+            relationship_attributes: Optional[
+                Dict[str, str]
+            ] = self.__diagram.get_relationship_between(class_pair[0], class_pair[1])
 
-            if relationships is not None:
-                for relationship_name in relationships:
-
-                    relationship_id: str = (
-                        "["
-                        + class_pair[0]
-                        + ","
-                        + class_pair[1]
-                        + (("," + relationship_name) if relationship_name else "")
-                        + "]"
-                    )
-
-                    response[relationship_id] = {}
-
-                    # TODO: Relationship Attributes, Sprint 3
-
+            if relationship_attributes is not None:
+                relationship_id: str = uml_utilities.stringify_relationship_identifier(
+                    class_pair[0], class_pair[1]
+                )
+                response[relationship_id] = relationship_attributes
             else:
                 raise Exception(
-                    "Class pair not found in diagram: ["
-                    + class_pair[0]
-                    + ","
-                    + class_pair[1]
-                    + "]"
+                    "Relationship not found in diagram: {}".format(
+                        uml_utilities.stringify_relationship_identifier(
+                            class_pair[0], class_pair[1]
+                        )
+                    )
                 )
 
         return response
@@ -283,25 +272,17 @@ Structure: dictionary[classPair][relationshipName][attributeName] == attributeVa
 
         class_name_a: str = relationship_properties["class_name_a"]
         class_name_b: str = relationship_properties["class_name_b"]
-        relationship_name: str = relationship_properties["relationship_name"]
 
         if not class_name_a in self.__diagram.get_all_class_names():
             return "Class " + class_name_a + " not found in the diagram."
         if not class_name_b in self.__diagram.get_all_class_names():
             return "Class " + class_name_b + " not found in the diagram."
 
-        if not self.__diagram.add_relationship(
-            class_name_a,
-            class_name_b,
-            relationship_name if len(relationship_name) > 0 else None,
-        ):
-            return (
-                "Relationship already exists: ["
-                + class_name_a
-                + ","
-                + class_name_b
-                + (("," + relationship_name) if relationship_name else "")
-                + "]"
+        if not self.__diagram.add_relationship(class_name_a, class_name_b):
+            return "Relationship already exists: {}".format(
+                uml_utilities.stringify_relationship_identifier(
+                    class_name_a, class_name_b
+                )
             )
 
         return ""
@@ -312,7 +293,7 @@ Structure: dictionary[classPair][relationshipName][attributeName] == attributeVa
     def removeRelationship(self, relationship_id: str) -> str:
 
         relationship_id_tuple: Optional[
-            Tuple[str, str, Optional[str]]
+            Tuple[str, str]
         ] = uml_utilities.parse_relationship_identifier(relationship_id)
 
         if not relationship_id_tuple:
@@ -322,23 +303,17 @@ Structure: dictionary[classPair][relationshipName][attributeName] == attributeVa
 
         class_name_a: str = relationship_id_tuple[0]
         class_name_b: str = relationship_id_tuple[1]
-        relationship_name: Optional[str] = relationship_id_tuple[2]
 
         if not class_name_a in self.__diagram.get_all_class_names():
             return "Class " + class_name_a + " not found in the diagram."
         if not class_name_b in self.__diagram.get_all_class_names():
             return "Class " + class_name_b + " not found in the diagram."
 
-        if not self.__diagram.remove_relationship(
-            class_name_a, class_name_b, relationship_name
-        ):
-            return (
-                "Relationship not found in diagram: [ "
-                + class_name_a
-                + ","
-                + class_name_b
-                + (("," + relationship_name) if relationship_name else "")
-                + "]"
+        if not self.__diagram.remove_relationship(class_name_a, class_name_b):
+            return "Relationship not found in diagram: {}".format(
+                uml_utilities.stringify_relationship_identifier(
+                    class_name_a, class_name_b
+                )
             )
 
         return ""
