@@ -84,7 +84,6 @@ def test_parse_class_identifier() -> None:
 
 def test_parse_relationship_identifier() -> None:
     assert uml_utilities.parse_relationship_identifier("[Alpha,Beta]")
-    assert uml_utilities.parse_relationship_identifier("[Alpha,Beta,relname]")
 
     assert not uml_utilities.parse_relationship_identifier("[]")
     assert not uml_utilities.parse_relationship_identifier("[Alpha,Beta")
@@ -96,9 +95,6 @@ def test_parse_relationship_identifier() -> None:
 def test_classify_identifier() -> None:
     assert uml_utilities.classify_identifier("ClassA") == "class"
     assert uml_utilities.classify_identifier("[ClassA,ClassB]") == "relationship"
-    assert (
-        uml_utilities.classify_identifier("[ClassA,ClassB,relname]") == "relationship"
-    )
 
     assert not uml_utilities.classify_identifier("b'a'd' n'a'm'e")
 
@@ -107,8 +103,4 @@ def test_stringify_relationship_identifier() -> None:
     assert (
         uml_utilities.stringify_relationship_identifier("Alpha", "Beta")
         == "[Alpha,Beta]"
-    )
-    assert (
-        uml_utilities.stringify_relationship_identifier("Alpha", "Beta", "relname")
-        == "[Alpha,Beta,relname]"
     )

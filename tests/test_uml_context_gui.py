@@ -116,7 +116,7 @@ def test_add_and_remove_relationship() -> None:
     result = api.removeRelationship("[classA,classB]")
     assert result == ""
     result = api.removeRelationship("[classA,classB]")
-    assert result == "Relationship not found in diagram: [ classA,classB]"
+    assert result == "Relationship not found in diagram: [classA,classB]"
     result = api.removeRelationship("[classC,classB]")
     assert result == "Class classC not found in the diagram."
     result = api.removeRelationship("[classA,classC]")

@@ -11,7 +11,7 @@ from scruml.uml_diagram import UMLDiagram
 def test_save(tmp_path: Path) -> None:
     diagram: UMLDiagram = UMLDiagram()
     file_path: str = str(tmp_path / "savetest.yaml")
-    assert diagram.add_class("SavedClassName") == "SavedClassName"
+    assert diagram.add_class("SavedClassName")
     assert uml_filesystem_io.save_diagram(diagram, file_path)
     invalid_file_path: str = str(
         tmp_path
@@ -23,7 +23,7 @@ def test_save(tmp_path: Path) -> None:
 def test_save_and_load(tmp_path: Path) -> None:
     diagram: UMLDiagram = UMLDiagram()
     file_path: str = str(tmp_path / "saveandloadtest.yaml")
-    assert diagram.add_class("ClassToLoad") == "ClassToLoad"
+    assert diagram.add_class("ClassToLoad")
     assert uml_filesystem_io.save_diagram(diagram, file_path)
     diagram = uml_filesystem_io.load_diagram(file_path)
     assert "ClassToLoad" in diagram.get_all_class_names()
