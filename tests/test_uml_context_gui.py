@@ -121,3 +121,28 @@ def test_add_and_remove_relationship() -> None:
     assert result == "Class classC not found in the diagram."
     result = api.removeRelationship("[classA,classC]")
     assert result == "Class classC not found in the diagram."
+
+
+def test_rename_class() -> None:
+    api: __API = __API()
+
+    rename_class_data = {"old_class_name": "old class", "new_class_name": "newClass"}
+    result = api.renameClass(rename_class_data)
+    assert (
+        result
+        == "Old class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+    )
+
+    rename_class_data2 = {"old_class_name": "oldClass", "new_class_name": "new class"}
+    result2 = api.renameClass(rename_class_data2)
+    assert (
+        result2
+        == "New class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+    )
+
+    rename_class_data3 = {"old_class_name": "oldClass", "new_class_name": "newClass"}
+    result3 = api.renameClass(rename_class_data3)
+    assert (
+        result3
+        == f"Class {rename_class_data['new_class_name']} already exists in the diagram."
+    )
