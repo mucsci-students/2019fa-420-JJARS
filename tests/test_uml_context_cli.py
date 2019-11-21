@@ -99,8 +99,8 @@ def test_add_and_remove_relationships() -> None:
 
     shell.onecmd("add [classA,classB]")
     shell.onecmd("add [classA,classB]")
-    shell.onecmd("add [classA,classB,inherits]")
-    shell.onecmd("add [classB,classA,extends]")
+    shell.onecmd("add [classA,classB]")
+    shell.onecmd("add [classB,classA]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
         ("classA", "classB")
@@ -108,14 +108,14 @@ def test_add_and_remove_relationships() -> None:
 
     shell.onecmd("remove [classC,classB]")
     shell.onecmd("remove [classA,classC]")
-    shell.onecmd("remove [classA,classB,doesntexist]")
+    shell.onecmd("remove [classA,classB]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
         ("classA", "classB")
     ]
 
     shell.onecmd("remove [classA,classB]")
-    shell.onecmd("remove [classA,classB,inherits]")
+    shell.onecmd("remove [classA,classB]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
         ("classA", "classB")
