@@ -89,39 +89,20 @@ def test_add_and_remove_relationships() -> None:
 
     shell.onecmd("add classA")
     shell.onecmd("add classB")
+    shell.onecmd("add classC")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 
-    shell.onecmd("add [classC,classB]")
-    shell.onecmd("add [classA,classC]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 
     shell.onecmd("add [classA,classB]")
-    shell.onecmd("add [classA,classB]")
-    shell.onecmd("add [classA,classB]")
-    shell.onecmd("add [classB,classA]")
-
-    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
-        ("classA", "classB")
-    ]
-
-    shell.onecmd("remove [classC,classB]")
-    shell.onecmd("remove [classA,classC]")
-    shell.onecmd("remove [classA,classB]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
         ("classA", "classB")
     ]
 
     shell.onecmd("remove [classA,classB]")
-    shell.onecmd("remove [classA,classB]")
-
-    assert shell._UMLShell__diagram.get_all_relationship_pairs() == [
-        ("classA", "classB")
-    ]
-
-    shell.onecmd("remove [classA,classB,extends]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 
@@ -215,24 +196,22 @@ def test_set_and_strip_relationship_attribute() -> None:
     shell.onecmd("add [class2,class3]")
     shell.onecmd("set [class2,class3] category aggregate")
 
+   
     assert shell._UMLShell__diagram.get_relationship_attributes(
-        "class1", "class2", "fakeName"
-    ) == {"category": "aggregate"}
-    assert shell._UMLShell__diagram.get_relationship_attributes(
-        "class2", "class3", None
+        "class2", "class3"
     ) == {"category": "aggregate"}
 
     shell.onecmd("strip [class2,class3] category")
 
     assert (
-        shell._UMLShell__diagram.get_relationship_attributes("class2", "class3", None)
+        shell._UMLShell__diagram.get_relationship_attributes("class2", "class3")
         == {}
     )
     assert (
         shell._UMLShell__diagram.get_relationship_attributes(
-            "class1", "class2", "fakeName"
+            "class1", "class2"
         )
-        == {}
+        == None
     )
 
 
