@@ -96,10 +96,12 @@ def test_add_and_remove_relationship() -> None:
 
     api.addClass({"x": 0, "y": 20, "class_name": "classA"})
     api.addClass({"x": 20, "y": 20, "class_name": "classB"})
+
     result = api.addRelationship(
         {"class_name_a": "classA", "class_name_b": "classB", "relationship_name": ""}
     )
     assert result == ""
+
     result = api.addRelationship(
         {"class_name_a": "classA", "class_name_b": "classB", "relationship_name": ""}
     )
