@@ -226,7 +226,7 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
 
         if (
             not "ignore_naming_rules" in class_attribute_properties
-            and not self.__parse_class_identifier(attribute_name)
+            and not uml_utilities.parse_class_identifier(attribute_name)
         ):
             return "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
 
