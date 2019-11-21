@@ -224,9 +224,10 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
         attribute_name: str = class_attribute_properties["attribute_name"]
         attribute_value: str = class_attribute_properties["attribute_value"]
 
-        if not class_attribute_properties[
-            "ignore_naming_rules"
-        ] and not uml_utilities.parse_class_identifier(attribute_name):
+        if (
+            not "ignore_naming_rules" in class_attribute_properties
+            and not self.__parse_class_identifier(attribute_name)
+        ):
             return "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
 
         if not self.__diagram.set_class_attribute(
