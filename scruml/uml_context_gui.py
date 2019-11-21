@@ -277,6 +277,8 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
             return "Class " + class_name_a + " not found in the diagram."
         if not class_name_b in self.__diagram.get_all_class_names():
             return "Class " + class_name_b + " not found in the diagram."
+        if class_name_a == class_name_b:
+            return "A class cannot have a relationship with itself."
 
         if not self.__diagram.add_relationship(class_name_a, class_name_b):
             return "Relationship already exists: {}".format(
