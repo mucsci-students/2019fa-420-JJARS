@@ -212,9 +212,7 @@ def test_set_and_strip_relationship_attribute() -> None:
     shell.onecmd("add class1")
     shell.onecmd("add class2")
     shell.onecmd("add class3")
-    shell.onecmd("add [class1,class2,fakeName]")
     shell.onecmd("add [class2,class3]")
-    shell.onecmd("set [class1,class2,fakeName] category aggregate")
     shell.onecmd("set [class2,class3] category aggregate")
 
     assert shell._UMLShell__diagram.get_relationship_attributes(
@@ -225,7 +223,6 @@ def test_set_and_strip_relationship_attribute() -> None:
     ) == {"category": "aggregate"}
 
     shell.onecmd("strip [class2,class3] category")
-    shell.onecmd("strip [class1,class2,fakeName] category")
 
     assert (
         shell._UMLShell__diagram.get_relationship_attributes("class2", "class3", None)
