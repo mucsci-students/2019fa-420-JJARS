@@ -177,6 +177,11 @@ For help with identifiers, type in 'help identifiers'"""
             print("Class '{}' does not exist in the diagram".format(rel_id[1]))
             return
 
+        # Check if both args are the same class, no class can have a relationship with itself
+        if rel_id[0] == rel_id[1]:
+            print("A class cannot have a relationship with itself.")
+            return
+
         # Add the relationship to the diagram, checking for an error
         if not self.__diagram.add_relationship(rel_id[0], rel_id[1]):
             print(
