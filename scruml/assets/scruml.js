@@ -139,14 +139,7 @@ function classElementConnect(element)
     var classBName = element.id();
     diagram.clearSelection();
 
-    var relationshipName = prompt("Enter the relationship name (leave blank for no name):");
-
-    // If the user hit "cancel", return
-    if (relationshipName == null) return;
-
-    pywebview.api.addRelationship({"class_name_a": classAName,
-                                   "class_name_b": classBName,
-                                   "relationship_name": relationshipName}).then(function addRelationshipUpdate(response) {
+    pywebview.api.addRelationship({"class_name_a": classAName, "class_name_b": classBName}).then(function addRelationshipUpdate(response) {
                                        if (response !== "")
                                        {
                                            alert(response);
