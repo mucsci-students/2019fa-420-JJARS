@@ -41,18 +41,10 @@ def test_add_and_remove_class() -> None:
     try:
         api.removeClass(add_class_data["class_name"])
         assert False
-    except:
+        # print(f"Selected class not found in diagram. Unable to add attribute: {add_class_data['class_name']}")
+    except Exception as e:
         assert True
-
-
-# assert api.__diagram.add_class("classA")
-# assert api.__diagram.add_class("classB")
-
-# result5 = api.removeClass({'class_name': "classA"})
-# return result5 == ""
-
-
-# assert api.__diagram.get_all_class_names() == []
+        # print(f"Selected class not found in diagram. Unable to add attribute: {add_class_data['class_name']}")
 
 
 def test_set_and_remove_class_attribute() -> str:
@@ -90,6 +82,17 @@ def test_set_and_remove_class_attribute() -> str:
         == f"Attribute {set_att_data['attribute_name']} not found in Class: {set_att_data['class_name']}"
     )
 
+    add_class_data = {"class_name": "classA", "x": 0, "y": 20}
+    result4 = api.addClass(add_class_data)
+    correct_att_data = {
+        "class_name": "classA",
+        "attribute_name": "Foo_Bar",
+        "attribute_value": "20",
+        "ignore_naming_rules": "t",
+    }
+    result5 = api.setClassAttribute(correct_att_data)
+    assert result5 == ""
+
 
 def test_add_and_remove_relationship() -> None:
     api: __API = __API()
@@ -124,23 +127,29 @@ def test_add_and_remove_relationship() -> None:
 def test_rename_class() -> None:
     api: __API = __API()
 
-    rename_class_data = {"old_class_name": "old class", "new_class_name": "newClass"}
-    result = api.renameClass(rename_class_data)
-    assert (
-        result
-        == "Old class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
-    )
+    add_class_data = {"class_name": "classA", "x": 0, "y": 20}
+    result = api.addClass(add_class_data)
+    rename_class_data1 = {"old_class_name": "classA", "new_class_name": "thisNewClass"}
+    result1 = api.renameClass(rename_class_data1)
+    assert result1 == ""
 
-    rename_class_data2 = {"old_class_name": "oldClass", "new_class_name": "new class"}
+    rename_class_data2 = {"old_class_name": "old class", "new_class_name": "newClass"}
     result2 = api.renameClass(rename_class_data2)
     assert (
         result2
-        == "New class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+        == "Old class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
     )
 
-    rename_class_data3 = {"old_class_name": "oldClass", "new_class_name": "newClass"}
+    rename_class_data3 = {"old_class_name": "oldClass", "new_class_name": "new class"}
     result3 = api.renameClass(rename_class_data3)
     assert (
         result3
-        == f"Class {rename_class_data['new_class_name']} already exists in the diagram."
+        == "New class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+    )
+
+    rename_class_data4 = {"old_class_name": "oldClass", "new_class_name": "newClass"}
+    result4 = api.renameClass(rename_class_data4)
+    assert (
+        result4
+        == f"Class {rename_class_data2['new_class_name']} already exists in the diagram."
     )
