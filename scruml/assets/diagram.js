@@ -169,16 +169,7 @@ class Diagram {
 
         // Build element on the canvas with appropriate ID and classification
         var element = this.canvas.nested().id(className).addClass("uml-class");
-        // Hardcoded class members (comment out body of updateClassAttr() when you uncomment this)
-        /*
-        var tempClassAttr = { "[F:getID]": "[public][string][int][offset][double][modifier]",
-                                           "[F:getVal]": "[private][double][string][prefix]",
-                                           "[F:calculateDist]": "[protected][int]",
-                                           "[V:myVar]": "[public][string]",
-                                           "[V:m_volume]": "[protected][float]",
-                                           "[V:m_distance]": "[private][int]" };
-        element.attr('data-attributes', JSON.stringify(tempClassAttr));
-        */
+
         element.attr('data-attributes', JSON.stringify(classAttr))
 
         // Add body and text
