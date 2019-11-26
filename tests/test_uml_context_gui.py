@@ -38,41 +38,29 @@ def test_add_and_remove_class() -> None:
         == "Class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
     )
 
-    """
-    result4 = api.removeClass(add_class_data['class_name'])
-    assert (
-        result4
-        == f"Selected class not found in diagram: {add_class_data['class_name']}"
-        )
-    """
-
-
-# assert api.__diagram.add_class("classA")
-# assert api.__diagram.add_class("classB")
-
-# result5 = api.removeClass({'class_name': "classA"})
-# return result5 == ""
-
-
-# assert api.__diagram.get_all_class_names() == []
+    try:
+        api.removeClass(add_class_data["class_name"])
+        assert False
+        # print(f"Selected class not found in diagram. Unable to add attribute: {add_class_data['class_name']}")
+    except Exception as e:
+        assert True
+        # print(f"Selected class not found in diagram. Unable to add attribute: {add_class_data['class_name']}")
 
 
 def test_set_and_remove_class_attribute() -> str:
     api: __API = __API()
     api._API__diagram = UMLDiagram()
-    """
+
     test_data = {
         "class_name": "classA",
         "attribute_name": "Foo Bar",
         "attribute_value": "20",
-        "ignore_naming_rules": "t",
     }
     result = api.setClassAttribute(test_data)
     assert (
-     	result
-     	== "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+        result
+        == "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
     )
-    """
 
     set_att_data = {
         "class_name": "classA",
@@ -94,16 +82,29 @@ def test_set_and_remove_class_attribute() -> str:
         == f"Attribute {set_att_data['attribute_name']} not found in Class: {set_att_data['class_name']}"
     )
 
+    add_class_data = {"class_name": "classA", "x": 0, "y": 20}
+    result4 = api.addClass(add_class_data)
+    correct_att_data = {
+        "class_name": "classA",
+        "attribute_name": "Foo_Bar",
+        "attribute_value": "20",
+        "ignore_naming_rules": "t",
+    }
+    result5 = api.setClassAttribute(correct_att_data)
+    assert result5 == ""
+
 
 def test_add_and_remove_relationship() -> None:
     api: __API = __API()
 
     api.addClass({"x": 0, "y": 20, "class_name": "classA"})
     api.addClass({"x": 20, "y": 20, "class_name": "classB"})
+
     result = api.addRelationship(
         {"class_name_a": "classA", "class_name_b": "classB", "relationship_name": ""}
     )
     assert result == ""
+
     result = api.addRelationship(
         {"class_name_a": "classA", "class_name_b": "classB", "relationship_name": ""}
     )
@@ -121,3 +122,34 @@ def test_add_and_remove_relationship() -> None:
     assert result == "Class classC not found in the diagram."
     result = api.removeRelationship("[classA,classC]")
     assert result == "Class classC not found in the diagram."
+
+
+def test_rename_class() -> None:
+    api: __API = __API()
+
+    add_class_data = {"class_name": "classA", "x": 0, "y": 20}
+    result = api.addClass(add_class_data)
+    rename_class_data1 = {"old_class_name": "classA", "new_class_name": "thisNewClass"}
+    result1 = api.renameClass(rename_class_data1)
+    assert result1 == ""
+
+    rename_class_data2 = {"old_class_name": "old class", "new_class_name": "newClass"}
+    result2 = api.renameClass(rename_class_data2)
+    assert (
+        result2
+        == "Old class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+    )
+
+    rename_class_data3 = {"old_class_name": "oldClass", "new_class_name": "new class"}
+    result3 = api.renameClass(rename_class_data3)
+    assert (
+        result3
+        == "New class name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+    )
+
+    rename_class_data4 = {"old_class_name": "oldClass", "new_class_name": "newClass"}
+    result4 = api.renameClass(rename_class_data4)
+    assert (
+        result4
+        == f"Class {rename_class_data2['new_class_name']} already exists in the diagram."
+    )
