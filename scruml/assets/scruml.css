@@ -2,17 +2,19 @@
 /* scruml.css */
 /* Team JJARS */
 
+
 /*
-   Colors:
+   Colors [Primary | Shadowed]:
    Light -     #FFFFFF | #E5E5E5
    Off-Light - #F2E9E1 | #D9D1CA
-   Mid-Tone -  #EFEFEF | #DDDDDD
+   Mid-Tone -  #EFEFEF | #CACACA
    Dark -      #1C140D | #090703
    Accent -    #DBF87B | #A6C050
+   Error -     #F44336 | #C62828
 */
 
-/* Font */
 
+/* Font */
 
 @font-face {
     font-family: "Noto Sans";
@@ -29,6 +31,7 @@
 html
 {
     font-family: "Noto Sans", sans-serif;
+    font-size: 15px;
 }
 html, body
 {
@@ -46,6 +49,62 @@ main
 {
     display: flex;
     flex: 1;
+}
+
+
+/* Modal Dialogs */
+
+.modal
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-color: rgba(0,0,0,0.35);
+}
+
+.modal-box
+{
+    border-bottom: 2px solid #CACACA;
+    border-radius: 5px;
+    padding: 35px;
+    background-color: #EFEFEF;
+    color: #1C140D;
+}
+
+
+/* Loading Modal */
+
+#loading-modal #loading-spinner
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50px;
+    max-height: 50px;
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+#loading-modal p
+{
+    margin-top: 10px;
+    margin-bottom: 0px;
+    font-size: 1em;
 }
 
 
@@ -226,6 +285,10 @@ main
 {
     color: #3E2723;
 }
+#info-panel .info-panel-content .spacer
+{
+    color: rgba(0,0,0,0);
+}
 
 #info-panel .info-panel-content hr
 {
@@ -236,10 +299,9 @@ main
 }
 
 #info-panel .info-panel-content input,
-#info-panel .info-panel-content label,
 #info-panel .info-panel-content select
 {
-    font-size: 11px;
+    font-size: 0.9em;
 }
 #info-panel .info-panel-content input,
 #info-panel .info-panel-content select
@@ -254,12 +316,6 @@ main
 #info-panel .info-panel-content select
 {
     border-radius: 5px;
-}
-#info-panel .info-panel-content label
-{
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 0px;
 }
 
 #info-panel .info-panel-content input:hover,

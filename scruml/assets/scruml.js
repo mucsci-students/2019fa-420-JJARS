@@ -413,12 +413,20 @@ function toolbarButtonClicked(element)
 // Page initialization
 
 document.addEventListener("DOMContentLoaded", function contentLoadedInit() {
-    setTimeout(function() {
 
-        diagram = new Diagram("diagram-canvas");
-        diagram.update();
+    var checkLoaded = setInterval(function() {
+        if (typeof(pywebview) !== 'undefined') {
 
-        document.getElementById("toolbar-select").click();
+            console.log("Exists!");
+            clearInterval(checkLoaded);
 
-    }, 200);
+            diagram = new Diagram("diagram-canvas");
+            diagram.update();
+
+            document.getElementById("toolbar-select").click();
+
+            document.getElementById("loading-modal").style.display = "none";
+
+        }
+    }, 500);
 });

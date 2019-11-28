@@ -21,6 +21,14 @@
     <script src="diagram.js"></script>
     <script src="scruml.js"></script>
 
+    <!-- Loading Modal -->
+    <div id="loading-modal" class="modal">
+      <div class="modal-box">
+        <img id="loading-spinner" src="img/spinner.png">
+        <p>Preparing Canvas</p>
+      </div>
+    </div>
+
     <!-- Menubar -->
     <header id="menubar">
       <ul>
@@ -41,24 +49,23 @@
         <div id="class-info" class="info-panel-content">
           <strong class="identifier header"><span id="class-id"></span><a class="edit-identifier" onclick="renameClass();"> 🖉</a></strong>
           <hr>
-          <strong class="header">Functions</strong>
+          <span class="header">Functions</span>
           <div id="function-list">
             <div class="member-function" id="func1"></div>
           </div>
           <input type="button" class="add-button" value="+" onclick="addMemberFunction();">
-          <strong class="header">Variables</strong>
+          <span class="header">Variables</span>
           <div id="variable-list">
             <div class="member-variable" id="var1"></div>
           </div>
           <input type="button" class="add-button" value="+" onclick="addMemberVariable();">
         </div>
         <div id="relationship-info" class="info-panel-content">
-          <strong class="identifier header"><span id="relationship-id"></span></strong>
+          <strong class="identifier header"><span id="relationship-id"></span><a class="spacer"> 🖉</a></strong>
           <hr>
-          <strong class="header">Properties</strong>
-          <label>Label</label>
+          <span class="header">Label</span>
           <input type="text" placeholder="My Relationship">
-          <label>Type</label>
+          <span class="header">Type</span>
           <select>
             <option>Association</option>
             <option>Inheritance</option>
@@ -67,7 +74,7 @@
             <option>Aggregation</option>
             <option>Composition</option>
           </select>
-          <label>Multiplicity</label>
+          <span class="header">Multiplicity</span>
           <select>
             <option>One-To-One</option>
             <option>One-To-Many</option>
