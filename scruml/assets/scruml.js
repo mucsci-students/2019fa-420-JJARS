@@ -417,14 +417,12 @@ document.addEventListener("DOMContentLoaded", function contentLoadedInit() {
     var checkLoaded = setInterval(function() {
         if (typeof(pywebview) !== 'undefined') {
 
-            console.log("Exists!");
             clearInterval(checkLoaded);
 
             diagram = new Diagram("diagram-canvas");
             diagram.update();
 
             document.getElementById("toolbar-select").click();
-
             document.getElementById("loading-modal").style.display = "none";
 
         }
