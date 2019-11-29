@@ -259,8 +259,7 @@ function relationshipElementRemove(element)
 function renameClass()
 {
 
-    //    var newClassName = prompt("Enter a new class name:");
-    var newClassName = prompt("New class name:", diagram.selectedElement.id());
+    var newClassName = modalPrompt("New class name:", diagram.selectedElement.id());
 
     // If the user hit "cancel", return
     if (newClassName == null) return;
@@ -385,7 +384,7 @@ function tryAddClass(event)
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
 
-    var newClassName = prompt("Enter the name of the new class:");
+    var newClassName = modalPrompt("New class name:", "className");
 
     // If the user hit "cancel", return
     if (newClassName == null) return;
