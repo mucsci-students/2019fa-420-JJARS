@@ -77,21 +77,31 @@ document.addEventListener("keyup", handleKeys);
 // ----------
 // Modal functions
 
-function modalPrompt(message, placeholder)
+var modalPromptCallback = null;
+
+function modalPrompt(message, placeholder, callback)
 {
     document.querySelector("#prompt-modal-message").innerHTML = message;
     document.querySelector("#prompt-modal-input").placeholder = placeholder;
     document.querySelector("#prompt-modal").style.display = "inherit";
+    modalPromptCallback = callback;
 }
 
 function acceptModalPrompt()
 {
-    // TODO
+    if (typeof(modalPromptCallback) === "function")
+    {
+        var modalPromptValue = document.querySelector("#prompt-modal-input").value;
+        modalPromptCallback(modalPromptValue);
+        modalPromptCallback = null;
+    }
+    closeModalPrompt();
 }
 
-function cancelModalPrompt()
+function closeModalPrompt()
 {
-    // TODO
+    document.querySelector("#prompt-modal").style.display = "none";
+    document.querySelector("#prompt-modal-input").value = "";
 }
 
 function modalAlert(message)
@@ -258,20 +268,19 @@ function relationshipElementRemove(element)
 
 function renameClass()
 {
-
-    var newClassName = modalPrompt("New class name:", diagram.selectedElement.id());
-
-    // If the user hit "cancel", return
-    if (newClassName == null) return;
-
-    pywebview.api.renameClass({"old_class_name": diagram.selectedElement.id(),
-                               "new_class_name": newClassName}).then(function renameClassUpdate(response) {
-                                   if (response !== "")
-                                   {
-                                       modalAlert(response);
-                                   }
-                                   diagram.update(newClassName);
-                               });
+    modalPrompt("New class name:",
+                diagram.selectedElement.id(),
+                function renamePromptAccepted(newClassName) {
+                    pywebview.api.renameClass({
+                        "old_class_name": diagram.selectedElement.id(),
+                        "new_class_name": newClassName}).then(function renameClassUpdate(response) {
+                            if (response !== "")
+                            {
+                                modalAlert(response);
+                            }
+                            diagram.update(newClassName);
+                        });
+                });
 }
 
 
@@ -384,20 +393,20 @@ function tryAddClass(event)
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
 
-    var newClassName = modalPrompt("New class name:", "className");
-
-    // If the user hit "cancel", return
-    if (newClassName == null) return;
-
-    pywebview.api.addClass({"class_name": newClassName,
-                            "x": x,
-                            "y": y}).then(function addClassUpdate(response) {
-                                if (response !== "")
-                                {
-                                    modalAlert(response);
-                                }
-                                diagram.update();
-                            });
+    modalPrompt("New class name:",
+                "className",
+                function addClassPromptAccepted(newClassName) {
+                    pywebview.api.addClass({
+                        "class_name": newClassName,
+                        "x": x,
+                        "y": y}).then(function addClassUpdate(response) {
+                            if (response !== "")
+                            {
+                                modalAlert(response);
+                            }
+                            diagram.update();
+                        });
+                });
 
 }
 
