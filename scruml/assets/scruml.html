@@ -29,6 +29,24 @@
       </div>
     </div>
 
+    <!-- Prompt Modal -->
+    <div id="prompt-modal" class="modal">
+      <div class="modal-box">
+        <p id="prompt-modal-message">Generic Prompt Message</p>
+        <input id="prompt-modal-input" type="text" placeholder="Prompt Value">
+        <input id="prompt-modal-cancel" type="button" value="Cancel" onclick="cancelModalPrompt();">
+        <input id="prompt-modal-ok" type="button" value="OK" onclick="acceptModalPrompt();">
+      </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="modal">
+      <div class="modal-box">
+        <p id="alert-modal-message">Alert Modal Message</p>
+        <input id="alert-modal-ok" type="button" value="OK" onclick="dismissModalAlert();">
+      </div>
+    </div>
+
     <!-- Menubar -->
     <header id="menubar">
       <ul>
