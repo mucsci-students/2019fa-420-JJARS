@@ -14,7 +14,7 @@ pdoc3 = "*"
 
 [packages]
 scruml = {editable = true,path = "."}
-pywebview = {extras = ["qt"],version = "*"}
+pywebview = "==3.1"
 cefpython3 = "*"
 
 [requires]
