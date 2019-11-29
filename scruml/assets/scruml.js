@@ -74,6 +74,38 @@ function handleKeys(keyEvent)
 document.addEventListener("keyup", handleKeys);
 
 
+// ----------
+// Modal functions
+
+function modalPrompt(message, placeholder)
+{
+    document.querySelector("#prompt-modal-message").innerHTML = message;
+    document.querySelector("#prompt-modal-input").placeholder = placeholder;
+    document.querySelector("#prompt-modal").style.display = "inherit";
+}
+
+function acceptModalPrompt()
+{
+    // TODO
+}
+
+function cancelModalPrompt()
+{
+    // TODO
+}
+
+function modalAlert(message)
+{
+    document.querySelector("#alert-modal-message").innerHTML = message;
+    document.querySelector("#alert-modal").style.display = "inherit";
+}
+
+function dismissModalAlert()
+{
+    document.querySelector("#alert-modal").style.display = "none";
+}
+
+
 // ---------
 // Menubar button click event functions
 
@@ -142,7 +174,7 @@ function classElementConnect(element)
     pywebview.api.addRelationship({"class_name_a": classAName, "class_name_b": classBName}).then(function addRelationshipUpdate(response) {
                                        if (response !== "")
                                        {
-                                           alert(response);
+                                           modalAlert(response);
                                        }
                                        diagram.update();
                                        document.getElementById("toolbar-connect").click();
@@ -227,7 +259,8 @@ function relationshipElementRemove(element)
 function renameClass()
 {
 
-    var newClassName = prompt("Enter a new class name:");
+    //    var newClassName = prompt("Enter a new class name:");
+    var newClassName = prompt("New class name:", diagram.selectedElement.id());
 
     // If the user hit "cancel", return
     if (newClassName == null) return;
@@ -236,7 +269,7 @@ function renameClass()
                                "new_class_name": newClassName}).then(function renameClassUpdate(response) {
                                    if (response !== "")
                                    {
-                                       alert(response);
+                                       modalAlert(response);
                                    }
                                    diagram.update(newClassName);
                                });
@@ -362,7 +395,7 @@ function tryAddClass(event)
                             "y": y}).then(function addClassUpdate(response) {
                                 if (response !== "")
                                 {
-                                    alert(response);
+                                    modalAlert(response);
                                 }
                                 diagram.update();
                             });
