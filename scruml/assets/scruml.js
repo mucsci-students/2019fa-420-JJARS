@@ -74,6 +74,78 @@ function handleKeys(keyEvent)
 document.addEventListener("keyup", handleKeys);
 
 
+// ----------
+// Modal functions
+
+var modalPromptCallback = null;
+
+function modalPrompt(message, placeholder, callback)
+{
+    document.querySelector("#prompt-modal-message").innerHTML = message;
+    document.querySelector("#prompt-modal-input").placeholder = placeholder;
+    document.querySelector("#prompt-modal").style.display = "inherit";
+    setTimeout(function focusPromptModalInput() {
+        document.querySelector("#prompt-modal-input").focus();
+    }, 0);
+    modalPromptCallback = callback;
+}
+
+function acceptModalPrompt()
+{
+    if (typeof(modalPromptCallback) === "function")
+    {
+        var modalPromptValue = document.querySelector("#prompt-modal-input").value;
+        modalPromptCallback(modalPromptValue);
+        modalPromptCallback = null;
+    }
+    closeModalPrompt();
+}
+
+function closeModalPrompt()
+{
+    document.querySelector("#prompt-modal").style.display = "none";
+    document.querySelector("#prompt-modal-input").value = "";
+}
+
+function handleModalPromptKeys(keyEvent)
+{
+    switch (keyEvent.key)
+    {
+        case "Enter":
+        document.querySelector("#prompt-modal-ok").click();
+        break;
+
+        case "Escape":
+        document.querySelector("#prompt-modal-cancel").click();
+        break;
+    }
+}
+
+function modalAlert(message)
+{
+    document.querySelector("#alert-modal-message").innerHTML = message;
+    document.querySelector("#alert-modal").style.display = "inherit";
+    setTimeout(function focusAlertModalOk() {
+      document.querySelector("#alert-modal-ok").focus();
+    }, 0);
+}
+
+function dismissModalAlert()
+{
+    document.querySelector("#alert-modal").style.display = "none";
+}
+
+function handleModalAlertKeys(keyEvent)
+{
+    switch (keyEvent.key)
+    {
+        case "Enter":
+        case "Escape":
+        document.querySelector("#alert-modal-ok").click();
+        break;
+    }
+}
+
 // ---------
 // Menubar button click event functions
 
@@ -142,7 +214,7 @@ function classElementConnect(element)
     pywebview.api.addRelationship({"class_name_a": classAName, "class_name_b": classBName}).then(function addRelationshipUpdate(response) {
                                        if (response !== "")
                                        {
-                                           alert(response);
+                                           modalAlert(response);
                                        }
                                        diagram.update();
                                        document.getElementById("toolbar-connect").click();
@@ -226,20 +298,19 @@ function relationshipElementRemove(element)
 
 function renameClass()
 {
-
-    var newClassName = prompt("Enter a new class name:");
-
-    // If the user hit "cancel", return
-    if (newClassName == null) return;
-
-    pywebview.api.renameClass({"old_class_name": diagram.selectedElement.id(),
-                               "new_class_name": newClassName}).then(function renameClassUpdate(response) {
-                                   if (response !== "")
-                                   {
-                                       alert(response);
-                                   }
-                                   diagram.update(newClassName);
-                               });
+    modalPrompt("New class name:",
+                diagram.selectedElement.id(),
+                function renamePromptAccepted(newClassName) {
+                    pywebview.api.renameClass({
+                        "old_class_name": diagram.selectedElement.id(),
+                        "new_class_name": newClassName}).then(function renameClassUpdate(response) {
+                            if (response !== "")
+                            {
+                                modalAlert(response);
+                            }
+                            diagram.update(newClassName);
+                        });
+                });
 }
 
 
@@ -352,20 +423,20 @@ function tryAddClass(event)
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
 
-    var newClassName = prompt("Enter the name of the new class:");
-
-    // If the user hit "cancel", return
-    if (newClassName == null) return;
-
-    pywebview.api.addClass({"class_name": newClassName,
-                            "x": x,
-                            "y": y}).then(function addClassUpdate(response) {
-                                if (response !== "")
-                                {
-                                    alert(response);
-                                }
-                                diagram.update();
-                            });
+    modalPrompt("New class name:",
+                "className",
+                function addClassPromptAccepted(newClassName) {
+                    pywebview.api.addClass({
+                        "class_name": newClassName,
+                        "x": x,
+                        "y": y}).then(function addClassUpdate(response) {
+                            if (response !== "")
+                            {
+                                modalAlert(response);
+                            }
+                            diagram.update();
+                        });
+                });
 
 }
 
@@ -413,12 +484,28 @@ function toolbarButtonClicked(element)
 // Page initialization
 
 document.addEventListener("DOMContentLoaded", function contentLoadedInit() {
-    setTimeout(function() {
 
-        diagram = new Diagram("diagram-canvas");
-        diagram.update();
+    // Check every 500ms to see if pywebview has loaded
+    var checkLoaded = setInterval(function() {
+        if (typeof(pywebview) !== 'undefined') {
 
-        document.getElementById("toolbar-select").click();
+            // Clear the check interval timer
+            clearInterval(checkLoaded);
 
-    }, 200);
+            // Initialize and draw the canvas
+            diagram = new Diagram("diagram-canvas");
+            diagram.update();
+
+            // Default the current UI state to selection mode
+            document.getElementById("toolbar-select").click();
+
+            // Add hotkey handling to modal dialogs
+            document.querySelector("#prompt-modal-input").addEventListener("keyup", handleModalPromptKeys);
+            document.querySelector("#alert-modal-ok").addEventListener("keyup", handleModalAlertKeys);
+
+            // Hide the loading screen to allow user interaction
+            document.getElementById("loading-modal").style.display = "none";
+
+        }
+    }, 500);
 });

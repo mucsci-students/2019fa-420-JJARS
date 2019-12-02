@@ -2,17 +2,19 @@
 /* scruml.css */
 /* Team JJARS */
 
+
 /*
-   Colors:
+   Colors [Primary | Shadowed]:
    Light -     #FFFFFF | #E5E5E5
    Off-Light - #F2E9E1 | #D9D1CA
-   Mid-Tone -  #EFEFEF | #DDDDDD
+   Mid-Tone -  #EFEFEF | #CACACA
    Dark -      #1C140D | #090703
    Accent -    #DBF87B | #A6C050
+   Error -     #F44336 | #C62828
 */
 
-/* Font */
 
+/* Font */
 
 @font-face {
     font-family: "Noto Sans";
@@ -46,6 +48,172 @@ main
 {
     display: flex;
     flex: 1;
+}
+
+
+/* Modal Dialogs */
+
+.modal
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-box
+{
+    max-width: 550px;
+    border-bottom: 5px solid #CACACA;
+    border-radius: 5px;
+    padding: 35px;
+    background-color: #EFEFEF;
+    color: #1C140D;
+}
+
+
+/* Loading Modal */
+
+#loading-modal #loading-spinner
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50px;
+    max-height: 50px;
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+#loading-modal p
+{
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+
+/* Prompt Modal */
+
+#prompt-modal
+{
+    display: none;
+}
+
+#prompt-modal p
+{
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+#prompt-modal input
+{
+    width: 100%;
+    height: 30px;
+    font-size: 0.9em;
+    background: #FFF;
+    border: 1px solid #1C140D;
+    transition: background-color 0.2s;
+    padding: 0px 10px;
+    margin-bottom: 10px;
+}
+#prompt-modal input:hover
+{
+    background: #F2E9E1;
+}
+#prompt-modal input:active
+{
+    background: #D9D1CA;
+}
+
+#prompt-modal #prompt-modal-cancel,
+#prompt-modal #prompt-modal-ok
+{
+    display: inline-block;
+    border-radius: 5px;
+    margin-bottom: 0px;
+    margin: 0px 15px;
+    width: 40%;
+}
+#prompt-modal #prompt-modal-ok
+{
+    float: right;
+}
+#prompt-modal #prompt-modal-cancel:hover
+{
+    color: #fff;
+    background: #F44336;
+}
+#prompt-modal #prompt-modal-cancel:active
+{
+    color: #fff;
+    background: #C62828;
+}
+#prompt-modal #prompt-modal-ok:hover
+{
+    color: #fff;
+    background: #A6C050;
+}
+#prompt-modal #prompt-modal-ok:active
+{
+    color: #fff;
+    background: #689F38;
+}
+
+
+/* Alert Modal */
+
+#alert-modal
+{
+    display: none;
+}
+
+#alert-modal p
+{
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+#alert-modal #alert-modal-ok
+{
+    width: 100%;
+    height: 30px;
+    font-size: 0.9em;
+    background: #FFF;
+    border: 1px solid #1C140D;
+    transition: background-color 0.2s;
+    padding: 0px 10px;
+    border-radius: 5px;
+    margin-bottom: 0px;
+}
+#alert-modal #alert-modal-ok:hover
+{
+    color: #fff;
+    background: #A6C050;
+}
+#alert-modal #alert-modal-ok:active
+{
+    color: #fff;
+    background: #689F38;
 }
 
 
@@ -91,7 +259,6 @@ main
     cursor: default;
     flex: 1;
     overflow: scroll;
-    max-height: 90%;
     background-image: url("img/background.png");
     padding: 10px;
 }
@@ -226,6 +393,10 @@ main
 {
     color: #3E2723;
 }
+#info-panel .info-panel-content .spacer
+{
+    color: rgba(0,0,0,0);
+}
 
 #info-panel .info-panel-content hr
 {
@@ -236,15 +407,10 @@ main
 }
 
 #info-panel .info-panel-content input,
-#info-panel .info-panel-content label,
-#info-panel .info-panel-content select
-{
-    font-size: 11px;
-}
-#info-panel .info-panel-content input,
 #info-panel .info-panel-content select
 {
     height: 30px;
+    font-size: 0.9em;
     background: #FFF;
     border: 1px solid #1C140D;
     transition: background-color 0.2s;
@@ -254,12 +420,6 @@ main
 #info-panel .info-panel-content select
 {
     border-radius: 5px;
-}
-#info-panel .info-panel-content label
-{
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 0px;
 }
 
 #info-panel .info-panel-content input:hover,
