@@ -338,51 +338,15 @@ function submitMemberFunction()
     pywebview.api.setClassAttribute(attrData).then(function alertMemberFunc(response) {
         if (response !== "")
         {
-            alert(response);
+            modalAlert(response);
             return;
         }
 
         // Check if function is being added or updated
         if (parentDiv.id == "[new]")
-            alert("Function " + name + " has been added.");
+            modalAlert("Function " + name + " has been added.");
         else
-            alert("Function " + name + " has been updated.");
-        parentDiv.id = name;
-    });
-}
-
-
-// ----------
-// Adds/updates the member function for the selected class
-
-function submitMemberFunction()
-{
-    var parentDiv = this.parentElement;
-
-    var visibility = parentDiv.getElementsByClassName("func-visibility")[0].value;
-    var returnType = parentDiv.getElementsByClassName("func-ret-type")[0].value;
-    var name = parentDiv.getElementsByClassName("func-name")[0].value;
-    var parameters = parentDiv.getElementsByClassName("func-params")[0].value;
-
-    var attrData = {"class_name": diagram.selectedElement.id(),
-                            "attribute_category": "function",
-                            "func_visibility": visibility,
-                            "func_return_type": returnType,
-                            "func_name": name,
-                            "func_params": parameters};
-
-    pywebview.api.setClassAttribute(attrData).then(function alertMemberFunc(response) {
-        if (response !== "")
-        {
-            alert(response);
-            return;
-        }
-
-        // Check if function is being added or updated
-        if (parentDiv.id == "[new]")
-            alert("Function " + name + " has been added.");
-        else
-            alert("Function " + name + " has been updated.");
+            modalAlert("Function " + name + " has been updated.");
         parentDiv.id = name;
         diagram.update(diagram.selectedElement.id());
     });
@@ -409,15 +373,15 @@ function submitMemberVariable()
     pywebview.api.setClassAttribute(attrData).then(function alertMemberVar(response) {
         if (response !== "")
         {
-            alert(response);
+            modalAlert(response);
             return;
         }
 
         // Check if variable is being added or updated
         if (parentDiv.id == "[new]")
-            alert("Variable " + name + " has been added.");
+            modalAlert("Variable " + name + " has been added.");
         else
-            alert("Variable " + name + " has been updated.");
+            modalAlert("Variable " + name + " has been updated.");
 
         parentDiv.id = name;
         diagram.update(diagram.selectedElement.id());
