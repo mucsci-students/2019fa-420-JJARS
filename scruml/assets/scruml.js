@@ -169,11 +169,13 @@ function classElementDragged(element)
 
     // Update class X, then class Y attributes in the backend model
     pywebview.api.setClassAttribute({"class_name": class_name,
+                                     "attribute_category": "metadata",
                                      "attribute_name": "[x]",
                                      "attribute_value": new_x,
                                      "ignore_naming_rules": "true"
                                     }).then(function classXUpdateThen() {
                                         pywebview.api.setClassAttribute({"class_name": class_name,
+                                                                         "attribute_category": "metadata",
                                                                          "attribute_name": "[y]",
                                                                          "attribute_value": new_y,
                                                                          "ignore_naming_rules": "true"
@@ -244,20 +246,96 @@ function renameClass()
 
 
 // ----------
+// Adds/updates the member function for the selected class
+
+function submitMemberFunction()
+{
+    var parentDiv = this.parentElement;
+
+    var visibility = parentDiv.getElementsByClassName("func-visibility")[0].value;
+    var returnType = parentDiv.getElementsByClassName("func-ret-type")[0].value;
+    var name = parentDiv.getElementsByClassName("func-name")[0].value;
+    var parameters = parentDiv.getElementsByClassName("func-params")[0].value;
+
+    var attrData = {"class_name": diagram.selectedElement.id(),
+                            "attribute_category": "function",
+                            "func_visibility": visibility,
+                            "func_return_type": returnType,
+                            "func_name": name,
+                            "func_params": parameters};
+
+    pywebview.api.setClassAttribute(attrData).then(function alertMemberFunc(response) {
+        if (response !== "")
+        {
+            alert(response);
+            return;
+        }
+
+        // Check if function is being added or updated
+        if (parentDiv.id == "[new]")
+            alert("Function " + name + " has been added.");
+        else
+            alert("Function " + name + " has been updated.");
+        parentDiv.id = name;
+    });
+}
+
+
+// ----------
+// Adds/updates the member variable for the selected class
+
+function submitMemberVariable()
+{
+    var parentDiv = this.parentElement;
+
+    var visibility = parentDiv.getElementsByClassName("var-visibility")[0].value;
+    var returnType = parentDiv.getElementsByClassName("var-type")[0].value;
+    var name = parentDiv.getElementsByClassName("var-name")[0].value;
+
+    var attrData = {"class_name": diagram.selectedElement.id(),
+                            "attribute_category": "variable",
+                            "var_visibility": visibility,
+                            "var_type": returnType,
+                            "var_name": name};
+
+    pywebview.api.setClassAttribute(attrData).then(function alertMemberVar(response) {
+        if (response !== "")
+        {
+            alert(response);
+            return;
+        }
+
+        // Check if variable is being added or updated
+        if (parentDiv.id == "[new]")
+            alert("Variable " + name + " has been added.");
+        else
+            alert("Variable " + name + " has been updated.");
+
+        parentDiv.id = name;
+    });
+}
+
+// ----------
 // Add input elements for a member function in the properties panel
 
-function addMemberFunction(visibility = "private", type = "int", name = "func", params = "int x, float y")
+function addMemberFunction(visibility = "", type = "", name = "", params = "")
 {
-    // TODO: name will need to be a unique function name
-
     var funcDiv = document.createElement("div");
     funcDiv.setAttribute('class', 'member-function');
-    funcDiv.setAttribute('id', name);
+    // Set the id of the div to indicate if the function is new and unsubmitted
+    var divID = ((name === "") ? "[new]" : name);
+    funcDiv.setAttribute('id', divID);
 
     var deleteButton = document.createElement("input");
     deleteButton.setAttribute('type', 'button');
     deleteButton.setAttribute('class', 'delete-button');
     deleteButton.setAttribute('value', 'x');
+
+    var submitButton = document.createElement("input");
+    submitButton.setAttribute('type', 'button');
+    submitButton.setAttribute('class', 'submit-button');
+    submitButton.setAttribute('value', '✓');
+    submitButton.onclick = submitMemberFunction;
 
     var visibilityField = document.createElement("input");
     visibilityField.setAttribute('type', 'text');
@@ -268,22 +346,23 @@ function addMemberFunction(visibility = "private", type = "int", name = "func", 
     var retTypeField = document.createElement("input");
     retTypeField.setAttribute('type', 'text');
     retTypeField.setAttribute('class', 'func-ret-type');
-    retTypeField.setAttribute('placeholder', 'type');
+    retTypeField.setAttribute('placeholder', 'return type');
     retTypeField.setAttribute('value', type);
 
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
     nameField.setAttribute('class', 'func-name');
-    nameField.setAttribute('placeholder', 'funcName');
+    nameField.setAttribute('placeholder', 'func name');
     nameField.setAttribute('value', name);
 
     var paramsField = document.createElement("input");
     paramsField.setAttribute('type', 'text');
     paramsField.setAttribute('class', 'func-params');
-    paramsField.setAttribute('placeholder', 'int x, float y');
+    paramsField.setAttribute('placeholder', 'int x, float y, ...');
     paramsField.setAttribute('value', params);
 
     funcDiv.appendChild(deleteButton);
+    funcDiv.appendChild(submitButton);
     funcDiv.appendChild(visibilityField);
     funcDiv.appendChild(retTypeField);
     funcDiv.appendChild(nameField);
@@ -297,18 +376,24 @@ function addMemberFunction(visibility = "private", type = "int", name = "func", 
 // ----------
 // Add input elements for a member variable in the properties panel
 
-function addMemberVariable(visibility = "private", type = "int", name = "var")
+function addMemberVariable(visibility = "", type = "", name = "")
 {
-    // TODO: name will need to be unique variable name
-
     var varDiv = document.createElement("div");
     varDiv.setAttribute('class', 'member-variable');
-    varDiv.setAttribute('id', name);
+    // Set the id of the div to indicate if the variable is new and unsubmitted
+    var divID = ((name === "") ? "[new]" : name);
+    varDiv.setAttribute('id', divID);
 
     var deleteButton = document.createElement("input");
     deleteButton.setAttribute('type', 'button');
     deleteButton.setAttribute('class', 'delete-button');
     deleteButton.setAttribute('value', 'x');
+
+    var submitButton = document.createElement("input");
+    submitButton.setAttribute('type', 'button');
+    submitButton.setAttribute('class', 'submit-button');
+    submitButton.setAttribute('value', '✓');
+    submitButton.onclick = submitMemberVariable;
 
     var visibilityField = document.createElement("input");
     visibilityField.setAttribute('type', 'text');
@@ -324,10 +409,11 @@ function addMemberVariable(visibility = "private", type = "int", name = "var")
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
     nameField.setAttribute('class', 'var-name');
-    nameField.setAttribute('placeholder', 'varName');
+    nameField.setAttribute('placeholder', 'variable name');
     nameField.setAttribute('value', name);
 
     varDiv.appendChild(deleteButton);
+    varDiv.appendChild(submitButton);
     varDiv.appendChild(visibilityField);
     varDiv.appendChild(typeField);
     varDiv.appendChild(nameField);
