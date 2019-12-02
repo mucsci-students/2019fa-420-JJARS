@@ -218,26 +218,72 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
     # ----------
     # setClassAttribute
 
-    def setClassAttribute(self, class_attribute_properties: Dict[str, str]) -> str:
+    def setClassAttribute(self, attribute_data: Dict[str, str]) -> str:
 
-        class_name: str = class_attribute_properties["class_name"]
-        attribute_name: str = class_attribute_properties["attribute_name"]
-        attribute_value: str = class_attribute_properties["attribute_value"]
+        attr_key: str = ""
+        attr_value: str = ""
+        attr_name: str = ""
+
+        class_name: str = attribute_data["class_name"]
+        attr_category: str = attribute_data["attribute_category"]
+
+        # Prepare the member function for storage
+        if attr_category == "function":
+
+            param_list: List[str] = []
+            # Leave param_list empty if no parameters were given
+            if attribute_data["func_params"] != "":
+                param_list = attribute_data["func_params"].split(",")
+                # Remove whitespace from each parameter
+                param_list = [p.strip() for p in param_list]
+                # Ensure that each parameter has a type and name
+                for param in param_list:
+                    if len(param.split(" ")) != 2:
+                        return f'Invalid parameter: "{param}".\n(Parameters must follow the format "[type1] [name1], [type2] [name2], ..." \nor leave the field blank for a void parameter list.'
+
+                serial_func_pair: Tuple[str, str] = uml_utilities.serialize_function(
+                    attribute_data["func_visibility"].strip(),
+                    attribute_data["func_return_type"].strip(),
+                    attribute_data["func_name"].strip(),
+                    param_list,
+                )
+
+                attr_name = attribute_data["func_name"]
+                attr_key = serial_func_pair[0]
+                attr_value = serial_func_pair[1]
+
+        # Prepare the member variable for storage
+        elif attr_category == "variable":
+            serial_var_pair: Tuple[str, str] = uml_utilities.serialize_variable(
+                attribute_data["var_visibility"].strip(),
+                attribute_data["var_type"].strip(),
+                attribute_data["var_name"].strip(),
+            )
+
+            attr_name = attribute_data["var_name"]
+            attr_key = serial_var_pair[0]
+            attr_value = serial_var_pair[1]
+
+        # Metadata attributes do not need to be serialized
+        elif attr_category == "metadata":
+            attr_name = attribute_data["attribute_name"]
+            attr_key = attribute_data["attribute_name"]
+            attr_value = attribute_data["attribute_value"]
+        else:
+            raise Exception("Unrecognized attribute category: " + attr_category)
 
         if (
-            not "ignore_naming_rules" in class_attribute_properties
-            and not uml_utilities.parse_class_identifier(attribute_name)
+            not "ignore_naming_rules" in attribute_data
+            and not uml_utilities.parse_class_identifier(attr_name)
         ):
             return "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
 
-        if not self.__diagram.set_class_attribute(
-            class_name, attribute_name, attribute_value
-        ):
+        if not self.__diagram.set_class_attribute(class_name, attr_key, attr_value):
             return (
                 "Class "
                 + class_name
                 + " does not exist in the diagram. Unable to add attribute: "
-                + attribute_name
+                + attr_key
             )
 
         return ""
