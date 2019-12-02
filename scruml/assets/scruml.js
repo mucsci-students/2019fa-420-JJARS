@@ -384,6 +384,7 @@ function submitMemberFunction()
         else
             alert("Function " + name + " has been updated.");
         parentDiv.id = name;
+        diagram.update(diagram.selectedElement.id());
     });
 }
 
@@ -419,6 +420,7 @@ function submitMemberVariable()
             alert("Variable " + name + " has been updated.");
 
         parentDiv.id = name;
+        diagram.update(diagram.selectedElement.id());
     });
 }
 
