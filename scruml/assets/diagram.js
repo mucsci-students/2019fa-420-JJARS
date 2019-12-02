@@ -20,7 +20,7 @@ class Diagram {
             return;
         }
         this.canvas = new SVG(canvasID).size(500, 500);
-        this.canvas.mousedown(function canvasMouseDown(event) {
+        this.canvas.click(function canvasOnClick(event) {
             tryAddClass(event);
         })
 
