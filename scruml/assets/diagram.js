@@ -170,12 +170,14 @@ class Diagram {
         // Build element on the canvas with appropriate ID and classification
         var element = this.canvas.nested().id(className).addClass("uml-class");
 
+        // Insert element attributes as HTML attribute
         element.attr('data-attributes', JSON.stringify(classAttr))
 
         // Add body and text
         var rect = element.rect(1, 1);
         var text_OfClassName = element.text(className).move(10, 10);
 
+        // Calculate width of surrounding rectangle
         var width = text_OfClassName.bbox().width + 20;
         var height = text_OfClassName.bbox().height + 20;
         rect.width(width);
