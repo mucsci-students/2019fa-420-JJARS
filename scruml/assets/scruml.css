@@ -259,7 +259,6 @@ main
     cursor: default;
     flex: 1;
     overflow: scroll;
-    max-height: 90%;
     background-image: url("img/background.png");
     padding: 10px;
 }
