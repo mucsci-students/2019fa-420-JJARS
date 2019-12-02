@@ -84,6 +84,9 @@ function modalPrompt(message, placeholder, callback)
     document.querySelector("#prompt-modal-message").innerHTML = message;
     document.querySelector("#prompt-modal-input").placeholder = placeholder;
     document.querySelector("#prompt-modal").style.display = "inherit";
+    setTimeout(function focusPromptModalInput() {
+        document.querySelector("#prompt-modal-input").focus();
+    }, 0);
     modalPromptCallback = callback;
 }
 
@@ -104,10 +107,27 @@ function closeModalPrompt()
     document.querySelector("#prompt-modal-input").value = "";
 }
 
+function handleModalPromptKeys(keyEvent)
+{
+    switch (keyEvent.key)
+    {
+        case "Enter":
+        document.querySelector("#prompt-modal-ok").click();
+        break;
+
+        case "Escape":
+        document.querySelector("#prompt-modal-cancel").click();
+        break;
+    }
+}
+
 function modalAlert(message)
 {
     document.querySelector("#alert-modal-message").innerHTML = message;
     document.querySelector("#alert-modal").style.display = "inherit";
+    setTimeout(function focusAlertModalOk() {
+      document.querySelector("#alert-modal-ok").focus();
+    }, 0);
 }
 
 function dismissModalAlert()
@@ -115,6 +135,16 @@ function dismissModalAlert()
     document.querySelector("#alert-modal").style.display = "none";
 }
 
+function handleModalAlertKeys(keyEvent)
+{
+    switch (keyEvent.key)
+    {
+        case "Enter":
+        case "Escape":
+        document.querySelector("#alert-modal-ok").click();
+        break;
+    }
+}
 
 // ---------
 // Menubar button click event functions
@@ -455,15 +485,25 @@ function toolbarButtonClicked(element)
 
 document.addEventListener("DOMContentLoaded", function contentLoadedInit() {
 
+    // Check every 500ms to see if pywebview has loaded
     var checkLoaded = setInterval(function() {
         if (typeof(pywebview) !== 'undefined') {
 
+            // Clear the check interval timer
             clearInterval(checkLoaded);
 
+            // Initialize and draw the canvas
             diagram = new Diagram("diagram-canvas");
             diagram.update();
 
+            // Default the current UI state to selection mode
             document.getElementById("toolbar-select").click();
+
+            // Add hotkey handling to modal dialogs
+            document.querySelector("#prompt-modal-input").addEventListener("keyup", handleModalPromptKeys);
+            document.querySelector("#alert-modal-ok").addEventListener("keyup", handleModalAlertKeys);
+
+            // Hide the loading screen to allow user interaction
             document.getElementById("loading-modal").style.display = "none";
 
         }
