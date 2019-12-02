@@ -192,10 +192,6 @@ class Diagram {
             classElementClicked(this);
         });
 
-        element.on("dragmove", function(event){
-            console.log(event);
-        })
-
         // Hook drag end event to handler
         element.on("dragend", function classDragEnd(event) {
             classElementDragged(this);
