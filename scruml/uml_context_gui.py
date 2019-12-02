@@ -241,16 +241,16 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
                     if len(param.split(" ")) != 2:
                         return f'Invalid parameter: "{param}".\n(Parameters must follow the format "[type1] [name1], [type2] [name2], ..." \nor leave the field blank for a void parameter list.'
 
-                serial_func_pair: Tuple[str, str] = uml_utilities.serialize_function(
-                    attribute_data["func_visibility"].strip(),
-                    attribute_data["func_return_type"].strip(),
-                    attribute_data["func_name"].strip(),
-                    param_list,
-                )
+            serial_func_pair: Tuple[str, str] = uml_utilities.serialize_function(
+                attribute_data["func_visibility"].strip(),
+                attribute_data["func_return_type"].strip(),
+                attribute_data["func_name"].strip(),
+                param_list,
+            )
 
-                attr_name = attribute_data["func_name"]
-                attr_key = serial_func_pair[0]
-                attr_value = serial_func_pair[1]
+            attr_name = attribute_data["func_name"]
+            attr_key = serial_func_pair[0]
+            attr_value = serial_func_pair[1]
 
         # Prepare the member variable for storage
         elif attr_category == "variable":
