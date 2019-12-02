@@ -2,8 +2,8 @@
 // diagram.js
 // Team JJARS
 
-const CLASS_WIDTH = 150;
-const CLASS_HEIGHT = 50;
+// ----------
+// Diagram class
 
 class Diagram {
 
