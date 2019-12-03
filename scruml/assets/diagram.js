@@ -2,8 +2,11 @@
 // diagram.js
 // Team JJARS
 
-const CLASS_WIDTH = 150;
-const CLASS_HEIGHT = 50;
+const CANVAS_DEFAULT_WIDTH = 1000;
+const CANVAS_DEFAULT_HEIGHT = 1000;
+
+// ----------
+// Diagram class
 
 class Diagram {
 
@@ -19,10 +22,16 @@ class Diagram {
             console.error("No canvas ID provided in Diagram constructor.");
             return;
         }
-        this.canvas = new SVG(canvasID).size(500, 500);
-        this.canvas.mousedown(function canvasMouseDown(event) {
+        this.canvas = new SVG(canvasID).size(CANVAS_DEFAULT_WIDTH, CANVAS_DEFAULT_HEIGHT);
+        this.canvas.click(function canvasOnClick(event) {
             tryAddClass(event);
         })
+
+        // Build marker elements
+        this.triangleMarker = this.canvas.polygon("-10,0 0,10 10,0");
+        this.openArrowMarker = this.canvas.polygon("-10,0 0,10 10,0");
+        this.whiteDiamondMarker = this.canvas.polygon("-10,0 0,10 10,0");
+        this.blackDiamondMarker = this.canvas.polygon("-10,0 0,10 10,0");
 
         // Set environment variables
         this.selectedElement = null;
@@ -68,6 +77,7 @@ class Diagram {
 
                 var attrDict= JSON.parse(element.attr("data-attributes"));
 
+                // Populate the attributes panel with all member variables and member functions for this class
                 for (let [key, value] of Object.entries(attrDict))
                 {
                     if ( key != "[x]" && key != "[y]")
@@ -104,6 +114,9 @@ class Diagram {
                 document.querySelector("#class-info").style.display = "none"
                 document.querySelector("#relationship-info").style.display = "block"
                 document.querySelector("#relationship-id").innerHTML = element.id()
+
+                // Set the fields in the attributes panel to the proper values for this relationship
+
             }
         }
         else
@@ -114,6 +127,10 @@ class Diagram {
         }
         this.selectedElement = element;
     }
+
+
+    // ----------
+    // Deserialization functions
 
     // ----------
     // deserializeFunction
@@ -133,8 +150,12 @@ class Diagram {
         for (var i = 2; i < splitArray.length; i += 2){
             paramsString += splitArray[i] + " " + splitArray[i + 1] + ", ";
         }
-        // Fixes fencepost issue: extra ", " at the end
-        paramsString = paramsString.trimRight(", ");
+
+        // Fencepost: Remove ", " from the end of the string
+        if (paramsString != "")
+        {
+            paramsString = paramsString.substring(0, paramsString.length - 2)
+        }
 
         resultDict["param-str"] = paramsString;
 
@@ -169,26 +190,63 @@ class Diagram {
 
         // Build element on the canvas with appropriate ID and classification
         var element = this.canvas.nested().id(className).addClass("uml-class");
-        // Hardcoded class members (comment out body of updateClassAttr() when you uncomment this)
-        /*
-        var tempClassAttr = { "[F:getID]": "[public][string][int][offset][double][modifier]",
-                                           "[F:getVal]": "[private][double][string][prefix]",
-                                           "[F:calculateDist]": "[protected][int]",
-                                           "[V:myVar]": "[public][string]",
-                                           "[V:m_volume]": "[protected][float]",
-                                           "[V:m_distance]": "[private][int]" };
-        element.attr('data-attributes', JSON.stringify(tempClassAttr));
-        */
-        element.attr('data-attributes', JSON.stringify(classAttr))
+
+        // Insert element attributes as HTML attribute
+        element.attr('data-attributes', JSON.stringify(classAttr));
 
         // Add body and text
         var rect = element.rect(1, 1);
-        var text_OfClassName = element.text(className).move(10, 10);
+        var classNameText = element.text(className).move(10, 10).addClass("uml-class-name");
 
-        var width = text_OfClassName.bbox().width + 20;
-        var height = text_OfClassName.bbox().height + 20;
-        rect.width(width);
-        rect.height(height);
+        // Add member variables to the class element
+        var currYOffset = classNameText.bbox().height + 15;
+        var longestStringWidth = classNameText.bbox().width;
+        for (let [key, value] of Object.entries(classAttr))
+        {
+            if ( key != "[x]" && key != "[y]")
+            {
+                // This attribute is a variable if the second char of the key is an 'V'
+                if (key.substring(1,2) == "V")
+                {
+                    var deserialDict = this.deserializeVariable(key, value);
+
+                    var varVisibility = deserialDict["visibility"];
+                    var varType = deserialDict["type"];
+                    var varName = deserialDict["name"];
+
+                    var varTextElem = element.text("- " + varVisibility + " " + varType + " " + varName).move(10, currYOffset).addClass("uml-class-member-variable");
+                    currYOffset += varTextElem.bbox().height + 5;
+                    longestStringWidth = Math.max(longestStringWidth, varTextElem.bbox().width);
+                }
+            }
+        }
+
+        // Add member functions to the class element
+        for (let [key, value] of Object.entries(classAttr))
+        {
+            if ( key != "[x]" && key != "[y]")
+            {
+                // This attribute is a function if the second char of the key is an 'F'
+                if (key.substring(1,2) == "F")
+                {
+                    var deserialDict = this.deserializeFunction(key, value);
+
+                    var funcVisibility = deserialDict["visibility"];
+                    var funcType = deserialDict["return-type"];
+                    var funcName = deserialDict["name"];
+                    var funcParamStr = deserialDict["param-str"];
+
+                    var funcTextElem = element.text("+ " + funcVisibility + " " + funcType + " " + funcName + "(" + funcParamStr + ")").move(10, currYOffset).addClass("uml-class-member-function");
+                    currYOffset += funcTextElem.bbox().height + 5;
+                    longestStringWidth = Math.max(longestStringWidth, funcTextElem.bbox().width);
+                }
+            }
+        }
+
+        // Calculate width of surrounding rectangle
+        var width = longestStringWidth + 20;
+        var height = currYOffset + 5;
+        rect.width(width).height(height);
 
         // Place element at the appropriate coordinates, if in the attributes
         if (classAttr["[x]"] && classAttr["[y]"])
@@ -200,10 +258,6 @@ class Diagram {
         element.mousedown(function classMouseDown(event) {
             classElementClicked(this);
         });
-
-        element.on("dragmove", function(event){
-            console.log(event);
-        })
 
         // Hook drag end event to handler
         element.on("dragend", function classDragEnd(event) {
@@ -243,8 +297,17 @@ class Diagram {
                                                 "type": "curved"},
                                                classBElem).connector;
 
+	//var endpointA = connector.pointAt(0);
+	//var endpointB = connector.connector.pointAt(connector.connector.length());
+        //var indicatorA = connector.parent().text("1").move(endpointA.x,endpointA.y);
+	//var indicatorB = connector.text("1asefasesf").move(endpointB.x(),endpointB.y());
+	//classAElem.add(indicatorA);
+
         // Give the connector an ID and classify it properly
         connector.id(relationshipID).addClass("uml-relationship");
+
+        // Insert element attributes as HTML attribute
+        connector.attr('data-attributes', JSON.stringify(relationshipAttr));
 
         // Hook element in to click event handler
         connector.mousedown(function relationshipMouseDown() {
