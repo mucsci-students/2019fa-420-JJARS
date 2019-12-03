@@ -87,11 +87,9 @@ def test_add_and_remove_relationships() -> None:
 
     shell.onecmd("add classA")
     shell.onecmd("add classB")
+    shell.onecmd("add classC")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
-
-    shell.onecmd("add [classC,classB]")
-    shell.onecmd("add [classA,classC]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
 
@@ -117,6 +115,48 @@ def test_add_and_remove_relationships() -> None:
     shell.onecmd("remove [fakeClass,classB]")
 
     assert shell._UMLShell__diagram.get_all_relationship_pairs() == []
+
+
+def test_do_function() -> None:
+    shell: __UMLShell = __UMLShell()
+    shell._UMLShell__diagram = UMLDiagram()
+
+    shell.onecmd("add classA")
+    shell.onecmd("function set")
+    shell.onecmd("function set 'badname' myfunc")
+    shell.onecmd("function set classA 'badfunc'")
+    shell.onecmd("function set classB myfunc")
+    shell.onecmd(
+        "function set classA myfunc -v public -s int -p [int'myint,float'myfloat] garbage"
+    )
+    shell.onecmd(
+        "function set classA myfunc -v public -s 'ddd' -p [int'myint,float'myfloat}"
+    )
+    shell.onecmd(
+        "function set classA myfunc -v public -s int - p [int'myint,float'myfloat]"
+    )
+
+    shell.onecmd("function remove classA myfunc")
+
+    assert shell._UMLShell__diagram.get_class_attributes("classA") == {}
+
+
+def test_do_variable() -> None:
+    shell: __UMLShell = __UMLShell()
+    shell._UMLShell__diagram = UMLDiagram()
+
+    shell.onecmd("add classA")
+
+    shell.onecmd("variable set classA")
+    shell.onecmd("variable set 'classsA' myint -v public -t int")
+    shell.onecmd("variable set classA 'myvar' -v public -t int")
+    shell.onecmd("variable set classA myvar -s ahhh -t int")
+    shell.onecmd("variable set classA myvar -v 'public' -t int")
+    shell.onecmd("variable set classA myvar -v public -t int")
+
+    shell.onecmd("variable remove classA myvar")
+
+    assert shell._UMLShell__diagram.get_class_attributes("classA") == {}
 
 
 def test_set_and_strip_class_attributes() -> None:
@@ -166,6 +206,7 @@ def test_set_and_strip_relationship_attribute() -> None:
     assert shell._UMLShell__diagram.get_relationship_attributes("class1", "class2") == {
         "category": "aggregate"
     }
+
     assert shell._UMLShell__diagram.get_relationship_attributes("class2", "class3") == {
         "category": "aggregate"
     }
@@ -310,3 +351,4 @@ def test_help() -> None:
     shell.onecmd("")
     shell.onecmd("help")
     shell.onecmd("help identifiers")
+    shell.onecmd("help parameters")
