@@ -214,7 +214,6 @@ def test_set_and_strip_relationship_attribute() -> None:
     shell.onecmd("strip [class2,class3] category")
     shell.onecmd("strip [class1,class2] category")
 
-
     assert (
         shell._UMLShell__diagram.get_relationship_attributes("class2", "class3") == {}
     )
