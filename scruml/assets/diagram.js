@@ -297,6 +297,12 @@ class Diagram {
                                                 "type": "curved"},
                                                classBElem).connector;
 
+	//var endpointA = connector.pointAt(0);
+	//var endpointB = connector.connector.pointAt(connector.connector.length());
+        //var indicatorA = connector.parent().text("1").move(endpointA.x,endpointA.y);
+	//var indicatorB = connector.text("1asefasesf").move(endpointB.x(),endpointB.y());
+	//classAElem.add(indicatorA);
+
         // Give the connector an ID and classify it properly
         connector.id(relationshipID).addClass("uml-relationship");
 
