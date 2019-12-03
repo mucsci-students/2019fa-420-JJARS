@@ -296,21 +296,9 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
         attribute_name: str = attribute_data["attribute_name"]
 
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
-            print(f' Attr name:"{attribute_name}" \n Class name: "{class_name}"')
             return "Attribute " + attribute_name + " not found in Class: " + class_name
 
         return ""
-
-    # ----------
-    # getClassAttributes
-
-    def getClassAttributes(self, class_name: str) -> Dict[str, str]:
-        attr_dict: Optional[Dict[str, str]] = self.__diagram.get_class_attributes(
-            class_name
-        )
-        if not attr_dict:
-            raise Exception("Selected class not found in diagram: " + class_name)
-        return attr_dict
 
     # ----------
     # Relationship functions
@@ -373,7 +361,86 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
     # ----------
     # Relationship attribute functions
 
-    # TODO: Sprint 3
+    # ----------
+    # setRelationshipAttribute
+
+    def setRelationshipAttribute(self, attribute_data: Dict[str, str]) -> str:
+
+        attr_key: str = attribute_data["attr_key"]
+        attr_value: str = attribute_data["attr_key"]
+
+        relationship_id: str = attribute_data["relationship_id"]
+        relationship_id_tuple: Optional[
+            Tuple[str, str]
+        ] = uml_utilities.parse_relationship_identifier(relationship_id)
+
+        if not relationship_id_tuple:
+            raise Exception(
+                "Invalid relationship identifier provided: " + relationship_id
+            )
+
+        class_name_a: str = relationship_id_tuple[0]
+        class_name_b: str = relationship_id_tuple[1]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return "Class " + class_name_a + " not found in the diagram."
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return "Class " + class_name_b + " not found in the diagram."
+
+        if (
+            not "ignore_naming_rules" in attribute_data
+            and not uml_utilities.parse_class_identifier(attr_key)
+        ):
+            return "Attribute name is invalid. (Cannot contain whitespace or quotes, and cannot be surrounded by brackets.)"
+
+        if not self.__diagram.set_relationship_attribute(
+            relationship_id_tuple[0], relationship_id_tuple[1], attr_key, attr_value
+        ):
+            return "Relationship not found in diagram: {}".format(
+                uml_utilities.stringify_relationship_identifier(
+                    class_name_a, class_name_b
+                )
+            )
+
+        return ""
+
+    # ----------
+    # removeRelationshipAttribute
+
+    def removeRelationshipAttribute(self, attribute_data: Dict[str, str]) -> str:
+
+        attribute_name: str = attribute_data["attribute_name"]
+        relationship_id: str = attribute_data["relationship_id"]
+        relationship_id_tuple: Optional[
+            Tuple[str, str]
+        ] = uml_utilities.parse_relationship_identifier(relationship_id)
+
+        if not relationship_id_tuple:
+            raise Exception(
+                "Invalid relationship identifier provided: " + relationship_id
+            )
+
+        class_name_a: str = relationship_id_tuple[0]
+        class_name_b: str = relationship_id_tuple[1]
+
+        if not class_name_a in self.__diagram.get_all_class_names():
+            return "Class " + class_name_a + " not found in the diagram."
+        if not class_name_b in self.__diagram.get_all_class_names():
+            return "Class " + class_name_b + " not found in the diagram."
+
+        if not self.__diagram.remove_relationship_attribute(
+            class_name_a, class_name_b, attribute_name
+        ):
+            return (
+                "Attribute "
+                + attribute_name
+                + " not found in Class: "
+                + uml_utilities.stringify_relationship_identifier(
+                    class_name_a, class_name_b
+                )
+            )
+
+        return ""
 
 
 # ----------

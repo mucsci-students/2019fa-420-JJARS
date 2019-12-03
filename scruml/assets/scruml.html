@@ -56,51 +56,54 @@
       </ul>
     </header>
 
+    <!-- Center Content -->
     <main>
 
-      <!-- Diagram Canvas -->
-      <section id="diagram-canvas">
-      </section>
+    <!-- Diagram Canvas -->
+    <section id="diagram-canvas">
+    </section>
 
-      <!-- Info Panel -->
-      <aside id="info-panel">
-        <div id="class-info" class="info-panel-content">
-          <strong class="identifier header"><span id="class-id"></span><a class="edit-identifier" onclick="renameClass();"> 🖉</a></strong>
-          <hr>
-          <span class="header">Functions</span>
-          <div id="function-list">
-            <div class="member-function" id="func1"></div>
-          </div>
-          <input type="button" class="add-button" value="+" onclick="addMemberFunction();">
-          <span class="header">Variables</span>
-          <div id="variable-list">
-            <div class="member-variable" id="var1"></div>
-          </div>
-          <input type="button" class="add-button" value="+" onclick="addMemberVariable();">
+    <!-- Info Panel -->
+    <aside id="info-panel">
+      <div id="class-info" class="info-panel-content">
+        <strong class="identifier header"><span id="class-id"></span><a class="edit-identifier" onclick="renameClass();"> 🖉</a></strong>
+        <hr>
+        <span class="header">Variables</span>
+        <div id="variable-list">
+          <div class="member-variable" id="var1"></div>
         </div>
-        <div id="relationship-info" class="info-panel-content">
-          <strong class="identifier header"><span id="relationship-id"></span><a class="spacer"> 🖉</a></strong>
-          <hr>
-          <span class="header">Label</span>
-          <input type="text" placeholder="My Relationship">
-          <span class="header">Type</span>
-          <select>
-            <option>Association</option>
-            <option>Inheritance</option>
-            <option>Realization</option>
-            <option>Dependency</option>
-            <option>Aggregation</option>
-            <option>Composition</option>
-          </select>
-          <span class="header">Multiplicity</span>
-          <select>
-            <option>One-To-One</option>
-            <option>One-To-Many</option>
-            <option>Many-To-One</option>
-            <option>Many-To-Many</option>
-          </select>
+        <input type="button" class="add-button" value="+" onclick="addMemberVariable();">
+        <span class="header">Functions</span>
+        <div id="function-list">
+          <div class="member-function" id="func1"></div>
         </div>
-      </aside>
+        <input type="button" class="add-button" value="+" onclick="addMemberFunction();">
+      </div>
+      <div id="relationship-info" class="info-panel-content">
+        <strong class="identifier header"><span id="relationship-id"></span><a class="spacer"> 🖉</a></strong>
+        <hr>
+        <span class="header">Label</span>
+        <input type="text" placeholder="My Relationship" onchange="setRelationshipAttrValue('label', this.value);">
+        <span class="header">Type</span>
+        <select onchange="changeRelationshipType();">
+          <option>Default</option>
+          <option>Association</option>
+          <option>Inheritance</option>
+          <option>Realization</option>
+          <option>Dependency</option>
+          <option>Aggregation</option>
+          <option>Composition</option>
+        </select>
+        <span class="header">Multiplicity</span>
+        <select onchange="changeRelationshipMultiplicity();">
+          <option>Default</option>
+          <option>One-To-One</option>
+          <option>One-To-Many</option>
+          <option>Many-To-One</option>
+          <option>Many-To-Many</option>
+        </select>
+      </div>
+    </aside>
 
     </main>
 
