@@ -96,13 +96,13 @@ function acceptModalPrompt()
     {
         var modalPromptValue = document.querySelector("#prompt-modal-input").value;
         modalPromptCallback(modalPromptValue);
-        modalPromptCallback = null;
     }
     closeModalPrompt();
 }
 
 function closeModalPrompt()
 {
+    modalPromptCallback = null;
     document.querySelector("#prompt-modal").style.display = "none";
     document.querySelector("#prompt-modal-input").value = "";
 }
@@ -203,7 +203,6 @@ function classElementConnect(element)
     if (diagram.selectedElement == null)
     {
         diagram.changeSelection(element);
-        document.querySelector("#info-panel-content").innerHTML = "<i>Select another class to create a relationship.</i>"
         return;
     }
 
@@ -535,6 +534,57 @@ function addMemberVariable(visibility = "", type = "", name = "")
     varList.appendChild(varDiv);
 }
 
+// ----------
+// relabelRelationship
+
+function setRelationshipAttrValue(key, value)
+{
+    var attrData = {
+        "attr_key": "label",
+        "attr_value": this.value,
+        "relationship_id": diagram.selectedElement.id()
+    };
+    pywebview.api.setRelationshipAttribute(attrData).then(function alertRelabelRelationship() {
+        if (response !== "")
+        {
+            modalAlert(response);
+            return;
+        }
+        diagram.update(diagram.selectedElement.id());
+    });
+}
+function changeRelationshipType()
+{
+    var attrData = {
+        "attr_key": "type",
+        "attr_value": this.value,
+        "relationship_id": diagram.selectedElement.id()
+    };
+    pywebview.api.setRelationshipAttribute(attrData).then(function alertChangeRelationshipType() {
+        if (response !== "")
+        {
+            modalAlert(response);
+            return;
+        }
+        diagram.update(diagram.selectedElement.id());
+    });
+}
+function changeRelationshipMultiplicity()
+{
+    var attrData = {
+        "attr_key": "multiplicity",
+        "attr_value": this.value,
+        "relationship_id": diagram.selectedElement.id()
+    };
+    pywebview.api.setRelationshipAttribute(attrData).then(function alertChangeRelationshipType() {
+        if (response !== "")
+        {
+            modalAlert(response);
+            return;
+        }
+        diagram.update(diagram.selectedElement.id());
+    });
+}
 
 // ----------
 // Diagram canvas class add event function

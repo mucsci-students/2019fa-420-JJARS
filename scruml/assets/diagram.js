@@ -2,6 +2,9 @@
 // diagram.js
 // Team JJARS
 
+const CANVAS_DEFAULT_WIDTH = 1000;
+const CANVAS_DEFAULT_HEIGHT = 1000;
+
 // ----------
 // Diagram class
 
@@ -19,10 +22,16 @@ class Diagram {
             console.error("No canvas ID provided in Diagram constructor.");
             return;
         }
-        this.canvas = new SVG(canvasID).size(500, 500);
+        this.canvas = new SVG(canvasID).size(CANVAS_DEFAULT_WIDTH, CANVAS_DEFAULT_HEIGHT);
         this.canvas.click(function canvasOnClick(event) {
             tryAddClass(event);
         })
+
+        // Build marker elements
+        this.triangleMarker = this.canvas.polygon("-10,0 0,10 10,0");
+        this.openArrowMarker = this.canvas.polygon("-10,0 0,10 10,0");
+        this.whiteDiamondMarker = this.canvas.polygon("-10,0 0,10 10,0");
+        this.blackDiamondMarker = this.canvas.polygon("-10,0 0,10 10,0");
 
         // Set environment variables
         this.selectedElement = null;
@@ -68,6 +77,7 @@ class Diagram {
 
                 var attrDict= JSON.parse(element.attr("data-attributes"));
 
+                // Populate the attributes panel with all member variables and member functions for this class
                 for (let [key, value] of Object.entries(attrDict))
                 {
                     if ( key != "[x]" && key != "[y]")
@@ -104,6 +114,9 @@ class Diagram {
                 document.querySelector("#class-info").style.display = "none"
                 document.querySelector("#relationship-info").style.display = "block"
                 document.querySelector("#relationship-id").innerHTML = element.id()
+
+                // Set the fields in the attributes panel to the proper values for this relationship
+
             }
         }
         else
@@ -114,6 +127,10 @@ class Diagram {
         }
         this.selectedElement = element;
     }
+
+
+    // ----------
+    // Deserialization functions
 
     // ----------
     // deserializeFunction
@@ -282,6 +299,9 @@ class Diagram {
 
         // Give the connector an ID and classify it properly
         connector.id(relationshipID).addClass("uml-relationship");
+
+        // Insert element attributes as HTML attribute
+        connector.attr('data-attributes', JSON.stringify(relationshipAttr));
 
         // Hook element in to click event handler
         connector.mousedown(function relationshipMouseDown() {

@@ -40,14 +40,14 @@ html, body
 body
 {
     display: flex;
-    min-height: 100vh;
-    max-height: 100vh;
+    height: 100vh;
     flex-direction: column;
 }
 main
 {
     display: flex;
-    flex: 1;
+    min-height: 0%;
+    height: 100%;
 }
 
 
@@ -219,6 +219,11 @@ main
 
 /* Menubar */
 
+#menubar
+{
+    flex: none;
+}
+
 #menubar ul
 {
     list-style-type: none;
@@ -257,10 +262,10 @@ main
 #diagram-canvas
 {
     cursor: default;
-    flex: 1;
-    overflow: scroll;
     background-image: url("img/background.png");
     padding: 10px;
+    overflow: scroll;
+    flex: auto;
 }
 
 #diagram-canvas svg
@@ -363,7 +368,7 @@ main
 {
     display: none;
     flex: 0 0 475px;
-    max-height: 90%;
+    height: 100%;
     overflow-y: scroll;
     padding: 10px;
     border-left: solid 5px #E5E5E5;
@@ -451,26 +456,19 @@ main
 }
 
 #info-panel .info-panel-content .member-function .func-visibility,
-#info-panel .info-panel-content .member-function .func-ret-type
-{
-    width: 19%;
-}
+#info-panel .info-panel-content .member-function .func-ret-type,
 #info-panel .info-panel-content .member-function .func-name,
 #info-panel .info-panel-content .member-function .func-params
 {
-    width: 22%;
+    width: 20%;
 }
 
-#info-panel .info-panel-content .member-variable .var-visibility
-{
-    width: 19%;
-}
+#info-panel .info-panel-content .member-variable .var-visibility,
 #info-panel .info-panel-content .member-variable .var-type,
 #info-panel .info-panel-content .member-variable .var-name
 {
-    width: 32%;
+    width: 27%;
 }
-
 
 #info-panel .info-panel-content .delete-button,
 #info-panel .info-panel-content .add-button,
@@ -514,6 +512,11 @@ main
 }
 
 /* Toolbar */
+
+#toolbar
+{
+    flex: none;
+}
 
 #toolbar ul
 {
