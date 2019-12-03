@@ -40,14 +40,14 @@ html, body
 body
 {
     display: flex;
-    min-height: 100vh;
-    max-height: 100vh;
+    height: 100vh;
     flex-direction: column;
 }
 main
 {
     display: flex;
-    flex: 1;
+    min-height: 0%;
+    height: 100%;
 }
 
 
@@ -219,6 +219,11 @@ main
 
 /* Menubar */
 
+#menubar
+{
+    flex: none;
+}
+
 #menubar ul
 {
     list-style-type: none;
@@ -257,10 +262,10 @@ main
 #diagram-canvas
 {
     cursor: default;
-    flex: 1;
-    overflow: scroll;
     background-image: url("img/background.png");
     padding: 10px;
+    overflow: scroll;
+    flex: auto;
 }
 
 #diagram-canvas svg
@@ -284,6 +289,16 @@ main
 #diagram-canvas .uml-class
 {
     fill-opacity: 1;
+}
+#diagram-canvas .uml-class-name
+{
+    font-weight: bold;
+    border-bottom: 1px solid #f00;
+}
+#diagram-canvas .uml-class .uml-class-member-function,
+#diagram-canvas .uml-class .uml-class-member-variable
+{
+    font-size: 0.75em;
 }
 
 #diagram-canvas .selected
@@ -352,8 +367,8 @@ main
 #info-panel
 {
     display: none;
-    flex: 0 0 400px;
-    max-height: 90%;
+    flex: 0 0 475px;
+    height: 100%;
     overflow-y: scroll;
     padding: 10px;
     border-left: solid 5px #E5E5E5;
@@ -439,26 +454,27 @@ main
     display: flex;
     justify-content: space-between;
 }
+
 #info-panel .info-panel-content .member-function .func-visibility,
 #info-panel .info-panel-content .member-function .func-ret-type,
 #info-panel .info-panel-content .member-function .func-name,
 #info-panel .info-panel-content .member-function .func-params
 {
-    width: 22%;
+    width: 20%;
 }
 
 #info-panel .info-panel-content .member-variable .var-visibility,
 #info-panel .info-panel-content .member-variable .var-type,
 #info-panel .info-panel-content .member-variable .var-name
 {
-    width: 29.5%;
+    width: 27%;
 }
 
-
 #info-panel .info-panel-content .delete-button,
-#info-panel .info-panel-content .add-button
+#info-panel .info-panel-content .add-button,
+#info-panel .info-panel-content .submit-button
 {
-    width: 10%;
+    width: 7%;
     padding: 0px;
     height: 30px;
     border-radius: 5px;
@@ -474,6 +490,16 @@ main
     color: #fff;
     background: #C62828;
 }
+#info-panel .info-panel-content .submit-button:hover
+{
+    color: #fff;
+    background: #E3D94B;
+}
+#info-panel .info-panel-content .submit-button:active
+{
+    color: #fff;
+    background: #A39C34;
+}
 #info-panel .info-panel-content .add-button:hover
 {
     color: #fff;
@@ -486,6 +512,11 @@ main
 }
 
 /* Toolbar */
+
+#toolbar
+{
+    flex: none;
+}
 
 #toolbar ul
 {
