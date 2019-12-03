@@ -133,8 +133,12 @@ class Diagram {
         for (var i = 2; i < splitArray.length; i += 2){
             paramsString += splitArray[i] + " " + splitArray[i + 1] + ", ";
         }
-        // Fixes fencepost issue: extra ", " at the end
-        paramsString = paramsString.trimRight(", ");
+
+        // Fencepost: Remove ", " from the end of the string
+        if (paramsString != "")
+        {
+            paramsString = paramsString.substring(0, paramsString.length - 2)
+        }
 
         resultDict["param-str"] = paramsString;
 

@@ -362,7 +362,7 @@ main
 #info-panel
 {
     display: none;
-    flex: 0 0 400px;
+    flex: 0 0 475px;
     max-height: 90%;
     overflow-y: scroll;
     padding: 10px;
@@ -449,26 +449,34 @@ main
     display: flex;
     justify-content: space-between;
 }
+
 #info-panel .info-panel-content .member-function .func-visibility,
-#info-panel .info-panel-content .member-function .func-ret-type,
+#info-panel .info-panel-content .member-function .func-ret-type
+{
+    width: 19%;
+}
 #info-panel .info-panel-content .member-function .func-name,
 #info-panel .info-panel-content .member-function .func-params
 {
     width: 22%;
 }
 
-#info-panel .info-panel-content .member-variable .var-visibility,
+#info-panel .info-panel-content .member-variable .var-visibility
+{
+    width: 19%;
+}
 #info-panel .info-panel-content .member-variable .var-type,
 #info-panel .info-panel-content .member-variable .var-name
 {
-    width: 29.5%;
+    width: 32%;
 }
 
 
 #info-panel .info-panel-content .delete-button,
-#info-panel .info-panel-content .add-button
+#info-panel .info-panel-content .add-button,
+#info-panel .info-panel-content .submit-button
 {
-    width: 10%;
+    width: 7%;
     padding: 0px;
     height: 30px;
     border-radius: 5px;
@@ -483,6 +491,16 @@ main
 {
     color: #fff;
     background: #C62828;
+}
+#info-panel .info-panel-content .submit-button:hover
+{
+    color: #fff;
+    background: #E3D94B;
+}
+#info-panel .info-panel-content .submit-button:active
+{
+    color: #fff;
+    background: #A39C34;
 }
 #info-panel .info-panel-content .add-button:hover
 {
