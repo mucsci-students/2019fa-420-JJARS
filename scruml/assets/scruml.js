@@ -347,7 +347,8 @@ function submitMemberFunction()
             modalAlert("Function " + name + " has been added.");
         else
             modalAlert("Function " + name + " has been updated.");
-        parentDiv.id = name;
+
+        parentDiv.id = "[F:" + name + "]";
         diagram.update(diagram.selectedElement.id());
     });
 }
@@ -383,10 +384,47 @@ function submitMemberVariable()
         else
             modalAlert("Variable " + name + " has been updated.");
 
-        parentDiv.id = name;
+        parentDiv.id = "[V:" + name + "]";
         diagram.update(diagram.selectedElement.id());
     });
 }
+
+
+// ----------
+// Removes the member for the selected class
+
+function removeMember()
+{
+    var parentDiv = this.parentElement;
+    var divName = parentDiv.id;
+
+    // Delete the div tht contains the member's buttons and input fields
+    parentDiv.remove();
+
+    // Only remove the member from the model if had been submitted
+    if (divName == "[new]")
+    {
+        return;
+    }
+
+    // Remove the member from the model
+    var attrData = {"class_name": diagram.selectedElement.id(),
+                            "attribute_name": divName};
+
+    pywebview.api.removeClassAttribute(attrData).then(function alertMemberDelete(response) {
+        if (response !== "")
+        {
+            modalAlert(response);
+            return;
+        }
+
+        divName = divName.substring(3, divName.length - 1);
+        modalAlert("Member " + divName + " has been removed.");
+
+        diagram.update(diagram.selectedElement.id());
+    });
+}
+
 
 // ----------
 // Add input elements for a member function in the properties panel
@@ -396,13 +434,14 @@ function addMemberFunction(visibility = "", type = "", name = "", params = "")
     var funcDiv = document.createElement("div");
     funcDiv.setAttribute('class', 'member-function');
     // Set the id of the div to indicate if the function is new and unsubmitted
-    var divID = ((name === "") ? "[new]" : name);
+    var divID = ((name === "") ? "[new]" : "[F:" + name + "]");
     funcDiv.setAttribute('id', divID);
 
     var deleteButton = document.createElement("input");
     deleteButton.setAttribute('type', 'button');
     deleteButton.setAttribute('class', 'delete-button');
     deleteButton.setAttribute('value', 'x');
+    deleteButton.onclick = removeMember;
 
     var submitButton = document.createElement("input");
     submitButton.setAttribute('type', 'button');
@@ -454,13 +493,14 @@ function addMemberVariable(visibility = "", type = "", name = "")
     var varDiv = document.createElement("div");
     varDiv.setAttribute('class', 'member-variable');
     // Set the id of the div to indicate if the variable is new and unsubmitted
-    var divID = ((name === "") ? "[new]" : name);
+    var divID = ((name === "") ? "[new]" : "[V:" + name + "]");
     varDiv.setAttribute('id', divID);
 
     var deleteButton = document.createElement("input");
     deleteButton.setAttribute('type', 'button');
     deleteButton.setAttribute('class', 'delete-button');
     deleteButton.setAttribute('value', 'x');
+    deleteButton.onclick = removeMember;
 
     var submitButton = document.createElement("input");
     submitButton.setAttribute('type', 'button');

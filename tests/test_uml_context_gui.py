@@ -46,6 +46,8 @@ def test_set_and_remove_class_attribute() -> str:
     api: __API = __API()
     api._API__diagram = UMLDiagram()
 
+    # Test setClassAttribute
+    # Failure cases
     test_data = {
         "class_name": "classA",
         "attribute_category": "metadata",
@@ -65,13 +67,9 @@ def test_set_and_remove_class_attribute() -> str:
     result2 = api.setClassAttribute(set_att_data)
     assert not result2 == ""
 
-    result3 = api.removeClassAttribute(
-        set_att_data["class_name"], set_att_data["attribute_name"]
-    )
-    assert not result3 == ""
-
+    # Successful cases
     add_class_data = {"class_name": "classA", "x": 0, "y": 20}
-    result4 = api.addClass(add_class_data)
+    result3 = api.addClass(add_class_data)
     correct_metadata_data = {
         "class_name": "classA",
         "attribute_category": "metadata",
@@ -79,8 +77,8 @@ def test_set_and_remove_class_attribute() -> str:
         "attribute_value": "20",
         "ignore_naming_rules": "t",
     }
-    result5 = api.setClassAttribute(correct_metadata_data)
-    assert result5 == ""
+    result4 = api.setClassAttribute(correct_metadata_data)
+    assert result4 == ""
 
     correct_func_params_data = {
         "class_name": "classA",
@@ -90,8 +88,8 @@ def test_set_and_remove_class_attribute() -> str:
         "func_name": "myFunc",
         "func_params": "int x, float y",
     }
-    result6 = api.setClassAttribute(correct_func_params_data)
-    assert result6 == ""
+    result5 = api.setClassAttribute(correct_func_params_data)
+    assert result5 == ""
 
     correct_func_no_params_data = {
         "class_name": "classA",
@@ -101,8 +99,8 @@ def test_set_and_remove_class_attribute() -> str:
         "func_name": "myOtherFunc",
         "func_params": "",
     }
-    result7 = api.setClassAttribute(correct_func_no_params_data)
-    assert result7 == ""
+    result6 = api.setClassAttribute(correct_func_no_params_data)
+    assert result6 == ""
 
     correct_variable_data = {
         "class_name": "classA",
@@ -111,8 +109,19 @@ def test_set_and_remove_class_attribute() -> str:
         "var_type": "string",
         "var_name": "myName",
     }
-    result8 = api.setClassAttribute(correct_variable_data)
-    assert result8 == ""
+    result7 = api.setClassAttribute(correct_variable_data)
+    assert result7 == ""
+
+    # Test removeClassAttribute
+    # Failure case
+    bad_attr_data = {"class_name": "classA", "attribute_name": "fakeAttr"}
+    result8 = api.removeClassAttribute(bad_attr_data)
+    assert not result8 == ""
+
+    # Successful case
+    good_attr_data = {"class_name": "classA", "attribute_name": "[V:myName]"}
+    result9 = api.removeClassAttribute(good_attr_data)
+    assert result9 == ""
 
 
 def test_add_and_remove_relationship() -> None:

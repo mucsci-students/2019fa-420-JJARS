@@ -291,9 +291,12 @@ Structure: dictionary[classPair][attributeName] == attributeValue"""
     # ----------
     # removeClassAttribute
 
-    def removeClassAttribute(self, class_name: str, attribute_name: str) -> str:
+    def removeClassAttribute(self, attribute_data: Dict[str, str]) -> str:
+        class_name: str = attribute_data["class_name"]
+        attribute_name: str = attribute_data["attribute_name"]
 
         if not self.__diagram.remove_class_attribute(class_name, attribute_name):
+            print(f' Attr name:"{attribute_name}" \n Class name: "{class_name}"')
             return "Attribute " + attribute_name + " not found in Class: " + class_name
 
         return ""
