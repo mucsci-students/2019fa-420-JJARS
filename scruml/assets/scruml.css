@@ -2,17 +2,19 @@
 /* scruml.css */
 /* Team JJARS */
 
+
 /*
-   Colors:
+   Colors [Primary | Shadowed]:
    Light -     #FFFFFF | #E5E5E5
    Off-Light - #F2E9E1 | #D9D1CA
-   Mid-Tone -  #EFEFEF | #DDDDDD
+   Mid-Tone -  #EFEFEF | #CACACA
    Dark -      #1C140D | #090703
    Accent -    #DBF87B | #A6C050
+   Error -     #F44336 | #C62828
 */
 
-/* Font */
 
+/* Font */
 
 @font-face {
     font-family: "Noto Sans";
@@ -38,18 +40,189 @@ html, body
 body
 {
     display: flex;
-    min-height: 100vh;
-    max-height: 100vh;
+    height: 100vh;
     flex-direction: column;
 }
 main
 {
     display: flex;
-    flex: 1;
+    min-height: 0%;
+    height: 100%;
+}
+
+
+/* Modal Dialogs */
+
+.modal
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-box
+{
+    max-width: 550px;
+    border-bottom: 5px solid #CACACA;
+    border-radius: 5px;
+    padding: 35px;
+    background-color: #EFEFEF;
+    color: #1C140D;
+}
+
+
+/* Loading Modal */
+
+#loading-modal #loading-spinner
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50px;
+    max-height: 50px;
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+#loading-modal p
+{
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+
+/* Prompt Modal */
+
+#prompt-modal
+{
+    display: none;
+}
+
+#prompt-modal p
+{
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+#prompt-modal input
+{
+    width: 100%;
+    height: 30px;
+    font-size: 0.9em;
+    background: #FFF;
+    border: 1px solid #1C140D;
+    transition: background-color 0.2s;
+    padding: 0px 10px;
+    margin-bottom: 10px;
+}
+#prompt-modal input:hover
+{
+    background: #F2E9E1;
+}
+#prompt-modal input:active
+{
+    background: #D9D1CA;
+}
+
+#prompt-modal #prompt-modal-cancel,
+#prompt-modal #prompt-modal-ok
+{
+    display: inline-block;
+    border-radius: 5px;
+    margin-bottom: 0px;
+    margin: 0px 15px;
+    width: 40%;
+}
+#prompt-modal #prompt-modal-ok
+{
+    float: right;
+}
+#prompt-modal #prompt-modal-cancel:hover
+{
+    color: #fff;
+    background: #F44336;
+}
+#prompt-modal #prompt-modal-cancel:active
+{
+    color: #fff;
+    background: #C62828;
+}
+#prompt-modal #prompt-modal-ok:hover
+{
+    color: #fff;
+    background: #A6C050;
+}
+#prompt-modal #prompt-modal-ok:active
+{
+    color: #fff;
+    background: #689F38;
+}
+
+
+/* Alert Modal */
+
+#alert-modal
+{
+    display: none;
+}
+
+#alert-modal p
+{
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+#alert-modal #alert-modal-ok
+{
+    width: 100%;
+    height: 30px;
+    font-size: 0.9em;
+    background: #FFF;
+    border: 1px solid #1C140D;
+    transition: background-color 0.2s;
+    padding: 0px 10px;
+    border-radius: 5px;
+    margin-bottom: 0px;
+}
+#alert-modal #alert-modal-ok:hover
+{
+    color: #fff;
+    background: #A6C050;
+}
+#alert-modal #alert-modal-ok:active
+{
+    color: #fff;
+    background: #689F38;
 }
 
 
 /* Menubar */
+
+#menubar
+{
+    flex: none;
+}
 
 #menubar ul
 {
@@ -89,11 +262,10 @@ main
 #diagram-canvas
 {
     cursor: default;
-    flex: 1;
-    overflow: scroll;
-    max-height: 90%;
     background-image: url("img/background.png");
     padding: 10px;
+    overflow: scroll;
+    flex: auto;
 }
 
 #diagram-canvas svg
@@ -117,6 +289,16 @@ main
 #diagram-canvas .uml-class
 {
     fill-opacity: 1;
+}
+#diagram-canvas .uml-class-name
+{
+    font-weight: bold;
+    border-bottom: 1px solid #f00;
+}
+#diagram-canvas .uml-class .uml-class-member-function,
+#diagram-canvas .uml-class .uml-class-member-variable
+{
+    font-size: 0.75em;
 }
 
 #diagram-canvas .selected
@@ -185,8 +367,8 @@ main
 #info-panel
 {
     display: none;
-    flex: 0 0 400px;
-    max-height: 90%;
+    flex: 0 0 475px;
+    height: 100%;
     overflow-y: scroll;
     padding: 10px;
     border-left: solid 5px #E5E5E5;
@@ -226,6 +408,10 @@ main
 {
     color: #3E2723;
 }
+#info-panel .info-panel-content .spacer
+{
+    color: rgba(0,0,0,0);
+}
 
 #info-panel .info-panel-content hr
 {
@@ -236,15 +422,10 @@ main
 }
 
 #info-panel .info-panel-content input,
-#info-panel .info-panel-content label,
-#info-panel .info-panel-content select
-{
-    font-size: 11px;
-}
-#info-panel .info-panel-content input,
 #info-panel .info-panel-content select
 {
     height: 30px;
+    font-size: 0.9em;
     background: #FFF;
     border: 1px solid #1C140D;
     transition: background-color 0.2s;
@@ -254,12 +435,6 @@ main
 #info-panel .info-panel-content select
 {
     border-radius: 5px;
-}
-#info-panel .info-panel-content label
-{
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 0px;
 }
 
 #info-panel .info-panel-content input:hover,
@@ -279,26 +454,27 @@ main
     display: flex;
     justify-content: space-between;
 }
+
 #info-panel .info-panel-content .member-function .func-visibility,
 #info-panel .info-panel-content .member-function .func-ret-type,
 #info-panel .info-panel-content .member-function .func-name,
 #info-panel .info-panel-content .member-function .func-params
 {
-    width: 22%;
+    width: 20%;
 }
 
 #info-panel .info-panel-content .member-variable .var-visibility,
 #info-panel .info-panel-content .member-variable .var-type,
 #info-panel .info-panel-content .member-variable .var-name
 {
-    width: 29.5%;
+    width: 27%;
 }
 
-
 #info-panel .info-panel-content .delete-button,
-#info-panel .info-panel-content .add-button
+#info-panel .info-panel-content .add-button,
+#info-panel .info-panel-content .submit-button
 {
-    width: 10%;
+    width: 7%;
     padding: 0px;
     height: 30px;
     border-radius: 5px;
@@ -314,6 +490,16 @@ main
     color: #fff;
     background: #C62828;
 }
+#info-panel .info-panel-content .submit-button:hover
+{
+    color: #fff;
+    background: #E3D94B;
+}
+#info-panel .info-panel-content .submit-button:active
+{
+    color: #fff;
+    background: #A39C34;
+}
 #info-panel .info-panel-content .add-button:hover
 {
     color: #fff;
@@ -326,6 +512,11 @@ main
 }
 
 /* Toolbar */
+
+#toolbar
+{
+    flex: none;
+}
 
 #toolbar ul
 {
