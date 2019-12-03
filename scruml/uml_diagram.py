@@ -10,9 +10,7 @@ from typing import Tuple
 import yaml
 
 ClassPair = Tuple[str, str]
-
 AttributeDict = Dict[str, str]
-RelationshipDict = Dict[Optional[str], AttributeDict]
 
 # ----------
 # UMLDiagram class
@@ -28,7 +26,7 @@ class UMLDiagram:
 
     def __init__(self) -> None:
         self.__classes: Dict[str, AttributeDict] = dict()
-        self.__relationships: Dict[ClassPair, RelationshipDict] = dict()
+        self.__relationships: Dict[ClassPair, AttributeDict] = dict()
 
     # ----------
     # Class functions
@@ -36,42 +34,39 @@ class UMLDiagram:
     # ----------
     # add_class
 
-    def add_class(self, class_name: str) -> Optional[str]:
+    def add_class(self, class_name: str) -> bool:
         """Adds a class with name 'class_name' to the diagram.
 Fails if a class with 'class_name' is already present in the diagram.
-Returns 'class_name' on success, or 'None' on failure."""
+Returns 'True' on success, or 'False' on failure."""
 
         if class_name in self.__classes:
-            return None
+            return False
 
         self.__classes[class_name] = dict()
 
-        return class_name
+        return True
 
     # ----------
     # remove_class
 
-    def remove_class(self, class_name: str) -> Optional[str]:
+    def remove_class(self, class_name: str) -> bool:
         """Removes the class with name 'class_name' from the diagram.
 Fails if a class with 'class_name' is not present in the diagram.
-Returns 'class_name' on success, or 'None' on failure."""
+Returns 'True' on success, or 'False' on failure."""
 
         if class_name not in self.__classes:
-            return None
+            return False
 
         del self.__classes[class_name]
 
-        # Remove all relationships that refer to this class
-        # (We work on a copy to avoid working on a dictionary while iterating over it)
-        new_relationships: Dict[
-            ClassPair, RelationshipDict
-        ] = self.__relationships.copy()
-        for class_pair in self.__relationships:
-            if class_name in class_pair:
-                del new_relationships[class_pair]
-        self.__relationships = new_relationships
+        # Remove any relationship that might refer to this class
+        self.__relationships = {
+            class_pair: attributes
+            for class_pair, attributes in self.__relationships.items()
+            if class_name not in class_pair
+        }
 
-        return class_name
+        return True
 
     # ----------
     # get_all_class_names
@@ -84,13 +79,13 @@ Returns 'class_name' on success, or 'None' on failure."""
     # ----------
     # rename_class
 
-    def rename_class(self, old_class_name: str, new_class_name: str) -> Optional[str]:
+    def rename_class(self, old_class_name: str, new_class_name: str) -> bool:
         """Renames the class with name 'old_name' to 'new_name' in the diagram.
 Fails if a class with 'old_name' is not present in the diagram or a class with 'new_name' already exists in the diagram.
-Returns 'new_name' on success or 'None' on failure."""
+Returns 'True' on success or 'False' on failure."""
 
         if old_class_name not in self.__classes or new_class_name in self.__classes:
-            return None
+            return False
 
         self.__classes[new_class_name] = self.__classes.pop(old_class_name)
 
@@ -109,7 +104,7 @@ Returns 'new_name' on success or 'None' on failure."""
                     class_pair
                 )
 
-        return new_class_name
+        return True
 
     # ----------
     # Class attribute functions
@@ -119,39 +114,37 @@ Returns 'new_name' on success or 'None' on failure."""
 
     def set_class_attribute(
         self, class_name: str, attribute_name: str, attribute_value: str
-    ) -> Optional[str]:
+    ) -> bool:
         """Sets the value of 'attribute_name' to 'attribute_value' for the class with name 'class_name' in the diagram.
 If the class does not yet have an attribute with the name 'attribute_name', one will be created.
 Fails if a class with 'class_name' is not present in the diagram.
-Returns 'attribute_value' on success, or 'None' on failure."""
+Returns 'True' on success, or 'False' on failure."""
 
         if class_name not in self.__classes:
-            return None
+            return False
 
         self.__classes[class_name][attribute_name] = attribute_value
 
-        return attribute_value
+        return True
 
     # ----------
     # remove_class_attribute
 
-    def remove_class_attribute(
-        self, class_name: str, attribute_name: str
-    ) -> Optional[str]:
+    def remove_class_attribute(self, class_name: str, attribute_name: str) -> bool:
         """Removes the attribute with name 'attribute_name' from class 'class_name'.
 Fails if an attribute with 'attribute_name' is not found in 'class_name'.
 Fails if a class with 'class_name' is not present in the diagram.
-Returns 'attribute_name' on success, or 'None' on failure."""
+Returns 'True' on success, or 'False' on failure."""
 
         if (
             class_name not in self.__classes
             or attribute_name not in self.__classes[class_name]
         ):
-            return None
+            return False
 
         del self.__classes[class_name][attribute_name]
 
-        return attribute_name
+        return True
 
     # ----------
     # get_class_attributes
@@ -186,14 +179,9 @@ Otherwise, returns (class_name_a, class_name_b)."""
     # ----------
     # add_relationship
 
-    def add_relationship(
-        self,
-        class_name_a: str,
-        class_name_b: str,
-        relationship_name: Optional[str] = None,
-    ) -> bool:
-        """Adds a relationship between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' to the diagram.
-Fails if a relation between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' is already present in the diagram.
+    def add_relationship(self, class_name_a: str, class_name_b: str) -> bool:
+        """Adds a relationship between the classes 'class_name_a' and 'class_name_b' to the diagram.
+Fails if a relationship between the classes 'class_name_a' and 'class_name_b' is already present in the diagram.
 Returns 'True' on success, or 'False' on failure."""
 
         class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
@@ -201,31 +189,24 @@ Returns 'True' on success, or 'False' on failure."""
         if (
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
-            or (
-                class_pair in self.__relationships
-                and relationship_name in self.__relationships[class_pair]
-            )
+            or class_name_a == class_name_b
+            or class_pair in self.__relationships
         ):
             return False
 
         if class_pair not in self.__relationships:
             self.__relationships[class_pair] = {}
 
-        self.__relationships[class_pair][relationship_name] = {}
+        self.__relationships[class_pair] = {}
 
         return True
 
     # ----------
     # remove_relationship
 
-    def remove_relationship(
-        self,
-        class_name_a: str,
-        class_name_b: str,
-        relationship_name: Optional[str] = None,
-    ) -> bool:
-        """Removes the relationship between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' from the diagram.
-Fails if a relationship between the classes 'class_name_a' and 'class_name_b' with optional 'relationship_name' is not present in the diagram.
+    def remove_relationship(self, class_name_a: str, class_name_b: str) -> bool:
+        """Removes the relationship between the classes 'class_name_a' and 'class_name_b' from the diagram.
+Fails if a relationship between the classes 'class_name_a' and 'class_name_b' is not present in the diagram.
 Returns 'True' on success, or 'False' on failure."""
 
         class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
@@ -234,24 +215,20 @@ Returns 'True' on success, or 'False' on failure."""
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
             or class_pair not in self.__relationships
-            or relationship_name not in self.__relationships[class_pair]
         ):
             return False
 
-        del self.__relationships[class_pair][relationship_name]
-
-        if self.__relationships[class_pair] == {}:
-            del self.__relationships[class_pair]
+        del self.__relationships[class_pair]
 
         return True
 
     # ----------
-    # get_relationships_between
+    # get_relationship_between
 
-    def get_relationships_between(
+    def get_relationship_between(
         self, class_name_a: str, class_name_b: str
-    ) -> Optional[RelationshipDict]:
-        """Returns a Dict[Optional[str], Dict[str, str]] containing every relationship (with attributes) between 'class_name_a' and 'class_name_b'.
+    ) -> Optional[AttributeDict]:
+        """Returns a Dict[str, str] containing all relationship attributes between 'class_name_a' and 'class_name_b'.
 Fails if class 'class_name_a' or class 'class_name_b' is not present in the diagram.
 Fails if a relationship between 'class_name_a' and 'class_name_b' does not exist.
 Returns 'None' on failure."""
@@ -285,15 +262,13 @@ Returns 'None' on failure."""
         self,
         class_name_a: str,
         class_name_b: str,
-        relationship_name: Optional[str],
         attribute_name: str,
         attribute_value: str,
-    ) -> Optional[str]:
-        """Sets the value of 'attribute_name' to 'attribute_value' for the relationship between 'class_name_a' and 'class_name_b'
-with the optional name 'relationship_name'.
+    ) -> bool:
+        """Sets the value of 'attribute_name' to 'attribute_value' for the relationship between 'class_name_a' and 'class_name_b'.
 If the relationship does not yet have an attribute with the name 'attribute_name', one will be created.
-Fails if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram.
-Returns 'attribute_value' on success, or 'None' on failure."""
+Fails if a relationship between 'class_name_a' and 'class_name_b' is not present in the diagram.
+Returns 'True' on success, or 'False' on failure."""
 
         class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
@@ -301,31 +276,23 @@ Returns 'attribute_value' on success, or 'None' on failure."""
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
             or class_pair not in self.__relationships
-            or relationship_name not in self.__relationships[class_pair]
         ):
-            return None
+            return False
 
-        self.__relationships[class_pair][relationship_name][
-            attribute_name
-        ] = attribute_value
+        self.__relationships[class_pair][attribute_name] = attribute_value
 
-        return attribute_value
+        return True
 
     # ----------
     # remove_relationship_attribute
 
     def remove_relationship_attribute(
-        self,
-        class_name_a: str,
-        class_name_b: str,
-        relationship_name: Optional[str],
-        attribute_name: str,
-    ) -> Optional[str]:
+        self, class_name_a: str, class_name_b: str, attribute_name: str
+    ) -> bool:
         """Removes the attribute with name 'attribute_name' from the relationship between 'class_name_a' and 'class_name_b'
-with the optional name 'relationship_name'.
 Fails if an attribute with 'attribute_name' is not found in the relationship.
-Fails if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram.
-Returns 'attribute_name' on success, or 'None' on failure."""
+Fails if a relationship between 'class_name_a' and 'class_name_b' is not present in the diagram.
+Returns 'True' on success, or 'False' on failure."""
 
         class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
@@ -333,27 +300,22 @@ Returns 'attribute_name' on success, or 'None' on failure."""
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
             or class_pair not in self.__relationships
-            or relationship_name not in self.__relationships[class_pair]
-            or attribute_name not in self.__relationships[class_pair][relationship_name]
+            or attribute_name not in self.__relationships[class_pair]
         ):
-            return None
+            return False
 
-        del self.__relationships[class_pair][relationship_name][attribute_name]
+        del self.__relationships[class_pair][attribute_name]
 
-        return attribute_name
+        return True
 
     # ----------
     # get_relationship_attributes
 
     def get_relationship_attributes(
-        self,
-        class_name_a: str,
-        class_name_b: str,
-        relationship_name: Optional[str] = None,
+        self, class_name_a: str, class_name_b: str
     ) -> Optional[AttributeDict]:
         """Returns a Dict[str, str] containing the attribute names and values for the relationship between 'class_name_a' and 'class_name_b'
-with the optional name 'relationship_name'.
-Fails and returns 'None' if a relationship with 'class_name_a', 'class_name_b', and 'relationship_name' is not present in the diagram."""
+Fails and returns 'None' if a relationship between 'class_name_a' and 'class_name_b' is not present in the diagram."""
 
         class_pair: ClassPair = self.__resolve_class_pair(class_name_a, class_name_b)
 
@@ -361,8 +323,7 @@ Fails and returns 'None' if a relationship with 'class_name_a', 'class_name_b', 
             class_name_a not in self.__classes
             or class_name_b not in self.__classes
             or class_pair not in self.__relationships
-            or relationship_name not in self.__relationships[class_pair]
         ):
             return None
 
-        return self.__relationships[class_pair][relationship_name]
+        return self.__relationships[class_pair]

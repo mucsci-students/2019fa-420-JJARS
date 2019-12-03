@@ -21,6 +21,32 @@
     <script src="diagram.js"></script>
     <script src="scruml.js"></script>
 
+    <!-- Loading Modal -->
+    <div id="loading-modal" class="modal">
+      <div class="modal-box">
+        <img id="loading-spinner" src="img/spinner.png">
+        <p>Preparing Canvas</p>
+      </div>
+    </div>
+
+    <!-- Prompt Modal -->
+    <div id="prompt-modal" class="modal">
+      <div class="modal-box">
+        <p id="prompt-modal-message">Generic Prompt Message</p>
+        <input id="prompt-modal-input" type="text" placeholder="Prompt Value">
+        <input id="prompt-modal-cancel" type="button" value="Cancel" onclick="closeModalPrompt();">
+        <input id="prompt-modal-ok" type="button" value="OK" onclick="acceptModalPrompt();">
+      </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="modal">
+      <div class="modal-box">
+        <p id="alert-modal-message">Alert Modal Message</p>
+        <input id="alert-modal-ok" type="button" value="OK" onclick="dismissModalAlert();">
+      </div>
+    </div>
+
     <!-- Menubar -->
     <header id="menubar">
       <ul>
@@ -30,52 +56,54 @@
       </ul>
     </header>
 
+    <!-- Center Content -->
     <main>
 
-      <!-- Diagram Canvas -->
-      <section id="diagram-canvas">
-      </section>
+    <!-- Diagram Canvas -->
+    <section id="diagram-canvas">
+    </section>
 
-      <!-- Info Panel -->
-      <aside id="info-panel">
-        <div id="class-info" class="info-panel-content">
-          <strong class="identifier header"><span id="class-id"></span><a class="edit-identifier" onclick="renameClass();"> 🖉</a></strong>
-          <hr>
-          <strong class="header">Functions</strong>
-          <div id="function-list">
-            <div class="member-function" id="func1"></div>
-          </div>
-          <input type="button" class="add-button" value="+" onclick="addMemberFunction();">
-          <strong class="header">Variables</strong>
-          <div id="variable-list">
-            <div class="member-variable" id="var1"></div>
-          </div>
-          <input type="button" class="add-button" value="+" onclick="addMemberVariable();">
+    <!-- Info Panel -->
+    <aside id="info-panel">
+      <div id="class-info" class="info-panel-content">
+        <strong class="identifier header"><span id="class-id"></span><a class="edit-identifier" onclick="renameClass();"> 🖉</a></strong>
+        <hr>
+        <span class="header">Variables</span>
+        <div id="variable-list">
+          <div class="member-variable" id="var1"></div>
         </div>
-        <div id="relationship-info" class="info-panel-content">
-          <strong class="identifier header"><span id="relationship-id"></span></strong>
-          <hr>
-          <strong class="header">Properties</strong>
-          <label>Label</label>
-          <input type="text" placeholder="My Relationship">
-          <label>Type</label>
-          <select>
-            <option>Association</option>
-            <option>Inheritance</option>
-            <option>Realization</option>
-            <option>Dependency</option>
-            <option>Aggregation</option>
-            <option>Composition</option>
-          </select>
-          <label>Multiplicity</label>
-          <select>
-            <option>One-To-One</option>
-            <option>One-To-Many</option>
-            <option>Many-To-One</option>
-            <option>Many-To-Many</option>
-          </select>
+        <input type="button" class="add-button" value="+" onclick="addMemberVariable();">
+        <span class="header">Functions</span>
+        <div id="function-list">
+          <div class="member-function" id="func1"></div>
         </div>
-      </aside>
+        <input type="button" class="add-button" value="+" onclick="addMemberFunction();">
+      </div>
+      <div id="relationship-info" class="info-panel-content">
+        <strong class="identifier header"><span id="relationship-id"></span><a class="spacer"> 🖉</a></strong>
+        <hr>
+        <span class="header">Label</span>
+        <input type="text" placeholder="My Relationship" onchange="setRelationshipAttrValue('label', this.value);">
+        <span class="header">Type</span>
+        <select onchange="changeRelationshipType();">
+          <option>Default</option>
+          <option>Association</option>
+          <option>Inheritance</option>
+          <option>Realization</option>
+          <option>Dependency</option>
+          <option>Aggregation</option>
+          <option>Composition</option>
+        </select>
+        <span class="header">Multiplicity</span>
+        <select onchange="changeRelationshipMultiplicity();">
+          <option>Default</option>
+          <option>One-To-One</option>
+          <option>One-To-Many</option>
+          <option>Many-To-One</option>
+          <option>Many-To-Many</option>
+        </select>
+      </div>
+    </aside>
 
     </main>
 
