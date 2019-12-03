@@ -2,8 +2,8 @@
 // diagram.js
 // Team JJARS
 
-const CLASS_WIDTH = 150;
-const CLASS_HEIGHT = 50;
+// ----------
+// Diagram class
 
 class Diagram {
 
@@ -20,7 +20,7 @@ class Diagram {
             return;
         }
         this.canvas = new SVG(canvasID).size(500, 500);
-        this.canvas.mousedown(function canvasMouseDown(event) {
+        this.canvas.click(function canvasOnClick(event) {
             tryAddClass(event);
         })
 
@@ -174,16 +174,62 @@ class Diagram {
         // Build element on the canvas with appropriate ID and classification
         var element = this.canvas.nested().id(className).addClass("uml-class");
 
-        element.attr('data-attributes', JSON.stringify(classAttr))
+        // Insert element attributes as HTML attribute
+        element.attr('data-attributes', JSON.stringify(classAttr));
 
         // Add body and text
         var rect = element.rect(1, 1);
-        var text_OfClassName = element.text(className).move(10, 10);
+        var classNameText = element.text(className).move(10, 10).addClass("uml-class-name");
 
-        var width = text_OfClassName.bbox().width + 20;
-        var height = text_OfClassName.bbox().height + 20;
-        rect.width(width);
-        rect.height(height);
+        // Add member variables to the class element
+        var currYOffset = classNameText.bbox().height + 15;
+        var longestStringWidth = classNameText.bbox().width;
+        for (let [key, value] of Object.entries(classAttr))
+        {
+            if ( key != "[x]" && key != "[y]")
+            {
+                // This attribute is a variable if the second char of the key is an 'V'
+                if (key.substring(1,2) == "V")
+                {
+                    var deserialDict = this.deserializeVariable(key, value);
+
+                    var varVisibility = deserialDict["visibility"];
+                    var varType = deserialDict["type"];
+                    var varName = deserialDict["name"];
+
+                    var varTextElem = element.text("- " + varVisibility + " " + varType + " " + varName).move(10, currYOffset).addClass("uml-class-member-variable");
+                    currYOffset += varTextElem.bbox().height + 5;
+                    longestStringWidth = Math.max(longestStringWidth, varTextElem.bbox().width);
+                }
+            }
+        }
+
+        // Add member functions to the class element
+        for (let [key, value] of Object.entries(classAttr))
+        {
+            if ( key != "[x]" && key != "[y]")
+            {
+                // This attribute is a function if the second char of the key is an 'F'
+                if (key.substring(1,2) == "F")
+                {
+                    var deserialDict = this.deserializeFunction(key, value);
+
+                    var funcVisibility = deserialDict["visibility"];
+                    var funcType = deserialDict["return-type"];
+                    var funcName = deserialDict["name"];
+                    var funcParamStr = deserialDict["param-str"];
+
+                    var funcTextElem = element.text("+ " + funcVisibility + " " + funcType + " " + funcName + "(" + funcParamStr + ")").move(10, currYOffset).addClass("uml-class-member-function");
+                    currYOffset += funcTextElem.bbox().height + 5;
+                    longestStringWidth = Math.max(longestStringWidth, funcTextElem.bbox().width);
+                }
+            }
+        }
+
+        // Calculate width of surrounding rectangle
+        var width = longestStringWidth + 20;
+        var height = currYOffset + 5;
+        rect.width(width).height(height);
 
         // Place element at the appropriate coordinates, if in the attributes
         if (classAttr["[x]"] && classAttr["[y]"])
@@ -195,10 +241,6 @@ class Diagram {
         element.mousedown(function classMouseDown(event) {
             classElementClicked(this);
         });
-
-        element.on("dragmove", function(event){
-            console.log(event);
-        })
 
         // Hook drag end event to handler
         element.on("dragend", function classDragEnd(event) {

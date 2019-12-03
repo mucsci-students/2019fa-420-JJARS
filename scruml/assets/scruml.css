@@ -285,6 +285,16 @@ main
 {
     fill-opacity: 1;
 }
+#diagram-canvas .uml-class-name
+{
+    font-weight: bold;
+    border-bottom: 1px solid #f00;
+}
+#diagram-canvas .uml-class .uml-class-member-function,
+#diagram-canvas .uml-class .uml-class-member-variable
+{
+    font-size: 0.75em;
+}
 
 #diagram-canvas .selected
 {
