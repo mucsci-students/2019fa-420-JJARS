@@ -48,6 +48,7 @@ def test_set_and_remove_class_attribute() -> str:
 
     test_data = {
         "class_name": "classA",
+        "attribute_category": "metadata",
         "attribute_name": "Foo Bar",
         "attribute_value": "20",
     }
@@ -56,6 +57,7 @@ def test_set_and_remove_class_attribute() -> str:
 
     set_att_data = {
         "class_name": "classA",
+        "attribute_category": "metadata",
         "attribute_name": "Foo_Bar",
         "attribute_value": "20",
         "ignore_naming_rules": "t",
@@ -70,14 +72,47 @@ def test_set_and_remove_class_attribute() -> str:
 
     add_class_data = {"class_name": "classA", "x": 0, "y": 20}
     result4 = api.addClass(add_class_data)
-    correct_att_data = {
+    correct_metadata_data = {
         "class_name": "classA",
+        "attribute_category": "metadata",
         "attribute_name": "Foo_Bar",
         "attribute_value": "20",
         "ignore_naming_rules": "t",
     }
-    result5 = api.setClassAttribute(correct_att_data)
+    result5 = api.setClassAttribute(correct_metadata_data)
     assert result5 == ""
+
+    correct_func_params_data = {
+        "class_name": "classA",
+        "attribute_category": "function",
+        "func_visibility": "private",
+        "func_return_type": "int",
+        "func_name": "myFunc",
+        "func_params": "int x, float y",
+    }
+    result6 = api.setClassAttribute(correct_func_params_data)
+    assert result6 == ""
+
+    correct_func_no_params_data = {
+        "class_name": "classA",
+        "attribute_category": "function",
+        "func_visibility": "private",
+        "func_return_type": "int",
+        "func_name": "myOtherFunc",
+        "func_params": "",
+    }
+    result7 = api.setClassAttribute(correct_func_no_params_data)
+    assert result7 == ""
+
+    correct_variable_data = {
+        "class_name": "classA",
+        "attribute_category": "variable",
+        "var_visibility": "public",
+        "var_type": "string",
+        "var_name": "myName",
+    }
+    result8 = api.setClassAttribute(correct_variable_data)
+    assert result8 == ""
 
 
 def test_add_and_remove_relationship() -> None:
