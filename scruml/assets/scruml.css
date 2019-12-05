@@ -460,14 +460,14 @@ main
 #info-panel .info-panel-content .member-function .func-name,
 #info-panel .info-panel-content .member-function .func-params
 {
-    width: 20%;
+    width: 22%;
 }
 
 #info-panel .info-panel-content .member-variable .var-visibility,
 #info-panel .info-panel-content .member-variable .var-type,
 #info-panel .info-panel-content .member-variable .var-name
 {
-    width: 27%;
+    width: 30%;
 }
 
 #info-panel .info-panel-content .delete-button,

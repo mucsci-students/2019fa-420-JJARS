@@ -328,13 +328,16 @@ function submitMemberFunction()
     var parameters = parentDiv.getElementsByClassName("func-params")[0].value;
 
     var attrData = {"class_name": diagram.selectedElement.id(),
-                            "attribute_category": "function",
-                            "func_visibility": visibility,
-                            "func_return_type": returnType,
-                            "func_name": name,
-                            "func_params": parameters};
+                    "attribute_category": "function",
+                    "attribute_name": parentDiv.id,
+                    "func_visibility": visibility,
+                    "func_return_type": returnType,
+                    "func_name": name,
+                    "func_params": parameters};
 
+    pywebview.api.removeClassAttribute(attrData).then(function () {
     pywebview.api.setClassAttribute(attrData).then(function alertMemberFunc(response) {
+
         if (response !== "")
         {
             modalAlert(response);
@@ -342,13 +345,16 @@ function submitMemberFunction()
         }
 
         // Check if function is being added or updated
-        if (parentDiv.id == "[new]")
-            modalAlert("Function " + name + " has been added.");
-        else
-            modalAlert("Function " + name + " has been updated.");
+        // if (parentDiv.id == "[new]")
+        //     modalAlert("Function " + name + " has been added.");
+        // else
+        //     modalAlert("Function " + name + " has been updated.");
 
         parentDiv.id = "[F:" + name + "]";
         diagram.update(diagram.selectedElement.id());
+
+    });
+
     });
 }
 
@@ -365,11 +371,13 @@ function submitMemberVariable()
     var name = parentDiv.getElementsByClassName("var-name")[0].value;
 
     var attrData = {"class_name": diagram.selectedElement.id(),
-                            "attribute_category": "variable",
-                            "var_visibility": visibility,
-                            "var_type": returnType,
-                            "var_name": name};
+                    "attribute_name": parentDiv.id,
+                    "attribute_category": "variable",
+                    "var_visibility": visibility,
+                    "var_type": returnType,
+                    "var_name": name};
 
+    pywebview.api.removeClassAttribute(attrData).then(function () {
     pywebview.api.setClassAttribute(attrData).then(function alertMemberVar(response) {
         if (response !== "")
         {
@@ -378,16 +386,18 @@ function submitMemberVariable()
         }
 
         // Check if variable is being added or updated
-        if (parentDiv.id == "[new]")
-            modalAlert("Variable " + name + " has been added.");
-        else
-            modalAlert("Variable " + name + " has been updated.");
+        // if (parentDiv.id == "[new]")
+        //     modalAlert("Variable " + name + " has been added.");
+        // else
+        //     modalAlert("Variable " + name + " has been updated.");
 
         parentDiv.id = "[V:" + name + "]";
         diagram.update(diagram.selectedElement.id());
     });
-}
 
+    });
+
+}
 
 // ----------
 // Removes the member for the selected class
@@ -418,20 +428,38 @@ function removeMember()
         }
 
         divName = divName.substring(3, divName.length - 1);
-        modalAlert("Member " + divName + " has been removed.");
+        // modalAlert("Member " + divName + " has been removed.");
 
         diagram.update(diagram.selectedElement.id());
     });
 }
 
+// ----------
+// Generate random name
+
+function stringGen(len)
+{
+
+    var text = "";
+
+    var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < len; i++ )
+        text += charset.charAt(Math.floor(Math.random() * charset.length));
+
+    return text;
+
+}
 
 // ----------
 // Add input elements for a member function in the properties panel
 
 function addMemberFunction(visibility = "", type = "", name = "", params = "")
 {
+
     var funcDiv = document.createElement("div");
     funcDiv.setAttribute('class', 'member-function');
+
     // Set the id of the div to indicate if the function is new and unsubmitted
     var divID = ((name === "") ? "[new]" : "[F:" + name + "]");
     funcDiv.setAttribute('id', divID);
@@ -442,38 +470,41 @@ function addMemberFunction(visibility = "", type = "", name = "", params = "")
     deleteButton.setAttribute('value', 'x');
     deleteButton.onclick = removeMember;
 
-    var submitButton = document.createElement("input");
-    submitButton.setAttribute('type', 'button');
-    submitButton.setAttribute('class', 'submit-button');
-    submitButton.setAttribute('value', '✓');
-    submitButton.onclick = submitMemberFunction;
-
     var visibilityField = document.createElement("input");
     visibilityField.setAttribute('type', 'text');
     visibilityField.setAttribute('class', 'func-visibility');
     visibilityField.setAttribute('placeholder', 'visibility');
     visibilityField.setAttribute('value', visibility);
+    visibilityField.onchange = submitMemberFunction;
 
     var retTypeField = document.createElement("input");
     retTypeField.setAttribute('type', 'text');
     retTypeField.setAttribute('class', 'func-ret-type');
     retTypeField.setAttribute('placeholder', 'return type');
     retTypeField.setAttribute('value', type);
+    retTypeField.onchange = submitMemberFunction;
+
+    // Generate random name if one is not provided
+    if (name === "")
+    {
+        name = "fn_" + stringGen(4);
+    }
 
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
     nameField.setAttribute('class', 'func-name');
     nameField.setAttribute('placeholder', 'func name');
     nameField.setAttribute('value', name);
+    nameField.onchange = submitMemberFunction;
 
     var paramsField = document.createElement("input");
     paramsField.setAttribute('type', 'text');
     paramsField.setAttribute('class', 'func-params');
-    paramsField.setAttribute('placeholder', 'int x, float y, ...');
+    paramsField.setAttribute('placeholder', 'int x, float y');
     paramsField.setAttribute('value', params);
+    paramsField.onchange = submitMemberFunction;
 
     funcDiv.appendChild(deleteButton);
-    funcDiv.appendChild(submitButton);
     funcDiv.appendChild(visibilityField);
     funcDiv.appendChild(retTypeField);
     funcDiv.appendChild(nameField);
@@ -481,6 +512,13 @@ function addMemberFunction(visibility = "", type = "", name = "", params = "")
 
     var funcList = document.getElementById("function-list");
     funcList.appendChild(funcDiv);
+
+    // Force update function
+    if (diagram.selectedElement !== null)
+    {
+        nameField.onchange();
+    }
+
 }
 
 
@@ -489,8 +527,10 @@ function addMemberFunction(visibility = "", type = "", name = "", params = "")
 
 function addMemberVariable(visibility = "", type = "", name = "")
 {
+
     var varDiv = document.createElement("div");
     varDiv.setAttribute('class', 'member-variable');
+
     // Set the id of the div to indicate if the variable is new and unsubmitted
     var divID = ((name === "") ? "[new]" : "[V:" + name + "]");
     varDiv.setAttribute('id', divID);
@@ -501,37 +541,46 @@ function addMemberVariable(visibility = "", type = "", name = "")
     deleteButton.setAttribute('value', 'x');
     deleteButton.onclick = removeMember;
 
-    var submitButton = document.createElement("input");
-    submitButton.setAttribute('type', 'button');
-    submitButton.setAttribute('class', 'submit-button');
-    submitButton.setAttribute('value', '✓');
-    submitButton.onclick = submitMemberVariable;
-
     var visibilityField = document.createElement("input");
     visibilityField.setAttribute('type', 'text');
     visibilityField.setAttribute('class', 'var-visibility');
     visibilityField.setAttribute('placeholder', 'visibility');
     visibilityField.setAttribute('value', visibility);
+    visibilityField.onchange = submitMemberVariable;
 
     var typeField = document.createElement("input");
     typeField.setAttribute('class', 'var-type');
     typeField.setAttribute('placeholder', 'type');
     typeField.setAttribute('value', type);
+    typeField.onchange = submitMemberVariable;
+
+    // Generate random name if one is not provided
+    if (name === "")
+    {
+        name = "var_" + stringGen(4);
+    }
 
     var nameField = document.createElement("input");
     nameField.setAttribute('type', 'text');
     nameField.setAttribute('class', 'var-name');
     nameField.setAttribute('placeholder', 'variable name');
     nameField.setAttribute('value', name);
+    nameField.onchange = submitMemberVariable;
 
     varDiv.appendChild(deleteButton);
-    varDiv.appendChild(submitButton);
     varDiv.appendChild(visibilityField);
     varDiv.appendChild(typeField);
     varDiv.appendChild(nameField);
 
     var varList = document.getElementById("variable-list");
     varList.appendChild(varDiv);
+
+    // Force update function
+    if (diagram.selectedElement !== null)
+    {
+        nameField.onchange();
+    }
+
 }
 
 // ----------
